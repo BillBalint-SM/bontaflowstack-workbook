@@ -24,7 +24,7 @@
     {
       "id": "plan_router",
       "type": "frontend",
-      "label": "bfs-driver",
+      "label": "bfs-router",
       "sublabel": "Choose the requested route",
       "row": 0,
       "col": 0,
@@ -36,7 +36,7 @@
     {
       "id": "business_brief",
       "type": "backend",
-      "label": "business-driver",
+      "label": "bfs-business-builder",
       "sublabel": "Shape a useful brief",
       "row": 0,
       "col": 1,
@@ -48,7 +48,7 @@
     {
       "id": "requirements",
       "type": "backend",
-      "label": "spec",
+      "label": "bfs-spec",
       "sublabel": "Define verifiable requirements",
       "row": 0,
       "col": 2,
@@ -60,7 +60,7 @@
     {
       "id": "plan_coordinator",
       "type": "backend",
-      "label": "autoplan",
+      "label": "bfs-autoplan",
       "sublabel": "Coordinate the plan reviews",
       "row": 0,
       "col": 3,
@@ -84,7 +84,7 @@
     {
       "id": "visual_direction",
       "type": "frontend",
-      "label": "design-consultation",
+      "label": "bfs-design-consultation",
       "sublabel": "Compare and select a direction",
       "row": 1,
       "col": 1,
@@ -96,7 +96,7 @@
     {
       "id": "page_implementation",
       "type": "backend",
-      "label": "design-html",
+      "label": "bfs-design-html",
       "sublabel": "Build and render the page",
       "row": 1,
       "col": 2,
@@ -108,7 +108,7 @@
     {
       "id": "visual_review",
       "type": "security",
-      "label": "design-review / qa",
+      "label": "bfs-design-review / bfs-qa",
       "sublabel": "Inspect the UI or user journey",
       "row": 1,
       "col": 3,

@@ -1,6 +1,6 @@
 # Shared browser usage
 
-Inspect installed capability readiness using `doctor browse`. Commands run as
+Inspect installed capability readiness using `doctor bfs-browse`. Commands run as
 `engine browser -- <command> <arguments>` or JSON `args` through the common CLI.
 Read the actual `--help` output before using an unfamiliar command or flag.
 

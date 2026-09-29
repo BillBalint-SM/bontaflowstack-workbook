@@ -1,6 +1,0 @@
-interface:
-  display_name: "Executable specification"
-  short_description: "Executable specification with checked results"
-  default_prompt: "Use $spec for the requested task and verify the result."
-policy:
-  allow_implicit_invocation: true

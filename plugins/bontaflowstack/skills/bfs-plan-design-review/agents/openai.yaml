@@ -1,0 +1,6 @@
+interface:
+  display_name: "BFS Plan Design Review"
+  short_description: "Design plan review with checked results"
+  default_prompt: "Use $bfs-plan-design-review for the requested task and verify the result."
+policy:
+  allow_implicit_invocation: true

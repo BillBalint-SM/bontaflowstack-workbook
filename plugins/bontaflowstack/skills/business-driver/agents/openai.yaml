@@ -1,6 +1,0 @@
-interface:
-  display_name: "Business brief"
-  short_description: "Business brief with checked results"
-  default_prompt: "Use $business-driver for the requested task and verify the result."
-policy:
-  allow_implicit_invocation: true

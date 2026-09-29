@@ -1,6 +1,0 @@
-interface:
-  display_name: "Coordinated plan review"
-  short_description: "Coordinated plan review with checked results"
-  default_prompt: "Use $autoplan for the requested task and verify the result."
-policy:
-  allow_implicit_invocation: true

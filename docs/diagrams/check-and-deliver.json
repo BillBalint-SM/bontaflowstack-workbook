@@ -24,7 +24,7 @@
     {
       "id": "delivery_router",
       "type": "frontend",
-      "label": "bfs-driver",
+      "label": "bfs-router",
       "sublabel": "Choose the requested route",
       "row": 0,
       "col": 0,
@@ -36,7 +36,7 @@
     {
       "id": "finish_change",
       "type": "backend",
-      "label": "finisher",
+      "label": "bfs-finisher",
       "sublabel": "Prepare the change",
       "row": 0,
       "col": 1,
@@ -48,7 +48,7 @@
     {
       "id": "verify_change",
       "type": "security",
-      "label": "review + project checks",
+      "label": "bfs-review + project checks",
       "sublabel": "Use the required evidence",
       "row": 0,
       "col": 2,
@@ -60,7 +60,7 @@
     {
       "id": "maintain_docs",
       "type": "backend",
-      "label": "documentation",
+      "label": "bfs-documentation",
       "sublabel": "Create or update affected docs",
       "row": 0,
       "col": 3,
@@ -72,7 +72,7 @@
     {
       "id": "requested_deploy",
       "type": "cloud",
-      "label": "prod-deploy",
+      "label": "bfs-prod-deploy",
       "sublabel": "Only when requested",
       "row": 0,
       "col": 4,
@@ -84,7 +84,7 @@
     {
       "id": "investigate_issue",
       "type": "backend",
-      "label": "bug-issue-investigate",
+      "label": "bfs-bug-issue-investigate",
       "sublabel": "Reproduce and find the cause",
       "row": 1,
       "col": 1,
@@ -109,7 +109,7 @@
       "id": "page_tools",
       "type": "external",
       "label": "Browser work",
-      "sublabel": "browse / scrape / benchmark",
+      "sublabel": "Navigation, data, performance",
       "row": 2,
       "col": 1,
       "size": [

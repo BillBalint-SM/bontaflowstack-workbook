@@ -1,0 +1,6 @@
+interface:
+  display_name: "BFS Router"
+  short_description: "Set up a project or route checked workflows"
+  default_prompt: "Use $bfs-router for the requested task and verify the result."
+policy:
+  allow_implicit_invocation: true

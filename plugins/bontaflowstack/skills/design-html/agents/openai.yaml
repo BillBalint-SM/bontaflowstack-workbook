@@ -1,6 +1,0 @@
-interface:
-  display_name: "Implement the design"
-  short_description: "Implement the design with checked results"
-  default_prompt: "Use $design-html for the requested task and verify the result."
-policy:
-  allow_implicit_invocation: true

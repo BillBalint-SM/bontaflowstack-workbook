@@ -1,6 +1,0 @@
-interface:
-  display_name: "Project quality checks"
-  short_description: "Project quality checks with checked results"
-  default_prompt: "Use $health for the requested task and verify the result."
-policy:
-  allow_implicit_invocation: true

@@ -1,6 +1,0 @@
-interface:
-  display_name: "Security audit"
-  short_description: "Security audit with checked results"
-  default_prompt: "Use $cso-audit for the requested task and verify the result."
-policy:
-  allow_implicit_invocation: true

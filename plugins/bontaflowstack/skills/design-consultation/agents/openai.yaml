@@ -1,6 +1,0 @@
-interface:
-  display_name: "Design direction and variants"
-  short_description: "Design direction and variants with checked results"
-  default_prompt: "Use $design-consultation for the requested task and verify the result."
-policy:
-  allow_implicit_invocation: true

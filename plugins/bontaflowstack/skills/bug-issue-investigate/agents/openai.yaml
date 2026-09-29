@@ -1,6 +1,0 @@
-interface:
-  display_name: "Investigate a reported defect"
-  short_description: "Investigate a reported defect with checked results"
-  default_prompt: "Use $bug-issue-investigate for the requested task and verify the result."
-policy:
-  allow_implicit_invocation: true

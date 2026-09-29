@@ -1,6 +1,0 @@
-interface:
-  display_name: "BontaFlowStack driver"
-  short_description: "BontaFlowStack driver with checked results"
-  default_prompt: "Use $bfs-driver for the requested task and verify the result."
-policy:
-  allow_implicit_invocation: true

@@ -10,5 +10,5 @@ if ($InstallPlugin) {
     if ($LASTEXITCODE -ne 0) { throw 'Could not register the local marketplace.' }
     & codex plugin add bontaflowstack@bontaflowstack
     if ($LASTEXITCODE -ne 0) { throw 'Could not install the plugin.' }
-    Write-Host 'Start a new Codex chat and use $bfs-driver.'
+    Write-Host 'Start a new Codex chat and use $bfs-router.'
 }

@@ -1,6 +1,0 @@
-interface:
-  display_name: "Web flow QA"
-  short_description: "Web flow QA with checked results"
-  default_prompt: "Use $qa for the requested task and verify the result."
-policy:
-  allow_implicit_invocation: true

@@ -26,7 +26,7 @@ function fixture(t) {
   });
   return {root,project,env,ctx};
 }
-const expected = ['bfs-driver','bfs-implement','business-driver','spec','autoplan','plan-ceo-review','plan-eng-review','plan-design-review','plan-devex-review','plan-tune','design-consultation','design-html','design-review','browse','scrape','benchmark','bug-issue-investigate','review','cso-audit','health','qa','documentation','finisher','prod-deploy','landing-report','bontaflow-memory','save-context','load-context','guard'];
+const expected = ['bfs-router','bfs-implement','bfs-business-builder','bfs-spec','bfs-autoplan','bfs-plan-ceo-review','bfs-plan-eng-review','bfs-plan-design-review','bfs-plan-devex-review','bfs-plan-tune','bfs-design-consultation','bfs-design-html','bfs-design-review','bfs-browse','bfs-scrape','bfs-benchmark','bfs-bug-issue-investigate','bfs-review','bfs-cso-audit','bfs-health','bfs-qa','bfs-documentation','bfs-finisher','bfs-prod-deploy','bfs-landing-report','bfs-bontaflow-memory','bfs-save-context','bfs-load-context','bfs-guard'];
 
 test('catalog exposes exactly the selected skills and preserves alias modes', () => {
   assert.deepEqual(catalog.skills.map(s=>s.id),expected);
@@ -42,6 +42,10 @@ test('catalog exposes exactly the selected skills and preserves alias modes', ()
   assert.equal(resolveSkill('qa-only').mode,'inspect');
   assert.equal(resolveSkill('unfreeze').mode,'release');
   assert.equal(resolveSkill('bfs implement').id,'bfs-implement');
+  assert.equal(resolveSkill('$bfs-router').id,'bfs-router');
+  assert.equal(resolveSkill('$bfs-business-builder').id,'bfs-business-builder');
+  assert.equal(resolveSkill('bfs-driver').id,'bfs-router');
+  assert.equal(resolveSkill('business-driver').id,'bfs-business-builder');
   assert.throws(()=>resolveSkill('skillify'),/removed/);
 });
 
@@ -49,7 +53,7 @@ test('implementation records an accepted basis, preserves waiting and detects ch
   const {ctx,project}=fixture(t);
   fs.writeFileSync(path.join(project,'spec.md'),'Return the agreed greeting.');
   const started=workflow(ctx,'start',{goal:'Implement the greeting',route:'implementation'},catalog);
-  assert.deepEqual(started.steps.map(step=>step.skill),['bfs-implement','health','review']);
+  assert.deepEqual(started.steps.map(step=>step.skill),['bfs-implement','bfs-health','bfs-review']);
   assert.equal(started.steps[0].mode,'implement');
   workflow(ctx,'begin',{id:started.id,step:'1',inputs:['spec.md']},catalog);
   workflow(ctx,'step',{id:started.id,step:'1',status:'waiting',summary:'Awaiting user acceptance of spec.md'},catalog);
@@ -83,7 +87,7 @@ test('read-only operations do not initialize state and separate same-name projec
 test('workflow checkpoints bind file content, stop at stale inputs and resume in a new task', t => {
   const {ctx,project,env}=fixture(t);
   fs.writeFileSync(path.join(project,'brief.md'),'version one');
-  const started=workflow(ctx,'start',{goal:'Specify the offer',skills:['business-driver','spec']},catalog);
+  const started=workflow(ctx,'start',{goal:'Specify the offer',skills:['bfs-business-builder','bfs-spec']},catalog);
   workflow(ctx,'begin',{id:started.id,step:'1',inputs:['brief.md']},catalog);
   workflow(ctx,'step',{id:started.id,step:'1',status:'completed',summary:'Brief checked',evidence:['Read the supplied brief and checked target audience'],outputs:['brief.md']},catalog);
   const resumed=workflow(context(project,{...env,CODEX_THREAD_ID:'next-task'}),'resume',{id:started.id},catalog);
@@ -98,7 +102,7 @@ test('workflow checkpoints bind file content, stop at stale inputs and resume in
 test('a changed input cannot be certified as a completed step', t => {
   const {ctx,project}=fixture(t);
   fs.writeFileSync(path.join(project,'code.js'),'one');
-  const started=workflow(ctx,'start',{goal:'Review',skills:['review']},catalog);
+  const started=workflow(ctx,'start',{goal:'Review',skills:['bfs-review']},catalog);
   workflow(ctx,'begin',{id:started.id,step:'1',inputs:['code.js']},catalog);
   fs.writeFileSync(path.join(project,'code.js'),'two');
   assert.throws(()=>workflow(ctx,'step',{id:started.id,step:'1',status:'completed',summary:'Reviewed',evidence:['Observed the prior content']},catalog),/Inputs changed/);
@@ -107,7 +111,7 @@ test('a changed input cannot be certified as a completed step', t => {
 
 test('reopening a step invalidates downstream results and preserves selected modes and history', t => {
   const {ctx}=fixture(t);
-  const started=workflow(ctx,'start',{goal:'Inspect then document',skills:[{skill:'qa',mode:'inspect'},'documentation']},catalog);
+  const started=workflow(ctx,'start',{goal:'Inspect then document',skills:[{skill:'bfs-qa',mode:'inspect'},'bfs-documentation']},catalog);
   for(const step of ['1','2']) {
     workflow(ctx,'begin',{id:started.id,step},catalog);
     workflow(ctx,'step',{id:started.id,step,status:'completed',summary:'Verified fixture result',evidence:['Test fixture completion']},catalog);
@@ -146,9 +150,9 @@ test('Git worktrees share memory while keeping workflow and task state separate'
 
 test('stop marks only active steps in this task and preserves waiting work', t => {
   const {ctx,env,project}=fixture(t);
-  const running=workflow(ctx,'start',{goal:'Active',skills:['spec']},catalog);
+  const running=workflow(ctx,'start',{goal:'Active',skills:['bfs-spec']},catalog);
   workflow(ctx,'begin',{id:running.id,step:'1'},catalog);
-  const waiting=workflow(ctx,'start',{goal:'Waiting',skills:['spec']},catalog);
+  const waiting=workflow(ctx,'start',{goal:'Waiting',skills:['bfs-spec']},catalog);
   workflow(ctx,'begin',{id:waiting.id,step:'1'},catalog);
   workflow(ctx,'step',{id:waiting.id,step:'1',status:'waiting',summary:'Needs a product choice'},catalog);
   assert.equal(stopWorkflows(context(project,{...env,CODEX_THREAD_ID:'different'})).changed,0);
@@ -269,7 +273,7 @@ test('PowerShell launcher resolves a renamed skill and reads from a fresh packag
   const {env,project}=fixture(t);
   const result=spawnSync('powershell.exe',['-NoProfile','-File',path.join(pluginRoot,'scripts/bfstack.ps1'),'-Command','catalog','-Action','resolve','bfstack'],{cwd:project,env,encoding:'utf8',windowsHide:true});
   assert.equal(result.status,0,result.stderr);
-  assert.equal(JSON.parse(result.stdout).id,'bfs-driver');
+  assert.equal(JSON.parse(result.stdout).id,'bfs-router');
 });
 
 test('Node engine bridge preserves failures and isolates missing external design tools', t => {

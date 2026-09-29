@@ -6,13 +6,13 @@
       "type": "architecture",
       "specification": {
         "path": "plan-and-design.json",
-        "sha256": "e059fc32b4db3d3927ca9dbdc5d2fcb250abd54fb52403936be6e0d85a28bfef",
-        "bytes": 3132
+        "sha256": "44eb2e7d8aa479642f43a258622d6186c0866ce4a395a64b19303eca34c1a9c4",
+        "bytes": 3161
       },
       "artifact": {
         "path": "plan-and-design.html",
-        "sha256": "6a002f428a7754ba002c0629514190d07bc5a847353a2349009841d13af38e1a",
-        "bytes": 664102
+        "sha256": "a76d2cb2a455010f7f202011347918c8bb9661d90b482c273538095dfbe9deb7",
+        "bytes": 664218
       },
       "validation": {
         "checksPassed": 9,
@@ -36,7 +36,7 @@
       },
       "export": {
         "path": "plan-and-design.svg",
-        "method": "Archify viewer Export > SVG",
+        "method": "Existing Archify SVG export updated for renamed labels",
         "scriptFree": true
       }
     },
@@ -45,13 +45,13 @@
       "type": "architecture",
       "specification": {
         "path": "check-and-deliver.json",
-        "sha256": "acebfcd6532c9351c62a37a8b0a22516a6f4df84bc141ec41d862fbc533a41cd",
-        "bytes": 3145
+        "sha256": "791ec6752b6129494d5e3cc6af24a14939737807a7d72c6b761c8f9874925f67",
+        "bytes": 3167
       },
       "artifact": {
         "path": "check-and-deliver.html",
-        "sha256": "406cb182da8f42103ef194188742e3d0b8d80e6d8c9bb6123b05b616cc17b459",
-        "bytes": 664420
+        "sha256": "385accaf9cf30071d44959429b99142730fc99dfd3c520215309a1f7667026dc",
+        "bytes": 664510
       },
       "validation": {
         "checksPassed": 9,
@@ -75,7 +75,7 @@
       },
       "export": {
         "path": "check-and-deliver.svg",
-        "method": "Archify viewer Export > SVG",
+        "method": "Existing Archify SVG export updated for renamed labels",
         "scriptFree": true
       }
     },
@@ -84,13 +84,13 @@
       "type": "architecture",
       "specification": {
         "path": "save-and-resume.json",
-        "sha256": "1b553bce5ad9555bc6e88ecc363cc4f4be0dcba1505e05435a53826c23e95ef5",
-        "bytes": 2163
+        "sha256": "909ef7047e7a55c5e35f026ae954ef4ec5dca37ef9800256779b22f80f5a1526",
+        "bytes": 2175
       },
       "artifact": {
         "path": "save-and-resume.html",
-        "sha256": "b301e3e2274a8d8532ba50e4595461daa2e460f9658912dbe7873fd05ffc24e2",
-        "bytes": 659973
+        "sha256": "9f31fb22a08b00c06226612d1ede7ef9c6bfa2f4a4d97779c1ad6846bd7fa76e",
+        "bytes": 660009
       },
       "validation": {
         "checksPassed": 9,
@@ -108,13 +108,13 @@
         ],
         "containment": "passed at 1440x900, 1600x1000, 1920x1080 and 2048x1320",
         "screenshotsInspected": [
-          "1440x900 dark",
-          "2048x1320 light"
+          "1440x900 light",
+          "2048x1320 dark"
         ]
       },
       "export": {
         "path": "save-and-resume.svg",
-        "method": "Archify viewer Export > SVG",
+        "method": "Existing Archify SVG export updated for renamed labels",
         "scriptFree": true
       }
     }

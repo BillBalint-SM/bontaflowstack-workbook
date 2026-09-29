@@ -342,19 +342,19 @@ rect.c-bg-rect { fill: var(--bg); }
         <text x="360" y="104" class="t-muted" font-size="8.8" text-anchor="middle">Write, then read back</text>
         </g>
 
-        <g id="node-restore_context" data-node-id="restore_context" data-node-label="load-context" tabindex="0" role="button" aria-label="Focus load-context, Check files and saved results, Architecture component" aria-pressed="false" data-node-kind="backend" data-node-sublabel="Check files and saved results" data-node-context="Architecture component">
-          <title>load-context · Check files and saved results · Architecture component</title>
+        <g id="node-restore_context" data-node-id="restore_context" data-node-label="bfs-load-context" tabindex="0" role="button" aria-label="Focus bfs-load-context, Check files and saved results, Architecture component" aria-pressed="false" data-node-kind="backend" data-node-sublabel="Check files and saved results" data-node-context="Architecture component">
+          <title>bfs-load-context · Check files and saved results · Architecture component</title>
           <rect x="550" y="60" width="120" height="60" rx="6" class="c-mask"/>
           <rect x="550" y="60" width="120" height="60" rx="6" class="c-backend" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(556 66) scale(0.6875)">
             <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
-          <text data-node-label="" x="610" y="88" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">load-context</text>
+          <text data-node-label="" x="610" y="88" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">bfs-load-context</text>
         <text x="610" y="104" class="t-muted" font-size="6.4" text-anchor="middle">Check files and saved results</text>
         </g>
 
-        <g id="node-continue_work" data-node-id="continue_work" data-node-label="bfs-driver" tabindex="0" role="button" aria-label="Focus bfs-driver, Continue the selected work, Architecture component" aria-pressed="false" data-node-kind="frontend" data-node-sublabel="Continue the selected work" data-node-context="Architecture component">
-          <title>bfs-driver · Continue the selected work · Architecture component</title>
+        <g id="node-continue_work" data-node-id="continue_work" data-node-label="bfs-router" tabindex="0" role="button" aria-label="Focus bfs-router, Continue the selected work, Architecture component" aria-pressed="false" data-node-kind="frontend" data-node-sublabel="Continue the selected work" data-node-context="Architecture component">
+          <title>bfs-router · Continue the selected work · Architecture component</title>
           <rect x="800" y="60" width="120" height="60" rx="6" class="c-mask"/>
           <rect x="800" y="60" width="120" height="60" rx="6" class="c-frontend" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="frontend" class="semantic-sigil s-frontend" transform="translate(806 66) scale(0.6875)">
@@ -363,18 +363,18 @@ rect.c-bg-rect { fill: var(--bg); }
             <circle cx="4.1" cy="4.8" r=".7" class="sigil-fill"/>
             <circle cx="6.3" cy="4.8" r=".7" class="sigil-fill"/>
           </g>
-          <text data-node-label="" x="860" y="88" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">bfs-driver</text>
+          <text data-node-label="" x="860" y="88" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">bfs-router</text>
         <text x="860" y="104" class="t-muted" font-size="7.1" text-anchor="middle">Continue the selected work</text>
         </g>
 
-        <g id="node-manual_snapshot" data-node-id="manual_snapshot" data-node-label="save-context" tabindex="0" role="button" aria-label="Focus save-context, Save an extra snapshot, Architecture component" aria-pressed="false" data-node-kind="backend" data-node-sublabel="Save an extra snapshot" data-node-context="Architecture component">
-          <title>save-context · Save an extra snapshot · Architecture component</title>
+        <g id="node-manual_snapshot" data-node-id="manual_snapshot" data-node-label="bfs-save-context" tabindex="0" role="button" aria-label="Focus bfs-save-context, Save an extra snapshot, Architecture component" aria-pressed="false" data-node-kind="backend" data-node-sublabel="Save an extra snapshot" data-node-context="Architecture component">
+          <title>bfs-save-context · Save an extra snapshot · Architecture component</title>
           <rect x="50" y="370" width="120" height="60" rx="6" class="c-mask"/>
           <rect x="50" y="370" width="120" height="60" rx="6" class="c-backend" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(56 376) scale(0.6875)">
             <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
-          <text data-node-label="" x="110" y="398" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">save-context</text>
+          <text data-node-label="" x="110" y="398" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">bfs-save-context</text>
         <text x="110" y="414" class="t-muted" font-size="8.4" text-anchor="middle">Save an extra snapshot</text>
         </g>
 
