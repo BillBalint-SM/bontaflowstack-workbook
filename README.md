@@ -69,30 +69,25 @@ operations included.
 
 ## How workflows connect
 
-```mermaid
-flowchart TD
-    R[bfs-driver] --> B[business-driver]
-    B --> S[spec]
-    S --> A[autoplan]
-    A --> P[Relevant plan reviews]
-    R --> D[design-consultation]
-    D --> H[design-html]
-    H --> Q[design-review / qa]
-    R --> I[bug-issue-investigate]
-    I --> C[Requested repair and checks]
-    R --> W[browse / scrape / benchmark]
-    R --> F[finisher]
-    F --> V[review + project checks]
-    V --> DOC[documentation]
-    DOC --> DEP[prod-deploy when requested]
-    R -. checkpoints .-> M[Local workflow state]
-    SC[save-context / load-context] <--> M
-```
-
 The driver loads and follows each relevant skill in the same chat. A completed
 step passes its checked artifacts and settled decisions to the next step.
 Missing information pauses only the dependent work. You can supply a document,
 existing file or your own description instead of running an earlier skill.
+
+### Plan and design
+
+Turn an idea into a brief, specification and reviewed plan, or take a selected
+visual direction through implementation and the relevant interface checks.
+
+[![Planning and design routes: bfs-driver selects business-driver, spec, autoplan and relevant plan reviews, or design-consultation, design-html and design-review or qa.](docs/diagrams/plan-and-design.svg)](docs/diagrams/plan-and-design.svg)
+
+### Check and deliver
+
+Prepare a change for delivery, investigate a defect, or work directly in the
+browser. Documentation follows the affected scope; deployment is included when
+requested and uses existing configuration.
+
+[![Delivery, debugging and browser routes: finisher uses review, project checks and documentation before requested deployment; bug investigation leads to requested repair and verification; browser work uses browse, scrape or benchmark.](docs/diagrams/check-and-deliver.svg)](docs/diagrams/check-and-deliver.svg)
 
 There are three kinds of connection:
 
@@ -100,11 +95,18 @@ There are three kinds of connection:
 - **Capabilities:** QA, scraping, rendering and benchmarks share the browser engine.
 - **Project data:** skills reuse the same design decisions, memory and workflow state.
 
+### Save and resume
+
+[![Continuation: a recorded step or manual save-context snapshot creates a local checkpoint; load-context checks saved results and changed files before bfs-driver continues the work.](docs/diagrams/save-and-resume.svg)](docs/diagrams/save-and-resume.svg)
+
 After every recorded step, the core writes and reads back a local checkpoint.
 The Stop hook marks an unfinished active step interrupted. It never turns an
 interruption into a successful result. Changed input files make old checks stale.
 `save-context` adds a manual snapshot; `load-context` checks what changed before
 continuing. Remembered decisions do not grant permission for new external actions.
+
+Click an image to enlarge it. [Interactive diagrams and editable sources](docs/diagrams/README.md)
+are included for local use.
 
 ## The 28 skills
 

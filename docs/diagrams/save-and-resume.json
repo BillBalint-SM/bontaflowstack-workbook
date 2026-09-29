@@ -1,0 +1,106 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Save and resume",
+    "quality_profile": "showcase",
+    "legend": {
+      "mode": "hidden"
+    }
+  },
+  "layout": {
+    "mode": "grid",
+    "origin": [
+      50,
+      60
+    ],
+    "cols": 5,
+    "cellW": 180,
+    "cellH": 90,
+    "gapX": 70,
+    "gapY": 220
+  },
+  "components": [
+    {
+      "id": "checked_step",
+      "type": "backend",
+      "label": "Recorded step",
+      "sublabel": "Checked result and next action",
+      "row": 0,
+      "col": 0
+    },
+    {
+      "id": "workflow_checkpoint",
+      "type": "database",
+      "label": "Local checkpoint",
+      "sublabel": "Write, then read back",
+      "row": 0,
+      "col": 1
+    },
+    {
+      "id": "restore_context",
+      "type": "backend",
+      "label": "load-context",
+      "sublabel": "Check files and saved results",
+      "row": 0,
+      "col": 2
+    },
+    {
+      "id": "continue_work",
+      "type": "frontend",
+      "label": "bfs-driver",
+      "sublabel": "Continue the selected work",
+      "row": 0,
+      "col": 3
+    },
+    {
+      "id": "manual_snapshot",
+      "type": "backend",
+      "label": "save-context",
+      "sublabel": "Save an extra snapshot",
+      "row": 1,
+      "col": 0
+    }
+  ],
+  "connections": [
+    {
+      "from": "checked_step",
+      "to": "workflow_checkpoint"
+    },
+    {
+      "from": "workflow_checkpoint",
+      "to": "restore_context"
+    },
+    {
+      "from": "restore_context",
+      "to": "continue_work"
+    },
+    {
+      "from": "manual_snapshot",
+      "to": "workflow_checkpoint"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "amber",
+      "title": "Changed files invalidate old checks",
+      "items": [
+        "Review stale evidence before continuing the affected work."
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Stop preserves unfinished progress",
+      "items": [
+        "Active work becomes interrupted; waiting work stays waiting."
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Memory is a separate choice",
+      "items": [
+        "bontaflow-memory stores explicit decisions and learnings."
+      ]
+    }
+  ]
+}

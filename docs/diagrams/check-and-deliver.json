@@ -1,0 +1,168 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Check and deliver",
+    "quality_profile": "showcase",
+    "legend": {
+      "mode": "hidden"
+    }
+  },
+  "layout": {
+    "mode": "grid",
+    "origin": [
+      50,
+      60
+    ],
+    "cols": 5,
+    "cellW": 180,
+    "cellH": 90,
+    "gapX": 70,
+    "gapY": 100
+  },
+  "components": [
+    {
+      "id": "delivery_router",
+      "type": "frontend",
+      "label": "bfs-driver",
+      "sublabel": "Choose the requested route",
+      "row": 0,
+      "col": 0,
+      "size": [
+        180,
+        80
+      ]
+    },
+    {
+      "id": "finish_change",
+      "type": "backend",
+      "label": "finisher",
+      "sublabel": "Prepare the change",
+      "row": 0,
+      "col": 1,
+      "size": [
+        180,
+        80
+      ]
+    },
+    {
+      "id": "verify_change",
+      "type": "security",
+      "label": "review + project checks",
+      "sublabel": "Use the required evidence",
+      "row": 0,
+      "col": 2,
+      "size": [
+        180,
+        80
+      ]
+    },
+    {
+      "id": "maintain_docs",
+      "type": "backend",
+      "label": "documentation",
+      "sublabel": "Create or update affected docs",
+      "row": 0,
+      "col": 3,
+      "size": [
+        180,
+        80
+      ]
+    },
+    {
+      "id": "requested_deploy",
+      "type": "cloud",
+      "label": "prod-deploy",
+      "sublabel": "Only when requested",
+      "row": 0,
+      "col": 4,
+      "size": [
+        180,
+        80
+      ]
+    },
+    {
+      "id": "investigate_issue",
+      "type": "backend",
+      "label": "bug-issue-investigate",
+      "sublabel": "Reproduce and find the cause",
+      "row": 1,
+      "col": 1,
+      "size": [
+        180,
+        80
+      ]
+    },
+    {
+      "id": "repair_and_check",
+      "type": "security",
+      "label": "Repair and verify",
+      "sublabel": "Apply the requested fix",
+      "row": 1,
+      "col": 2,
+      "size": [
+        180,
+        80
+      ]
+    },
+    {
+      "id": "page_tools",
+      "type": "external",
+      "label": "Browser work",
+      "sublabel": "browse / scrape / benchmark",
+      "row": 2,
+      "col": 1,
+      "size": [
+        180,
+        80
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "from": "delivery_router",
+      "to": "finish_change"
+    },
+    {
+      "from": "finish_change",
+      "to": "verify_change"
+    },
+    {
+      "from": "verify_change",
+      "to": "maintain_docs"
+    },
+    {
+      "from": "maintain_docs",
+      "to": "requested_deploy",
+      "label": "if requested"
+    },
+    {
+      "from": "delivery_router",
+      "to": "investigate_issue"
+    },
+    {
+      "from": "investigate_issue",
+      "to": "repair_and_check"
+    },
+    {
+      "from": "delivery_router",
+      "to": "page_tools"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Checks follow the task",
+      "items": [
+        "Use the project checks relevant to the actual change."
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Deploy with existing configuration",
+      "items": [
+        "Missing deployment inputs must be supplied before this step."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,167 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Plan and design",
+    "quality_profile": "showcase",
+    "legend": {
+      "mode": "hidden"
+    }
+  },
+  "layout": {
+    "mode": "grid",
+    "origin": [
+      50,
+      60
+    ],
+    "cols": 5,
+    "cellW": 180,
+    "cellH": 90,
+    "gapX": 70,
+    "gapY": 220
+  },
+  "components": [
+    {
+      "id": "plan_router",
+      "type": "frontend",
+      "label": "bfs-driver",
+      "sublabel": "Choose the requested route",
+      "row": 0,
+      "col": 0,
+      "size": [
+        180,
+        80
+      ]
+    },
+    {
+      "id": "business_brief",
+      "type": "backend",
+      "label": "business-driver",
+      "sublabel": "Shape a useful brief",
+      "row": 0,
+      "col": 1,
+      "size": [
+        180,
+        80
+      ]
+    },
+    {
+      "id": "requirements",
+      "type": "backend",
+      "label": "spec",
+      "sublabel": "Define verifiable requirements",
+      "row": 0,
+      "col": 2,
+      "size": [
+        180,
+        80
+      ]
+    },
+    {
+      "id": "plan_coordinator",
+      "type": "backend",
+      "label": "autoplan",
+      "sublabel": "Coordinate the plan reviews",
+      "row": 0,
+      "col": 3,
+      "size": [
+        180,
+        80
+      ]
+    },
+    {
+      "id": "relevant_reviews",
+      "type": "security",
+      "label": "Relevant plan reviews",
+      "sublabel": "Business, engineering, UX, DevEx",
+      "row": 0,
+      "col": 4,
+      "size": [
+        180,
+        80
+      ]
+    },
+    {
+      "id": "visual_direction",
+      "type": "frontend",
+      "label": "design-consultation",
+      "sublabel": "Compare and select a direction",
+      "row": 1,
+      "col": 1,
+      "size": [
+        180,
+        80
+      ]
+    },
+    {
+      "id": "page_implementation",
+      "type": "backend",
+      "label": "design-html",
+      "sublabel": "Build and render the page",
+      "row": 1,
+      "col": 2,
+      "size": [
+        180,
+        80
+      ]
+    },
+    {
+      "id": "visual_review",
+      "type": "security",
+      "label": "design-review / qa",
+      "sublabel": "Inspect the UI or user journey",
+      "row": 1,
+      "col": 3,
+      "size": [
+        180,
+        80
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "from": "plan_router",
+      "to": "business_brief"
+    },
+    {
+      "from": "business_brief",
+      "to": "requirements"
+    },
+    {
+      "from": "requirements",
+      "to": "plan_coordinator"
+    },
+    {
+      "from": "plan_coordinator",
+      "to": "relevant_reviews"
+    },
+    {
+      "from": "plan_router",
+      "to": "visual_direction"
+    },
+    {
+      "from": "visual_direction",
+      "to": "page_implementation"
+    },
+    {
+      "from": "page_implementation",
+      "to": "visual_review"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Enter at any skill",
+      "items": [
+        "An existing brief, file or your description can supply the input."
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Keep your selection",
+      "items": [
+        "The chosen design direction becomes the implementation input."
+      ]
+    }
+  ]
+}

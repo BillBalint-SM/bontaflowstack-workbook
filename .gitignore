@@ -6,3 +6,4 @@ artifacts/
 **/.playwright-browsers/
 **/dist/
 runtime/
+docs/diagrams/*.visual-check.*
