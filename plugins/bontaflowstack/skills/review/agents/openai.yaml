@@ -1,0 +1,6 @@
+interface:
+  display_name: "Code change review"
+  short_description: "Code change review with checked results"
+  default_prompt: "Use $review for the requested task and verify the result."
+policy:
+  allow_implicit_invocation: true

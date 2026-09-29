@@ -1,0 +1,8 @@
+*.zip
+*.zip.sha256
+.tmp/
+artifacts/
+**/node_modules/
+**/.playwright-browsers/
+**/dist/
+runtime/

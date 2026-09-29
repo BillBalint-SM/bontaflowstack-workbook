@@ -1,0 +1,535 @@
+{
+  "schema": 1,
+  "version": "0.3.0",
+  "skills": [
+    {
+      "id": "bfs-driver",
+      "title": "BontaFlowStack driver",
+      "description": "Route a business, product, design, development or delivery task to a BontaFlowStack skill or resumable workflow. Use for choosing the next step or coordinating several requested steps.",
+      "defaultMode": "route",
+      "modes": {
+        "route": [],
+        "guide": [],
+        "setup": []
+      },
+      "handoffs": [
+        "business-driver",
+        "spec",
+        "autoplan",
+        "design-consultation",
+        "design-html",
+        "design-review",
+        "browse",
+        "scrape",
+        "benchmark",
+        "bug-issue-investigate",
+        "review",
+        "cso-audit",
+        "health",
+        "qa",
+        "documentation",
+        "finisher",
+        "prod-deploy",
+        "landing-report",
+        "bontaflow-memory",
+        "save-context",
+        "load-context",
+        "plan-tune"
+      ]
+    },
+    {
+      "id": "business-driver",
+      "title": "Business brief",
+      "description": "Clarify an idea, offer, customer problem or product direction and produce a testable business brief. Use for founder decisions and comparing practical approaches.",
+      "defaultMode": "explore",
+      "modes": {
+        "explore": [],
+        "diagnose": []
+      },
+      "handoffs": [
+        "spec"
+      ]
+    },
+    {
+      "id": "spec",
+      "title": "Executable specification",
+      "description": "Turn an agreed request into a specification with behavior, scope, acceptance cases and implementation steps grounded in the actual project.",
+      "defaultMode": "draft",
+      "modes": {
+        "draft": [],
+        "revise": []
+      },
+      "handoffs": [
+        "autoplan"
+      ]
+    },
+    {
+      "id": "autoplan",
+      "title": "Coordinated plan review",
+      "description": "Review a concrete plan through the relevant business, design, developer-experience and engineering perspectives, preserving decisions and unresolved findings.",
+      "defaultMode": "review",
+      "modes": {
+        "review": []
+      },
+      "handoffs": [
+        "business-driver",
+        "spec",
+        "plan-ceo-review",
+        "plan-design-review",
+        "plan-devex-review",
+        "plan-eng-review"
+      ]
+    },
+    {
+      "id": "plan-ceo-review",
+      "title": "Business and scope review",
+      "description": "Review a plan for customer value, business fit, scope and practical success criteria. Use before committing effort to a product direction.",
+      "defaultMode": "review",
+      "modes": {
+        "review": []
+      },
+      "handoffs": []
+    },
+    {
+      "id": "plan-eng-review",
+      "title": "Engineering plan review",
+      "description": "Check a plan's architecture, correctness, data handling, tests, performance and implementation readiness against the actual codebase.",
+      "defaultMode": "review",
+      "modes": {
+        "review": []
+      },
+      "handoffs": []
+    },
+    {
+      "id": "plan-design-review",
+      "title": "Design plan review",
+      "description": "Review planned screens and journeys for hierarchy, interaction states, consistency, responsiveness and accessibility before implementation.",
+      "defaultMode": "review",
+      "modes": {
+        "review": []
+      },
+      "handoffs": []
+    },
+    {
+      "id": "plan-devex-review",
+      "title": "Developer interface plan review",
+      "description": "Review planned API, CLI, SDK, onboarding and error-recovery experiences. Use for developer-facing designs before implementation.",
+      "defaultMode": "review",
+      "modes": {
+        "review": []
+      },
+      "handoffs": []
+    },
+    {
+      "id": "plan-tune",
+      "title": "Question preferences",
+      "description": "Inspect or change optional question preferences and declared profile values, review local question history, and propose or apply scoped adjustments.",
+      "defaultMode": "inspect",
+      "modes": {
+        "inspect": [],
+        "configure": [],
+        "proposals": []
+      },
+      "handoffs": [
+        "bontaflow-memory"
+      ]
+    },
+    {
+      "id": "design-consultation",
+      "title": "Design direction and variants",
+      "description": "Define a visual identity or design system, compare distinct design alternatives, and refine the selected direction for a website or product interface.",
+      "defaultMode": "consult",
+      "modes": {
+        "consult": [],
+        "variants": [
+          "render"
+        ],
+        "images": [],
+        "refine": []
+      },
+      "handoffs": [
+        "design-html",
+        "bontaflow-memory"
+      ]
+    },
+    {
+      "id": "design-html",
+      "title": "Implement the design",
+      "description": "Build responsive HTML or a project-native component from a brief, selected design or image, then inspect the actual rendered result.",
+      "defaultMode": "implement",
+      "modes": {
+        "implement": [
+          "render"
+        ],
+        "refine": [
+          "render"
+        ]
+      },
+      "handoffs": [
+        "design-review"
+      ]
+    },
+    {
+      "id": "design-review",
+      "title": "Rendered design review",
+      "description": "Inspect a real interface for visual and interaction problems, optionally repair requested issues, and verify the affected output.",
+      "defaultMode": "inspect",
+      "modes": {
+        "inspect": [
+          "browser"
+        ],
+        "fix": [
+          "browser"
+        ]
+      },
+      "handoffs": [
+        "design-consultation",
+        "design-html"
+      ]
+    },
+    {
+      "id": "browse",
+      "title": "Browser work",
+      "description": "Read and interact with a scoped web page, open a visible browser for human sign-in, and resume the same browser session.",
+      "defaultMode": "browse",
+      "modes": {
+        "browse": [
+          "browser"
+        ],
+        "open": [
+          "browser"
+        ],
+        "login": [
+          "browser"
+        ]
+      },
+      "handoffs": [
+        "scrape"
+      ]
+    },
+    {
+      "id": "scrape",
+      "title": "Structured page extraction",
+      "description": "Extract tables, products, listings or other specified fields from a real page into checked JSON, or answer from that page with sources.",
+      "defaultMode": "extract",
+      "modes": {
+        "extract": [
+          "browser"
+        ],
+        "answer": [
+          "browser"
+        ]
+      },
+      "handoffs": []
+    },
+    {
+      "id": "benchmark",
+      "title": "Page performance measurement",
+      "description": "Measure page performance, capture comparable baselines, and report regressions or trends from real browser samples.",
+      "defaultMode": "quick",
+      "modes": {
+        "quick": [
+          "browser"
+        ],
+        "baseline": [
+          "browser"
+        ],
+        "compare": [
+          "browser"
+        ],
+        "trend": []
+      },
+      "handoffs": []
+    },
+    {
+      "id": "bug-issue-investigate",
+      "title": "Investigate a reported defect",
+      "description": "Reproduce a bug or issue, trace the actual cause, and perform a requested focused repair with regression verification.",
+      "defaultMode": "diagnose",
+      "modes": {
+        "diagnose": [],
+        "fix": []
+      },
+      "handoffs": [
+        "health",
+        "review",
+        "bontaflow-memory"
+      ]
+    },
+    {
+      "id": "review",
+      "title": "Code change review",
+      "description": "Review a diff, patch or pull request for correctness, regressions and requirement coverage by tracing changed code and its callers.",
+      "defaultMode": "inspect",
+      "modes": {
+        "inspect": [],
+        "fix": []
+      },
+      "handoffs": []
+    },
+    {
+      "id": "cso-audit",
+      "title": "Security audit",
+      "description": "Audit a codebase or change for demonstrated security risks, trust-boundary failures and prioritized remediation.",
+      "defaultMode": "audit",
+      "modes": {
+        "audit": []
+      },
+      "handoffs": [
+        "bug-issue-investigate"
+      ]
+    },
+    {
+      "id": "health",
+      "title": "Project quality checks",
+      "description": "Run the project's existing tests, lint, type checks or build checks and report their actual results and limits.",
+      "defaultMode": "check",
+      "modes": {
+        "check": []
+      },
+      "handoffs": []
+    },
+    {
+      "id": "qa",
+      "title": "Web flow QA",
+      "description": "Test actual web interactions and responsive behavior, report reproducible defects, and optionally fix requested issues and retest them.",
+      "defaultMode": "inspect",
+      "modes": {
+        "inspect": [
+          "browser"
+        ],
+        "fix": [
+          "browser"
+        ],
+        "quick": [
+          "browser"
+        ],
+        "full": [
+          "browser"
+        ],
+        "regression": [
+          "browser"
+        ],
+        "diff": [
+          "browser"
+        ]
+      },
+      "handoffs": [
+        "bug-issue-investigate"
+      ]
+    },
+    {
+      "id": "documentation",
+      "title": "Create and update documentation",
+      "description": "Create missing project documentation or update existing guides, references and release notes from verified source and actual behavior.",
+      "defaultMode": "create",
+      "modes": {
+        "create": [],
+        "update": [],
+        "coverage": []
+      },
+      "handoffs": []
+    },
+    {
+      "id": "finisher",
+      "title": "Finish and deliver a change",
+      "description": "Prepare a verified change for delivery, review and documentation, then carry out the requested commit, push and pull-request operations.",
+      "defaultMode": "prepare",
+      "modes": {
+        "prepare": [],
+        "publish": []
+      },
+      "handoffs": [
+        "review",
+        "health",
+        "documentation",
+        "landing-report",
+        "prod-deploy"
+      ]
+    },
+    {
+      "id": "prod-deploy",
+      "title": "Integrate and deploy",
+      "description": "Merge or deploy an explicitly selected change using existing environment configuration, then verify the actual delivered revision and health.",
+      "defaultMode": "inspect",
+      "modes": {
+        "inspect": [],
+        "integrate": [],
+        "deploy": [],
+        "verify": []
+      },
+      "handoffs": [
+        "review",
+        "documentation",
+        "qa",
+        "landing-report"
+      ]
+    },
+    {
+      "id": "landing-report",
+      "title": "Delivery status",
+      "description": "Read a repository's integration queue, version claims and check freshness without changing Git or remote state.",
+      "defaultMode": "report",
+      "modes": {
+        "report": []
+      },
+      "handoffs": []
+    },
+    {
+      "id": "bontaflow-memory",
+      "title": "Project memory",
+      "description": "Read and maintain project decisions and learnings, search or export them, prune selected records, or explicitly import legacy notes.",
+      "defaultMode": "read",
+      "modes": {
+        "read": [],
+        "write": [],
+        "prune": [],
+        "export": [],
+        "import": []
+      },
+      "handoffs": [
+        "save-context",
+        "load-context"
+      ]
+    },
+    {
+      "id": "save-context",
+      "title": "Save working context",
+      "description": "Create a manual local checkpoint of the goal, progress, decisions and remaining work, or list existing checkpoints.",
+      "defaultMode": "save",
+      "modes": {
+        "save": [],
+        "list": []
+      },
+      "handoffs": [
+        "load-context"
+      ]
+    },
+    {
+      "id": "load-context",
+      "title": "Restore working context",
+      "description": "Load a manual or automatic checkpoint, identify changed inputs and resume the requested work from a verified next step.",
+      "defaultMode": "load",
+      "modes": {
+        "load": [],
+        "resume": []
+      },
+      "handoffs": [
+        "bfs-driver"
+      ]
+    },
+    {
+      "id": "guard",
+      "title": "Task protection",
+      "description": "Inspect or explicitly change destructive-command warnings and a project edit boundary for the current Codex task.",
+      "defaultMode": "status",
+      "modes": {
+        "status": [],
+        "warnings": [],
+        "boundary": [],
+        "combined": [],
+        "release": [],
+        "off": []
+      },
+      "handoffs": []
+    }
+  ],
+  "aliases": {
+    "bfstack": {
+      "skill": "bfs-driver",
+      "mode": "route"
+    },
+    "office-hours": {
+      "skill": "business-driver",
+      "mode": "explore"
+    },
+    "cso": {
+      "skill": "cso-audit",
+      "mode": "audit"
+    },
+    "context-save": {
+      "skill": "save-context",
+      "mode": "save"
+    },
+    "context-restore": {
+      "skill": "load-context",
+      "mode": "load"
+    },
+    "ship": {
+      "skill": "finisher",
+      "mode": "prepare"
+    },
+    "land-and-deploy": {
+      "skill": "prod-deploy",
+      "mode": "inspect"
+    },
+    "investigate": {
+      "skill": "bug-issue-investigate",
+      "mode": "diagnose"
+    },
+    "design-shotgun": {
+      "skill": "design-consultation",
+      "mode": "variants"
+    },
+    "open-bfstack-browser": {
+      "skill": "browse",
+      "mode": "open"
+    },
+    "qa-only": {
+      "skill": "qa",
+      "mode": "inspect"
+    },
+    "document-generate": {
+      "skill": "documentation",
+      "mode": "create"
+    },
+    "document-release": {
+      "skill": "documentation",
+      "mode": "update"
+    },
+    "learn": {
+      "skill": "bontaflow-memory",
+      "mode": "read"
+    },
+    "careful": {
+      "skill": "guard",
+      "mode": "warnings"
+    },
+    "freeze": {
+      "skill": "guard",
+      "mode": "boundary"
+    },
+    "unfreeze": {
+      "skill": "guard",
+      "mode": "release"
+    }
+  },
+  "removed": {
+    "skillify": "Reusable browser automation generation and execution are unavailable; use one-time browse or scrape.",
+    "devex-review": "Runtime developer-experience auditing is unavailable. Plan review remains a separate capability.",
+    "setup-deploy": "Deployment configuration generation is unavailable. Provide existing configuration to prod-deploy.",
+    "retro": "Retrospective reporting was removed. Workflow progress remains available."
+  },
+  "workflows": {
+    "idea": [
+      "business-driver",
+      "spec",
+      "autoplan"
+    ],
+    "website": [
+      "design-consultation",
+      "design-html",
+      "design-review",
+      "qa"
+    ],
+    "repair": [
+      "bug-issue-investigate",
+      "health",
+      "review"
+    ],
+    "delivery": [
+      "finisher",
+      "prod-deploy"
+    ]
+  }
+}
