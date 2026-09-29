@@ -8,9 +8,9 @@ const root=fileURLToPath(new URL('../',import.meta.url));
 const catalog=loadCatalog();
 const manifest=JSON.parse(fs.readFileSync(path.join(pluginRoot,'.codex-plugin/plugin.json'),'utf8'));
 assert.equal(manifest.version,catalog.version);
-assert.equal(catalog.skills.length,28);
+assert.equal(catalog.skills.length,29);
 const names=catalog.skills.map(s=>s.id);
-assert.equal(new Set(names).size,28);
+assert.equal(new Set(names).size,29);
 assert.deepEqual(fs.readdirSync(path.join(pluginRoot,'skills')).sort(),[...names].sort());
 for(const skill of catalog.skills) {
   assert.ok(Object.hasOwn(skill.modes,skill.defaultMode));
@@ -32,4 +32,4 @@ assert.equal(fs.readFileSync(path.join(root,'LICENSE'),'utf8'),fs.readFileSync(p
 const result=spawnSync(process.execPath,['--test',path.join(root,'tests/core.test.mjs')],{stdio:'inherit',windowsHide:true});
 if(result.error)throw result.error;
 if(result.status!==0)process.exit(result.status||1);
-console.log(`Checked BontaFlowStack ${manifest.version}: 28 skills, handoffs, hooks, license and core tests.`);
+console.log(`Checked BontaFlowStack ${manifest.version}: 29 skills, handoffs, hooks, license and core tests.`);

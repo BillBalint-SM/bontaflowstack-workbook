@@ -16,6 +16,7 @@ Modes: `review`. Choose the mode from the actual request.
 6. Return the reviewed plan, executed or reused perspectives, acceptance cases, implementation order and open decisions. Record verified phase findings as evidence for this workflow step.
 
 A narrow plan need not run every perspective. Reading review instructions alone is not execution.
+When the requested workflow includes implementation, pass the reviewed plan to bfs-implement after the user's acceptance of that version. Its accepted-basis rules govern the transition; review completion alone does not start implementation.
 
 ## References
 

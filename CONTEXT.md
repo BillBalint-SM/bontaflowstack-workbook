@@ -5,7 +5,7 @@ design, implementation, testing, documentation and delivery.
 
 ## Terms
 
-- **Skill:** one of 28 public task entry points, defined by the catalog and its SKILL.md.
+- **Skill:** one of 29 public task entry points, defined by the catalog and its SKILL.md.
 - **Mode:** an explicitly selected behavior within one skill, such as QA inspection or repair.
 - **Workflow:** an ordered sequence of skills performed in the current chat.
 - **Step:** one skill operation with input fingerprints, evidence, outputs and next action.
@@ -14,11 +14,12 @@ design, implementation, testing, documentation and delivery.
 - **Engine:** a separately installed browser, renderer or design capability invoked as a process.
 - **Guard:** optional per-task command warnings and supported edit-path constraints.
 - **Delivery evidence:** an observed result bound to the actual checked content.
+- **Accepted basis:** the concrete plan, specification, selected design or scoped change explicitly accepted by the user, with identifiable content and acceptance criteria.
 
 ## Decisions
 
 The main package contains a Node.js standard-library core, a PowerShell launcher,
-28 independently usable skills and two native hooks: PreToolUse and Stop.
+29 independently usable skills and two native hooks: PreToolUse and Stop.
 Shared references and catalog entries define handoffs without dependencies on
 another skill's internal directory. Optional engines are installed separately
 from a checksum-pinned release. Legacy user data remains untouched; import is explicit.
@@ -31,3 +32,8 @@ prerequisites for their specific operations; neither is required for ordinary de
 Skill names and modes are in `plugins/bontaflowstack/catalog.json`. The core
 contract is `plugins/bontaflowstack/HOST.md`. Source and behavior checks run with
 `node scripts/check.mjs`; actual browser integration has a separate explicit test.
+
+General implementation uses the independent `bfs-implement` skill. It starts
+from an accepted basis within a requested implementation scope and checkpoints
+the actual decision and verified progress. Its skill instructions define when
+to wait or return for acceptance of a material revision.

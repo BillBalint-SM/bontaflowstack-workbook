@@ -1,6 +1,6 @@
 # BontaFlowStack execution contract
 
-BontaFlowStack has 28 skills. The catalog is the authority for names, aliases,
+BontaFlowStack has 29 skills. The catalog is the authority for names, aliases,
 modes, capabilities and handoffs. Answer in the user's language. Use the current
 project and this installed plugin; do not borrow source or tools from another
 plugin installation.

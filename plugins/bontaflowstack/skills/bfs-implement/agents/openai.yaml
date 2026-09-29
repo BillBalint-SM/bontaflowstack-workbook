@@ -1,0 +1,6 @@
+interface:
+  display_name: "BFS implement"
+  short_description: "Implement a user-accepted plan, spec or design"
+  default_prompt: "Use $bfs-implement to implement the plan I have explicitly accepted and verify its acceptance criteria."
+policy:
+  allow_implicit_invocation: true

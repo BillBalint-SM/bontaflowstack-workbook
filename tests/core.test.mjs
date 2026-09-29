@@ -26,7 +26,7 @@ function fixture(t) {
   });
   return {root,project,env,ctx};
 }
-const expected = ['bfs-driver','business-driver','spec','autoplan','plan-ceo-review','plan-eng-review','plan-design-review','plan-devex-review','plan-tune','design-consultation','design-html','design-review','browse','scrape','benchmark','bug-issue-investigate','review','cso-audit','health','qa','documentation','finisher','prod-deploy','landing-report','bontaflow-memory','save-context','load-context','guard'];
+const expected = ['bfs-driver','bfs-implement','business-driver','spec','autoplan','plan-ceo-review','plan-eng-review','plan-design-review','plan-devex-review','plan-tune','design-consultation','design-html','design-review','browse','scrape','benchmark','bug-issue-investigate','review','cso-audit','health','qa','documentation','finisher','prod-deploy','landing-report','bontaflow-memory','save-context','load-context','guard'];
 
 test('catalog exposes exactly the selected skills and preserves alias modes', () => {
   assert.deepEqual(catalog.skills.map(s=>s.id),expected);
@@ -41,7 +41,31 @@ test('catalog exposes exactly the selected skills and preserves alias modes', ()
   for (const name of Object.keys(catalog.aliases)) assert.ok(expected.includes(resolveSkill(name).id));
   assert.equal(resolveSkill('qa-only').mode,'inspect');
   assert.equal(resolveSkill('unfreeze').mode,'release');
+  assert.equal(resolveSkill('bfs implement').id,'bfs-implement');
   assert.throws(()=>resolveSkill('skillify'),/removed/);
+});
+
+test('implementation records an accepted basis, preserves waiting and detects changed inputs', t => {
+  const {ctx,project}=fixture(t);
+  fs.writeFileSync(path.join(project,'spec.md'),'Return the agreed greeting.');
+  const started=workflow(ctx,'start',{goal:'Implement the greeting',route:'implementation'},catalog);
+  assert.deepEqual(started.steps.map(step=>step.skill),['bfs-implement','health','review']);
+  assert.equal(started.steps[0].mode,'implement');
+  workflow(ctx,'begin',{id:started.id,step:'1',inputs:['spec.md']},catalog);
+  workflow(ctx,'step',{id:started.id,step:'1',status:'waiting',summary:'Awaiting user acceptance of spec.md'},catalog);
+  assert.equal(stopWorkflows(ctx).changed,0);
+  assert.throws(()=>workflow(ctx,'begin',{id:started.id,step:'2'},catalog),/unresolved/);
+  // Fixture data exercises storage, not authentication of a real user decision.
+  const acceptance=workflow(ctx,'save',{goal:'Implement the greeting',summary:'Accepted greeting specification',decisions:['Fixture user: implement this version of spec.md'],files:['spec.md']},catalog);
+  assert.equal(acceptance.files[0].sha256,digest('Return the agreed greeting.'));
+  workflow(ctx,'begin',{id:started.id,step:'1',inputs:['spec.md']},catalog);
+  fs.writeFileSync(path.join(project,'greeting.txt'),'Hello');
+  workflow(ctx,'step',{id:started.id,step:'1',status:'completed',summary:'Greeting implemented',evidence:['Read greeting.txt: Hello'],outputs:['greeting.txt'],decisions:['Acceptance checkpoint: '+acceptance.id]},catalog);
+  workflow(ctx,'begin',{id:started.id,step:'2'},catalog);
+  fs.writeFileSync(path.join(project,'spec.md'),'Return a different greeting.');
+  const resumed=workflow(ctx,'resume',{id:started.id},catalog);
+  assert.ok(resumed.drift.some(change=>change.path==='spec.md'));
+  assert.equal(resumed.steps[0].decisions[0],'Acceptance checkpoint: '+acceptance.id);
 });
 
 test('read-only operations do not initialize state and separate same-name projects', t => {

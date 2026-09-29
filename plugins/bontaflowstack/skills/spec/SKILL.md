@@ -16,6 +16,7 @@ Modes: `draft`, `revise`. Choose the mode from the actual request.
 6. Read the final specification for contradictory requirements and unusable placeholders. Pass it to autoplan or an individual plan review when requested.
 
 Draft locally by default. Creating an issue is a separate requested publication using the project's tracker instructions.
+When implementation is requested, pass the concrete specification and its user acceptance source to bfs-implement. Its accepted-basis rules govern the transition.
 
 ## References
 

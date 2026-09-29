@@ -19,9 +19,17 @@ on `node <plugin>/core/cli.mjs`. The PowerShell launcher takes `-Command`,
 ```
 
 Send this to `workflow start`. Alternatively provide `route`: `idea`, `website`,
-`repair` or `delivery`. Routes are ordered suggestions selected for the request.
+`implementation`, `repair` or `delivery`. Routes are ordered suggestions selected for the request.
 An explicit selection may also be `{"skill":"qa","mode":"inspect"}` instead
 of a string. Each saved step retains its selected mode.
+
+The `implementation` route selects `bfs-implement`, `health`, then `review`.
+Its implementation skill requires a concrete user-accepted basis before editing.
+The agent verifies the actual user decision; starting a workflow is not approval.
+For a multi-part implementation, keep one active implementation step and use
+`workflow save` for each verified part. Complete the step with its final outputs
+so intermediate revisions of the same file do not stale earlier step evidence.
+The `idea` route still ends at plan review.
 
 ```json
 {"id":"<returned-id>","step":"1","inputs":["brief.md"]}

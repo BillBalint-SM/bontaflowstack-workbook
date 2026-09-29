@@ -57,7 +57,7 @@ Ask in a new chat:
 $bfs-driver Check the installed catalog and capabilities, then guide me to the next step.
 ```
 
-There must be exactly 28 skill entries. Core readiness and engine readiness are
+There must be exactly 29 skill entries. Core readiness and engine readiness are
 reported separately. `doctor browse` must report the browser capability ready
 before a browser-dependent task starts. Images use the Codex image generation tool
 available in the chat; no separate API key is needed. Optional impeccable and

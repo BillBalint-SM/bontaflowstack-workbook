@@ -1,6 +1,6 @@
 # BontaFlowStack
 
-**28 connected skills for turning business ideas into designed, tested and delivered products.**
+**29 connected skills for turning business ideas into designed, tested and delivered products.**
 
 BontaFlowStack works inside **Codex Desktop on Windows x64**. Describe your goal
 in your own language. The plugin helps choose the next step, performs the requested
@@ -56,6 +56,7 @@ Git Bash and jq are not required by the core.
 |---|---|
 | Develop an idea | `$business-driver Help me shape an offer for independent consultants.` |
 | Turn a brief into a plan | `$bfs-driver Turn this brief into a specification and check the implementation plan.` |
+| Implement an accepted plan | `$bfs-implement Implement the specification I accepted and verify its acceptance criteria.` |
 | Compare visual directions | `$design-consultation Explore three directions using this brief and content.` |
 | Build an approved page | `$design-html Implement the selected direction in this project and check the rendered page.` |
 | Inspect a user journey | `$qa Inspect checkout at this URL and report reproducible issues.` |
@@ -80,6 +81,22 @@ Turn an idea into a brief, specification and reviewed plan, or take a selected
 visual direction through implementation and the relevant interface checks.
 
 [![Planning and design routes: bfs-driver selects business-driver, spec, autoplan and relevant plan reviews, or design-consultation, design-html and design-review or qa.](docs/diagrams/plan-and-design.svg)](docs/diagrams/plan-and-design.svg)
+
+### Implement an accepted plan
+
+Use **`$bfs-implement`** (BFS implement) to build functionality from a plan,
+specification, selected design or scoped change you have explicitly accepted.
+It identifies the accepted version and your decision, implements checkable parts,
+saves their verified progress and checks the result against your acceptance criteria.
+
+Acceptance starts implementation when the requested workflow includes it.
+Without clear acceptance, the skill waits. Material changes to scope, behavior
+or design return to you for a decision; routine technical choices remain within
+the accepted scope. Accepting a plan does not authorize publication or deployment.
+
+The route is **accepted basis → bfs-implement → relevant checks → finisher when requested**.
+The Codex agent performs the edits and commands; the skill guides that work and
+the local core records its checkpoints.
 
 ### Check and deliver
 
@@ -108,13 +125,14 @@ continuing. Remembered decisions do not grant permission for new external action
 Click an image to enlarge it. [Interactive diagrams and editable sources](docs/diagrams/README.md)
 are included for local use.
 
-## The 28 skills
+## The 29 skills
 
 | Area | Skills | What they do |
 |---|---|---|
 | Routing | `bfs-driver` | Choose and run a skill or workflow; set up capabilities. |
 | Business and specification | `business-driver`, `spec` | Clarify the customer problem, value and scope; write verifiable requirements. |
 | Plan coordination | `autoplan`, `plan-tune` | Select relevant reviews; manage explicit preferences and local proposals. |
+| Implementation | `bfs-implement` | Implement a user-accepted plan, spec or design; verify and checkpoint each part. |
 | Plan reviews | `plan-ceo-review`, `plan-eng-review`, `plan-design-review`, `plan-devex-review` | Check business value, engineering, UI/UX and planned developer-facing interfaces. |
 | Design | `design-consultation`, `design-html`, `design-review` | Compare directions, preserve your selection, implement and inspect the rendered result. |
 | Browser and data | `browse`, `scrape`, `benchmark` | Browse or sign in visibly, extract verified data, measure page performance. |
@@ -133,7 +151,7 @@ are included for local use.
   Releasing the boundary keeps command warnings active.
 
 The full mode and handoff definitions live in the [catalog](plugins/bontaflowstack/catalog.json).
-Older names resolve through the driver; only the final 28 entries are installed.
+Older names resolve through the driver; only the final 29 entries are installed.
 Saved reusable browser automation, standalone developer-experience audits,
 deployment provisioning and retrospective reports are outside this version.
 
@@ -173,7 +191,7 @@ node tests/engine.integration.mjs C:\path\to\bontaflowstack-engines
 powershell -NoProfile -File scripts/build-package.ps1
 ```
 
-The first command checks the 28-skill package and core behavior. The second uses
+The first command checks the 29-skill package and core behavior. The second uses
 real Chromium for navigation, interactions, extraction, performance, screenshots,
 HTML rendering and design comparison. The package builder writes a ZIP, SHA-256
 and a per-file manifest; it records whether the source checkout was clean.
