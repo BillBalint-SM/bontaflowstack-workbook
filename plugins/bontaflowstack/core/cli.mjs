@@ -71,7 +71,7 @@ export function run(argv) {
     if (ctx.taskId) {
       try { hooks.observed = guard(ctx,'status').hookObservedRecently; } catch (error) { hooks.reason = error.message; }
     }
-    if (skill?.id === 'guard' && !hooks.observed) missing.push('native-guard-hook');
+    if (skill?.id === 'bfs-guard' && !hooks.observed) missing.push('native-guard-hook');
     const version = Number(process.versions.node.split('.')[0]);
     return { core:{ ready:version >= 24, node:process.version }, skill:skill?.id || null, mode:skill?.mode || null,
       ready:version >= 24 && !missing.length, missing, hooks, engines:engine, projectId:ctx.projectId, workspaceId:ctx.workspaceId, git:ctx.git, skillCount:catalog.skills.length };

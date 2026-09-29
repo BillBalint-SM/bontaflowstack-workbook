@@ -5,31 +5,71 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { loadCatalog, pluginRoot } from '../plugins/bontaflowstack/core/cli.mjs';
 const root=fileURLToPath(new URL('../',import.meta.url));
-const catalog=loadCatalog();
-const manifest=JSON.parse(fs.readFileSync(path.join(pluginRoot,'.codex-plugin/plugin.json'),'utf8'));
-assert.equal(manifest.version,catalog.version);
-assert.equal(catalog.skills.length,29);
-const names=catalog.skills.map(s=>s.id);
-assert.equal(new Set(names).size,29);
-assert.deepEqual(fs.readdirSync(path.join(pluginRoot,'skills')).sort(),[...names].sort());
-for(const skill of catalog.skills) {
-  assert.ok(Object.hasOwn(skill.modes,skill.defaultMode));
-  for(const next of skill.handoffs)assert.ok(names.includes(next),`${skill.id}: unknown ${next}`);
-  const folder=path.join(pluginRoot,'skills',skill.id);
-  const source=fs.readFileSync(path.join(folder,'SKILL.md'),'utf8');
-  assert.ok(source.startsWith(`---\nname: ${skill.id}\n`));
-  for(const match of source.matchAll(/\]\(([^)]+)\)/g)) {
-    if(!/^https?:/.test(match[1]))assert.ok(fs.existsSync(path.resolve(folder,match[1])),`${skill.id}: broken ${match[1]}`);
-  }
-  const yaml=fs.readFileSync(path.join(folder,'agents/openai.yaml'),'utf8');
-  assert.ok(yaml.includes(`$${skill.id}`));
+export function skillPolicy(id, yaml) {
+  for(const field of ['interface:','  display_name:','  short_description:','  default_prompt:','policy:'])
+    assert.ok(yaml.split(/\r?\n/).some(line=>line.startsWith(field)),`${id}: missing ${field}`);
+  assert.ok(yaml.includes(`$${id}`),`${id}: missing default prompt`);
+  const policy=[...yaml.matchAll(/^  allow_implicit_invocation: (true|false)\s*$/gm)];
+  assert.equal(policy.length,1,`${id}: expected one explicit invocation policy`);
+  return policy[0][1]==='true';
 }
-for(const alias of Object.values(catalog.aliases))assert.ok(names.includes(alias.skill));
-for(const route of Object.values(catalog.workflows))for(const name of route)assert.ok(names.includes(name));
-const hooks=JSON.parse(fs.readFileSync(path.join(pluginRoot,'hooks/hooks.json'),'utf8'));
-assert.deepEqual(Object.keys(hooks.hooks).sort(),['PreToolUse','Stop']);
-assert.equal(fs.readFileSync(path.join(root,'LICENSE'),'utf8'),fs.readFileSync(path.join(pluginRoot,'LICENSE'),'utf8'));
-const result=spawnSync(process.execPath,['--test',path.join(root,'tests/core.test.mjs')],{stdio:'inherit',windowsHide:true});
-if(result.error)throw result.error;
-if(result.status!==0)process.exit(result.status||1);
-console.log(`Checked BontaFlowStack ${manifest.version}: 29 skills, handoffs, hooks, license and core tests.`);
+
+export function checkPublicSkills(catalog, readme, policies) {
+  const names=catalog.skills.map(skill=>skill.id);
+  const section=readme.replace(/\r\n/g,'\n').split('## The 29 skills\n')[1]?.split(/\n#{2,3} /)[0];
+  assert.ok(section,'README: missing 29 skills section');
+  const table=section.split('\n').filter(line=>line.startsWith('|'));
+  const listed=table.slice(2).flatMap(line=>[...line.matchAll(/`([a-z][a-z0-9-]*)`/g)].map(match=>match[1]));
+  assert.deepEqual(listed.sort(),[...names].sort(),'README skill table differs from catalog');
+  for(const skill of catalog.skills) {
+    assert.equal(policies[skill.id],skill.id!=='bfs-guard',`${skill.id}: wrong invocation policy`);
+    for(const next of skill.handoffs) assert.equal(policies[next],true,`${skill.id}: handoff to non-implicit ${next}`);
+  }
+  for(const route of Object.values(catalog.workflows))for(const name of route)
+    assert.equal(policies[name],true,`route to non-implicit ${name}`);
+}
+
+function checkPackage() {
+  const catalog=loadCatalog();
+  const manifest=JSON.parse(fs.readFileSync(path.join(pluginRoot,'.codex-plugin/plugin.json'),'utf8'));
+  assert.equal(manifest.version,catalog.version);
+  assert.equal(manifest.interface.displayName,'BontaFlowStack');
+  const marketplace=JSON.parse(fs.readFileSync(path.join(root,'.agents/plugins/marketplace.json'),'utf8'));
+  assert.equal(marketplace.interface.displayName,'BontaFlowStack');
+  assert.equal(catalog.skills.length,29);
+  const names=catalog.skills.map(s=>s.id);
+  assert.equal(new Set(names).size,29);
+  assert.deepEqual(fs.readdirSync(path.join(pluginRoot,'skills')).sort(),[...names].sort());
+  const policies={};
+  for(const skill of catalog.skills) {
+    assert.ok(skill.id.startsWith('bfs-'),`${skill.id}: skill ID needs bfs- prefix`);
+    const acronyms={qa:'QA',ceo:'CEO',cso:'CSO',html:'HTML',devex:'DevEx',bontaflow:'BontaFlow'};
+    const displayName='BFS '+skill.id.slice(4).split('-').map(word=>acronyms[word] || word[0].toUpperCase()+word.slice(1)).join(' ');
+    assert.equal(skill.title,displayName,`${skill.id}: picker title differs from skill name`);
+    assert.ok(Object.hasOwn(skill.modes,skill.defaultMode));
+    for(const next of skill.handoffs)assert.ok(names.includes(next),`${skill.id}: unknown ${next}`);
+    const folder=path.join(pluginRoot,'skills',skill.id);
+    const source=fs.readFileSync(path.join(folder,'SKILL.md'),'utf8');
+    assert.ok(source.startsWith(`---\nname: ${skill.id}\n`));
+    assert.ok(source.includes(`\n# ${skill.title}\n`),`${skill.id}: skill heading differs from picker title`);
+    for(const match of source.matchAll(/\]\(([^)]+)\)/g)) {
+      if(!/^https?:/.test(match[1]))assert.ok(fs.existsSync(path.resolve(folder,match[1])),`${skill.id}: broken ${match[1]}`);
+    }
+    const yaml=fs.readFileSync(path.join(folder,'agents/openai.yaml'),'utf8');
+    assert.ok(yaml.includes(`  display_name: "${skill.title}"`),`${skill.id}: picker title differs from catalog`);
+    assert.ok(skill.title.startsWith('BFS '),`${skill.id}: picker title needs BFS prefix`);
+    policies[skill.id]=skillPolicy(skill.id,yaml);
+  }
+  checkPublicSkills(catalog,fs.readFileSync(path.join(root,'README.md'),'utf8'),policies);
+  for(const alias of Object.values(catalog.aliases))assert.ok(names.includes(alias.skill));
+  for(const route of Object.values(catalog.workflows))for(const name of route)assert.ok(names.includes(name));
+  const hooks=JSON.parse(fs.readFileSync(path.join(pluginRoot,'hooks/hooks.json'),'utf8'));
+  assert.deepEqual(Object.keys(hooks.hooks).sort(),['PreToolUse','Stop']);
+  assert.equal(fs.readFileSync(path.join(root,'LICENSE'),'utf8'),fs.readFileSync(path.join(pluginRoot,'LICENSE'),'utf8'));
+  const result=spawnSync(process.execPath,['--test',path.join(root,'tests/core.test.mjs'),path.join(root,'tests/package.test.mjs')],{stdio:'inherit',windowsHide:true});
+  if(result.error)throw result.error;
+  if(result.status!==0)process.exit(result.status||1);
+  console.log(`Checked BontaFlowStack ${manifest.version}: 29 skills, README, policies, handoffs, hooks, license and core tests.`);
+}
+
+if(process.argv[1] && path.resolve(process.argv[1])===fileURLToPath(import.meta.url))checkPackage();

@@ -1,6 +1,0 @@
-interface:
-  display_name: "Integrate and deploy"
-  short_description: "Integrate and deploy with checked results"
-  default_prompt: "Use $prod-deploy for the requested task and verify the result."
-policy:
-  allow_implicit_invocation: true

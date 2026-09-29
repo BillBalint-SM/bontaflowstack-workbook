@@ -322,8 +322,8 @@ rect.c-bg-rect { fill: var(--bg); }
         <path data-edge-from="page_implementation" data-edge-to="visual_review" data-edge-key="6" data-composition-points="730,410;800,410" d="M 730 410 L 800 410" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
 
         <!-- Components -->
-        <g id="node-plan_router" data-node-id="plan_router" data-node-label="bfs-driver" tabindex="0" role="button" aria-label="Focus bfs-driver, Choose the requested route, Architecture component" aria-pressed="false" data-node-kind="frontend" data-node-sublabel="Choose the requested route" data-node-context="Architecture component">
-          <title>bfs-driver · Choose the requested route · Architecture component</title>
+        <g id="node-plan_router" data-node-id="plan_router" data-node-label="bfs-router" tabindex="0" role="button" aria-label="Focus bfs-router, Choose the requested route, Architecture component" aria-pressed="false" data-node-kind="frontend" data-node-sublabel="Choose the requested route" data-node-context="Architecture component">
+          <title>bfs-router · Choose the requested route · Architecture component</title>
           <rect x="50" y="60" width="180" height="80" rx="6" class="c-mask"/>
           <rect x="50" y="60" width="180" height="80" rx="6" class="c-frontend" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="frontend" class="semantic-sigil s-frontend" transform="translate(56 66) scale(0.6875)">
@@ -332,40 +332,40 @@ rect.c-bg-rect { fill: var(--bg); }
             <circle cx="4.1" cy="4.8" r=".7" class="sigil-fill"/>
             <circle cx="6.3" cy="4.8" r=".7" class="sigil-fill"/>
           </g>
-          <text data-node-label="" x="140" y="98" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">bfs-driver</text>
+          <text data-node-label="" x="140" y="98" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">bfs-router</text>
         <text x="140" y="114" class="t-muted" font-size="9" text-anchor="middle">Choose the requested route</text>
         </g>
 
-        <g id="node-business_brief" data-node-id="business_brief" data-node-label="business-driver" tabindex="0" role="button" aria-label="Focus business-driver, Shape a useful brief, Architecture component" aria-pressed="false" data-node-kind="backend" data-node-sublabel="Shape a useful brief" data-node-context="Architecture component">
-          <title>business-driver · Shape a useful brief · Architecture component</title>
+        <g id="node-business_brief" data-node-id="business_brief" data-node-label="bfs-business-builder" tabindex="0" role="button" aria-label="Focus bfs-business-builder, Shape a useful brief, Architecture component" aria-pressed="false" data-node-kind="backend" data-node-sublabel="Shape a useful brief" data-node-context="Architecture component">
+          <title>bfs-business-builder · Shape a useful brief · Architecture component</title>
           <rect x="300" y="60" width="180" height="80" rx="6" class="c-mask"/>
           <rect x="300" y="60" width="180" height="80" rx="6" class="c-backend" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(306 66) scale(0.6875)">
             <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
-          <text data-node-label="" x="390" y="98" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">business-driver</text>
+          <text data-node-label="" x="390" y="98" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">bfs-business-builder</text>
         <text x="390" y="114" class="t-muted" font-size="9" text-anchor="middle">Shape a useful brief</text>
         </g>
 
-        <g id="node-requirements" data-node-id="requirements" data-node-label="spec" tabindex="0" role="button" aria-label="Focus spec, Define verifiable requirements, Architecture component" aria-pressed="false" data-node-kind="backend" data-node-sublabel="Define verifiable requirements" data-node-context="Architecture component">
-          <title>spec · Define verifiable requirements · Architecture component</title>
+        <g id="node-requirements" data-node-id="requirements" data-node-label="bfs-spec" tabindex="0" role="button" aria-label="Focus bfs-spec, Define verifiable requirements, Architecture component" aria-pressed="false" data-node-kind="backend" data-node-sublabel="Define verifiable requirements" data-node-context="Architecture component">
+          <title>bfs-spec · Define verifiable requirements · Architecture component</title>
           <rect x="550" y="60" width="180" height="80" rx="6" class="c-mask"/>
           <rect x="550" y="60" width="180" height="80" rx="6" class="c-backend" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(556 66) scale(0.6875)">
             <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
-          <text data-node-label="" x="640" y="98" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">spec</text>
+          <text data-node-label="" x="640" y="98" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">bfs-spec</text>
         <text x="640" y="114" class="t-muted" font-size="9" text-anchor="middle">Define verifiable requirements</text>
         </g>
 
-        <g id="node-plan_coordinator" data-node-id="plan_coordinator" data-node-label="autoplan" tabindex="0" role="button" aria-label="Focus autoplan, Coordinate the plan reviews, Architecture component" aria-pressed="false" data-node-kind="backend" data-node-sublabel="Coordinate the plan reviews" data-node-context="Architecture component">
-          <title>autoplan · Coordinate the plan reviews · Architecture component</title>
+        <g id="node-plan_coordinator" data-node-id="plan_coordinator" data-node-label="bfs-autoplan" tabindex="0" role="button" aria-label="Focus bfs-autoplan, Coordinate the plan reviews, Architecture component" aria-pressed="false" data-node-kind="backend" data-node-sublabel="Coordinate the plan reviews" data-node-context="Architecture component">
+          <title>bfs-autoplan · Coordinate the plan reviews · Architecture component</title>
           <rect x="800" y="60" width="180" height="80" rx="6" class="c-mask"/>
           <rect x="800" y="60" width="180" height="80" rx="6" class="c-backend" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(806 66) scale(0.6875)">
             <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
-          <text data-node-label="" x="890" y="98" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">autoplan</text>
+          <text data-node-label="" x="890" y="98" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">bfs-autoplan</text>
         <text x="890" y="114" class="t-muted" font-size="9" text-anchor="middle">Coordinate the plan reviews</text>
         </g>
 
@@ -381,8 +381,8 @@ rect.c-bg-rect { fill: var(--bg); }
         <text x="1140" y="114" class="t-muted" font-size="8.9" text-anchor="middle">Business, engineering, UX, DevEx</text>
         </g>
 
-        <g id="node-visual_direction" data-node-id="visual_direction" data-node-label="design-consultation" tabindex="0" role="button" aria-label="Focus design-consultation, Compare and select a direction, Architecture component" aria-pressed="false" data-node-kind="frontend" data-node-sublabel="Compare and select a direction" data-node-context="Architecture component">
-          <title>design-consultation · Compare and select a direction · Architecture component</title>
+        <g id="node-visual_direction" data-node-id="visual_direction" data-node-label="bfs-design-consultation" tabindex="0" role="button" aria-label="Focus bfs-design-consultation, Compare and select a direction, Architecture component" aria-pressed="false" data-node-kind="frontend" data-node-sublabel="Compare and select a direction" data-node-context="Architecture component">
+          <title>bfs-design-consultation · Compare and select a direction · Architecture component</title>
           <rect x="300" y="370" width="180" height="80" rx="6" class="c-mask"/>
           <rect x="300" y="370" width="180" height="80" rx="6" class="c-frontend" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="frontend" class="semantic-sigil s-frontend" transform="translate(306 376) scale(0.6875)">
@@ -391,30 +391,30 @@ rect.c-bg-rect { fill: var(--bg); }
             <circle cx="4.1" cy="4.8" r=".7" class="sigil-fill"/>
             <circle cx="6.3" cy="4.8" r=".7" class="sigil-fill"/>
           </g>
-          <text data-node-label="" x="390" y="408" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">design-consultation</text>
+          <text data-node-label="" x="390" y="408" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">bfs-design-consultation</text>
         <text x="390" y="424" class="t-muted" font-size="9" text-anchor="middle">Compare and select a direction</text>
         </g>
 
-        <g id="node-page_implementation" data-node-id="page_implementation" data-node-label="design-html" tabindex="0" role="button" aria-label="Focus design-html, Build and render the page, Architecture component" aria-pressed="false" data-node-kind="backend" data-node-sublabel="Build and render the page" data-node-context="Architecture component">
-          <title>design-html · Build and render the page · Architecture component</title>
+        <g id="node-page_implementation" data-node-id="page_implementation" data-node-label="bfs-design-html" tabindex="0" role="button" aria-label="Focus bfs-design-html, Build and render the page, Architecture component" aria-pressed="false" data-node-kind="backend" data-node-sublabel="Build and render the page" data-node-context="Architecture component">
+          <title>bfs-design-html · Build and render the page · Architecture component</title>
           <rect x="550" y="370" width="180" height="80" rx="6" class="c-mask"/>
           <rect x="550" y="370" width="180" height="80" rx="6" class="c-backend" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(556 376) scale(0.6875)">
             <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
-          <text data-node-label="" x="640" y="408" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">design-html</text>
+          <text data-node-label="" x="640" y="408" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">bfs-design-html</text>
         <text x="640" y="424" class="t-muted" font-size="9" text-anchor="middle">Build and render the page</text>
         </g>
 
-        <g id="node-visual_review" data-node-id="visual_review" data-node-label="design-review / qa" tabindex="0" role="button" aria-label="Focus design-review / qa, Inspect the UI or user journey, Architecture component" aria-pressed="false" data-node-kind="security" data-node-sublabel="Inspect the UI or user journey" data-node-context="Architecture component">
-          <title>design-review / qa · Inspect the UI or user journey · Architecture component</title>
+        <g id="node-visual_review" data-node-id="visual_review" data-node-label="bfs-design-review / bfs-qa" tabindex="0" role="button" aria-label="Focus bfs-design-review / bfs-qa, Inspect the UI or user journey, Architecture component" aria-pressed="false" data-node-kind="security" data-node-sublabel="Inspect the UI or user journey" data-node-context="Architecture component">
+          <title>bfs-design-review / bfs-qa · Inspect the UI or user journey · Architecture component</title>
           <rect x="800" y="370" width="180" height="80" rx="6" class="c-mask"/>
           <rect x="800" y="370" width="180" height="80" rx="6" class="c-security" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="security" class="semantic-sigil s-security" transform="translate(806 376) scale(0.6875)">
             <path d="M8 2.2 13 4v3.5c0 3.1-1.8 5.4-5 6.5-3.2-1.1-5-3.4-5-6.5V4Z"/>
             <path d="m5.8 8 1.5 1.5 3-3"/>
           </g>
-          <text data-node-label="" x="890" y="408" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">design-review / qa</text>
+          <text data-node-label="" x="890" y="408" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">bfs-design-review / bfs-qa</text>
         <text x="890" y="424" class="t-muted" font-size="9" text-anchor="middle">Inspect the UI or user journey</text>
         </g>
 

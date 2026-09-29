@@ -40,7 +40,7 @@
     {
       "id": "restore_context",
       "type": "backend",
-      "label": "load-context",
+      "label": "bfs-load-context",
       "sublabel": "Check files and saved results",
       "row": 0,
       "col": 2
@@ -48,7 +48,7 @@
     {
       "id": "continue_work",
       "type": "frontend",
-      "label": "bfs-driver",
+      "label": "bfs-router",
       "sublabel": "Continue the selected work",
       "row": 0,
       "col": 3
@@ -56,7 +56,7 @@
     {
       "id": "manual_snapshot",
       "type": "backend",
-      "label": "save-context",
+      "label": "bfs-save-context",
       "sublabel": "Save an extra snapshot",
       "row": 1,
       "col": 0
@@ -99,7 +99,7 @@
       "dot": "cyan",
       "title": "Memory is a separate choice",
       "items": [
-        "bontaflow-memory stores explicit decisions and learnings."
+        "bfs-bontaflow-memory stores explicit decisions and learnings."
       ]
     }
   ]

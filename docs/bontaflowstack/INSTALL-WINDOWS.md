@@ -19,13 +19,43 @@ codex plugin marketplace add BillBalint-SM/bontaflowstack-workbook --ref main
 codex plugin add bontaflowstack@bontaflowstack
 ```
 
-Start a new chat in your project. Ask `$bfs-driver Set up BontaFlowStack`.
+Start a new chat in your project. Ask `$bfs-router Set up BontaFlowStack`.
 Include "browser and design capabilities" to run the optional engine installer.
 Open `/hooks` in the Codex CLI and review/trust this plugin's PreToolUse and Stop
 definitions. Installation alone does not trust hooks; changed definitions need
 review again. See the [official hook guide](https://learn.chatgpt.com/docs/hooks#review-and-trust-hooks).
 Setup with `-InstallPrerequisites` can use Windows Package Manager to install
 missing Node.js. Existing unsupported Node versions produce an upgrade message.
+
+## Set up the target project
+
+The PowerShell setup checks the plugin installation. To add project guidance,
+open a Codex chat in the target project and request:
+
+```text
+$bfs-router Set up BontaFlowStack for this project.
+```
+
+The driver checks `AGENTS.md`, issue-tracker guidance, domain terms and decision
+locations before changing project files. It creates a missing
+`docs/agents/issue-tracker.md` with the chosen tracker location and its read,
+publish and update procedure; a missing `docs/agents/domain.md` points to the
+actual domain and decision sources. It adds only missing `AGENTS.md` links.
+Existing instructions are not replaced. If the tracker or domain source is not
+clear, answer the driver's focused question first. A Git remote alone does not
+mean specifications belong in GitHub Issues. Choosing no tracker is valid and
+is recorded explicitly. Setup never creates invented terms, labels or ADRs.
+
+For example, an empty project may need the answer “Use local Markdown issues in
+`tasks/`; keep domain terms in `CONTEXT.md` and decisions in `docs/adr/`.” The
+driver can then create the two guides and their `AGENTS.md` pointers. Verify the
+reported created and reused paths, open each pointer, and rerun the same setup
+request: it should leave the guides unchanged. Use `doctor` to confirm requested
+core or browser capabilities; a core-only check does not prove browser readiness.
+
+`bfs-guard` is not started by the driver. Invoke `$bfs-guard Show the current protection
+status.` directly when you want task protection. Skill selection does not itself
+authorize publication, deployment, spending or destructive changes.
 
 ## Install a source ZIP or clone
 
@@ -54,18 +84,18 @@ powershell -NoProfile -File plugins/bontaflowstack/scripts/bfstack.ps1 -Command 
 Ask in a new chat:
 
 ```text
-$bfs-driver Check the installed catalog and capabilities, then guide me to the next step.
+$bfs-router Check the installed catalog and capabilities, then guide me to the next step.
 ```
 
 There must be exactly 29 skill entries. Core readiness and engine readiness are
-reported separately. `doctor browse` must report the browser capability ready
+reported separately. `doctor bfs-browse` must report the browser capability ready
 before a browser-dependent task starts. Images use the Codex image generation tool
 available in the chat; no separate API key is needed. Optional impeccable and
 Google DESIGN.md commands report unavailable until their external installations
 are configured; this does not block the browser, renderer or ordinary design work.
 
 The first browser operation starts the local browser. A visible session supports
-manual login and continuation. Close it with the browse skill when finished.
+manual login and continuation. Close it with the bfs-browse skill when finished.
 
 ## Update
 

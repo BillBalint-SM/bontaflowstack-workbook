@@ -15,15 +15,15 @@ on `node <plugin>/core/cli.mjs`. The PowerShell launcher takes `-Command`,
 ## Workflow
 
 ```json
-{"goal":"Build the requested page","skills":["design-consultation","design-html","qa"]}
+{"goal":"Build the requested page","skills":["bfs-design-consultation","bfs-design-html","bfs-qa"]}
 ```
 
 Send this to `workflow start`. Alternatively provide `route`: `idea`, `website`,
 `implementation`, `repair` or `delivery`. Routes are ordered suggestions selected for the request.
-An explicit selection may also be `{"skill":"qa","mode":"inspect"}` instead
+An explicit selection may also be `{"skill":"bfs-qa","mode":"inspect"}` instead
 of a string. Each saved step retains its selected mode.
 
-The `implementation` route selects `bfs-implement`, `health`, then `review`.
+The `implementation` route selects `bfs-implement`, `bfs-health`, then `bfs-review`.
 Its implementation skill requires a concrete user-accepted basis before editing.
 The agent verifies the actual user decision; starting a workflow is not approval.
 For a multi-part implementation, keep one active implementation step and use

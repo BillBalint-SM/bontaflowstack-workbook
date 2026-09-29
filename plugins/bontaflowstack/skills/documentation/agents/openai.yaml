@@ -1,6 +1,0 @@
-interface:
-  display_name: "Create and update documentation"
-  short_description: "Create and update documentation with checked results"
-  default_prompt: "Use $documentation for the requested task and verify the result."
-policy:
-  allow_implicit_invocation: true

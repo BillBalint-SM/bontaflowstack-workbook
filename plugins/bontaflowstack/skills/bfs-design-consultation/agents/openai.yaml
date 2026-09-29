@@ -1,0 +1,6 @@
+interface:
+  display_name: "BFS Design Consultation"
+  short_description: "Design direction and variants with checked results"
+  default_prompt: "Use $bfs-design-consultation for the requested task and verify the result."
+policy:
+  allow_implicit_invocation: true

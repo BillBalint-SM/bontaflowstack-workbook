@@ -13,6 +13,6 @@
     "developerName": "Bálint Bilisics (BontaFlow)",
     "category": "Productivity",
     "capabilities": [],
-    "defaultPrompt": "Use $bfs-driver to help me choose and carry out the next step for my project."
+    "defaultPrompt": "Use $bfs-router to help me choose and carry out the next step for my project."
   }
 }

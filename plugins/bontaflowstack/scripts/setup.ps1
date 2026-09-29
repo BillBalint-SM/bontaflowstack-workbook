@@ -24,8 +24,8 @@ if ($WithEngines) {
 & node (Join-Path $pluginRoot 'core/cli.mjs') doctor
 if ($LASTEXITCODE -ne 0) { throw 'BontaFlowStack core check failed.' }
 if ($WithEngines) {
-    & node (Join-Path $pluginRoot 'core/cli.mjs') doctor browse
+    & node (Join-Path $pluginRoot 'core/cli.mjs') doctor bfs-browse
     if ($LASTEXITCODE -ne 0) { throw 'Browser capability is unavailable after setup.' }
 }
-Write-Host 'Setup complete. In Codex, use $bfs-driver. Installed plugin changes are loaded in a new chat.'
+Write-Host 'Setup complete. In Codex, use $bfs-router. Installed plugin changes are loaded in a new chat.'
 Write-Host 'Review and trust PreToolUse and Stop in Codex /hooks to enable protection and interruption tracking.'
