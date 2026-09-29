@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { spawnSync } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { context, atomicWrite, readJson, changeJson, digest, fingerprints } from '../plugins/bontaflowstack/core/state.mjs';
 import { workflow, stopWorkflows } from '../plugins/bontaflowstack/core/workflow.mjs';
@@ -14,6 +14,11 @@ import { engines } from '../plugins/bontaflowstack/core/engines.mjs';
 import { loadCatalog, resolveSkill, pluginRoot } from '../plugins/bontaflowstack/core/cli.mjs';
 
 const catalog = loadCatalog();
+function hookCommand(event = 'PreToolUse') {
+  const hook = readJson(path.join(pluginRoot,'hooks/hooks.json')).hooks[event][0].hooks[0];
+  assert.equal(hook.command,hook.commandWindows);
+  return hook.commandWindows.match(/ -Command "(.+)"$/)[1];
+}
 function fixture(t) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(),'bfs-core-'));
   const project = path.join(root,'project'); fs.mkdirSync(project);
@@ -175,6 +180,20 @@ test('atomic failure and write contention retain the previous bytes', t => {
   assert.equal(fs.readFileSync(file,'utf8'),old);
 });
 
+test('a transient Windows lock error is retried without losing the update', t => {
+  const {ctx}=fixture(t), file=path.join(ctx.home,'record.json');
+  const mkdir=fs.mkdirSync;
+  let failures=0;
+  fs.mkdirSync=(target,...args) => {
+    if (target === `${file}.lock` && failures++ === 0) throw Object.assign(new Error('transient lock error'),{code:'EPERM'});
+    return mkdir(target,...args);
+  };
+  try { assert.deepEqual(changeJson(file,null,()=>({value:1})),{value:1}); }
+  finally { fs.mkdirSync=mkdir; }
+  assert.equal(failures,2);
+  assert.deepEqual(readJson(file),{value:1});
+});
+
 test('memory keeps revisions, prunes exact IDs and imports legacy data without changing it', t => {
   const {ctx,root}=fixture(t);
   memory(ctx,'put',{kind:'learning',key:'retry',text:'first',source:'observed'});
@@ -294,8 +313,52 @@ test('Node engine bridge preserves failures and isolates missing external design
 test('PowerShell native-hook command forwards UTF-8 stdin and returns the host contract', t => {
   const {env,project}=fixture(t);
   const payload={hook_event_name:'PreToolUse',session_id:env.CODEX_THREAD_ID,cwd:project,tool_name:'functions.exec_command',tool_input:{cmd:'git status'}};
-  const command='& (Join-Path $env:PLUGIN_ROOT "scripts/bfstack.ps1") -Command hook -Action pretool';
+  const command=hookCommand();
   const result=spawnSync('powershell.exe',['-NoProfile','-ExecutionPolicy','Bypass','-Command',command],{cwd:project,env:{...env,PLUGIN_ROOT:pluginRoot},input:JSON.stringify(payload),encoding:'utf8',windowsHide:true,timeout:15000});
   assert.equal(result.status,0,result.stderr);
   assert.match(JSON.parse(result.stdout).hookSpecificOutput.additionalContext,/BFS_GUARD_OBSERVED/);
+});
+
+test('native hook preserves inspection failure exit codes and Stop success', t => {
+  const {env,project}=fixture(t);
+  for (const [event,code] of [['PreToolUse',2],['Stop',0]]) {
+    const payload={hook_event_name:event,session_id:env.CODEX_THREAD_ID,cwd:project,tool_name:'functions.exec_command',tool_input:null};
+    const result=spawnSync('powershell.exe',['-NoProfile','-ExecutionPolicy','Bypass','-Command',hookCommand(event)],{cwd:project,env:{...env,PLUGIN_ROOT:pluginRoot},input:JSON.stringify(payload),encoding:'utf8',windowsHide:true,timeout:8000});
+    assert.equal(result.status,code,result.stderr || result.stdout);
+    if(event==='PreToolUse') assert.match(JSON.parse(result.stdout).hookSpecificOutput.permissionDecisionReason,/Malformed native tool input/);
+    else assert.deepEqual(JSON.parse(result.stdout),{});
+  }
+});
+
+test('parallel native hooks refresh missing and stale observations and wait for a writer', async t => {
+  const {env,project,root}=fixture(t);
+  for(const mode of ['missing','stale','locked']) {
+    const runEnv={...env,PLUGIN_ROOT:pluginRoot,BFS_STATE_HOME:path.join(root,mode)};
+    const ctx=context(project,runEnv);
+    const observed=path.join(ctx.workspaceDir,'tasks',`${ctx.taskId}.guard.json.observed.json`);
+    if(mode==='stale') atomicWrite(observed,{taskId:ctx.taskId,workspaceId:ctx.workspaceId,at:'2000-01-01T00:00:00.000Z',package:'0.3.0'});
+    let release=Promise.resolve();
+    if(mode==='locked') {
+      fs.mkdirSync(`${observed}.lock`,{recursive:true});
+      release=new Promise(resolve=>setTimeout(()=>{ fs.rmdirSync(`${observed}.lock`); resolve(); },700));
+    }
+    const payload={hook_event_name:'PreToolUse',session_id:ctx.taskId,cwd:project,tool_name:'functions.exec_command',tool_input:{cmd:'git status'}};
+    const results=await Promise.all(Array.from({length:8},()=>new Promise(resolve=>{
+      const child=spawn('powershell.exe',['-NoProfile','-ExecutionPolicy','Bypass','-Command',hookCommand()],{cwd:project,env:runEnv,windowsHide:true,timeout:8000});
+      let stdout='',stderr='';
+      child.stdout.on('data',data=>stdout+=data); child.stderr.on('data',data=>stderr+=data);
+      child.on('error',error=>resolve({error:error.message}));
+      child.on('close',code=>resolve({code,stdout,stderr}));
+      child.stdin.end(JSON.stringify(payload));
+    })));
+    await release;
+    for(const result of results) {
+      assert.equal(result.code,0,`${mode}: ${JSON.stringify(result)}`);
+      assert.match(JSON.parse(result.stdout).hookSpecificOutput.additionalContext,/BFS_GUARD_OBSERVED/);
+    }
+    const saved=readJson(observed);
+    assert.equal(saved.taskId,ctx.taskId); assert.equal(saved.workspaceId,ctx.workspaceId);
+    assert.ok(Date.now()-Date.parse(saved.at)<10000);
+    assert.equal(fs.existsSync(`${observed}.lock`),false);
+  }
 });

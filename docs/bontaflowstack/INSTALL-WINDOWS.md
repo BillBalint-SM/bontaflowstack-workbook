@@ -121,6 +121,7 @@ historical permissions are not imported.
 | Engine component changed/missing | Inspect the installation and rerun the explicit installer; do not bypass the hash check. |
 | Incomplete engine directory | Inspect the named failed installation. Preserve useful logs before removing only that directory and retrying. |
 | Another process holds a state lock | Wait for that operation and retry. Never remove a lock while its writer is active. |
+| PreToolUse says `BFS guard could not inspect this event` | The tool call was denied. A brief Windows lock error is retried automatically; if the message persists, check state-directory permissions and competing processes before retrying. Changed hook definitions must be reviewed again in `/hooks`. |
 | Guard lacks a native observation | Review/trust the plugin definitions in `/hooks`, then use a new chat. Manual hook invocation is not native integration evidence. |
 | Saved checks are stale | Recheck the changed inputs and rerun the affected workflow step. |
 | Codex image tool unavailable | Use a chat with image generation available, or choose local HTML variants. |

@@ -87,8 +87,9 @@ non-Git project uses the selected canonical directory.
 BFS_STATE_HOME overrides the state directory for isolated testing or an
 explicitly selected installation. Reads do not initialize absent stores.
 Writes use validated data, exclusive locks and atomic replacement/read-back.
-An existing lock is a visible concurrent-write error; do not remove an
-unverified lock or silently discard malformed records.
+Brief lock contention is retried; persistent contention or permission errors
+remain visible. Do not remove an unverified lock or silently discard malformed
+records.
 
 Durable decisions and learnings use bfs-bontaflow-memory. Their creation is
 explicit; automatic step checkpoints do not become automatic long-term lessons.

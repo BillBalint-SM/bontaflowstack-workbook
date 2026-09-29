@@ -108,7 +108,20 @@ export function changeJson(file, fallback, update) {
   noLinks(file);
   fs.mkdirSync(path.dirname(file), { recursive: true });
   const lock = `${file}.lock`;
-  try { fs.mkdirSync(lock); } catch { throw new Error(`State is being changed by another process; retry: ${file}`); }
+  const deadline = performance.now() + 2000;
+  const sleeper = new Int32Array(new SharedArrayBuffer(4));
+  while (true) {
+    try { fs.mkdirSync(lock); break; }
+    catch (error) {
+      if (error.code !== 'EEXIST' && error.code !== 'EPERM') throw error;
+      const remaining = deadline - performance.now();
+      if (remaining <= 0) {
+        if (error.code === 'EPERM') throw error;
+        throw new Error(`State is being changed by another process; retry: ${file}`, { cause: error });
+      }
+      Atomics.wait(sleeper, 0, 0, Math.min(25, remaining));
+    }
+  }
   try { return atomicWrite(file, update(readJson(file, fallback))); }
   finally { fs.rmdirSync(lock); }
 }
