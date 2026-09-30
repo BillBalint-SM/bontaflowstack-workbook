@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.5.1 — 2026-09-30
+
+- Fixed guard detection for destructive Git flag aliases, default worktree restores
+  and explicit checkout paths. Read-only and staged-only cases retain their behavior.
+- Legacy memory import preserves both typed collections, checks source drift
+  before writing and reports conflicting prior record IDs without rewriting them.
+  Existing imported data is not automatically migrated or pruned.
+- Pinned engine 0.3.1: design choices are checked against current board/image hashes
+  and cleared after board regeneration; HTTP headers survive browser relaunches.
+- Documented that headless-to-visible handoff/connect reloads pages while retaining
+  cookies, local/session storage, URLs and the selected tab. Unsaved form and
+  in-memory application state require connect before interaction.
+
 ## 0.5.0 — 2026-09-30
 
 - Added the `question-presentation` preference: `prefer-panel` (with chat fallback) or `chat`, using existing user/project/task preference storage.

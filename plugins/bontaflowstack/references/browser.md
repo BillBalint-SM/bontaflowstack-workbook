@@ -22,6 +22,10 @@ visual output. Keep errors separate from extracted datasets.
 Visible sign-in uses the engine's documented connect/handoff/resume path. The
 user enters credentials in the browser; the agent verifies access afterwards.
 The core supplies project/task-specific state and profile locations.
+Switching a headless session to visible via connect/handoff reloads its pages;
+unsaved forms and in-memory application state are lost. Use connect before
+those interactions when human access will be needed. Repeated handoff in an
+already visible session does not reload it. Resume continues that session.
 
 ## Removed browser scripts
 
