@@ -5,7 +5,7 @@ description: "Build responsive HTML or a project-native component from a brief, 
 
 # BFS Design HTML
 
-Read [HOST.md](../../HOST.md) for execution, state and authorization rules.
+Load [HOST.md](../../HOST.md) for execution, state and authorization rules unless its full matching content is already loaded in this chat. Follow its hash-based read protocol.
 Modes: `implement`, `refine`. Choose the mode from the actual request.
 
 1. Identify the accepted input, target files, existing framework, content and reusable design tokens. Reuse the supplied direction and relevant project conventions.

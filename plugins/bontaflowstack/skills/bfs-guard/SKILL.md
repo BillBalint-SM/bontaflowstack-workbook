@@ -5,7 +5,7 @@ description: "Inspect or explicitly change destructive-command warnings and a pr
 
 # BFS Guard
 
-Read [HOST.md](../../HOST.md) for execution, state and authorization rules.
+Load [HOST.md](../../HOST.md) for execution, state and authorization rules unless its full matching content is already loaded in this chat. Follow its hash-based read protocol.
 Modes: `status`, `warnings`, `boundary`, `combined`, `release`, `off`. Choose the mode from the actual request.
 
 1. Read guard status for the current task and explain the requested change to warnings, edit boundary or both. Reuse the supplied directory and decisions.

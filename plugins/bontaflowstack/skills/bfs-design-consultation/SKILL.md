@@ -5,7 +5,7 @@ description: "Define a visual identity or design system, compare distinct design
 
 # BFS Design Consultation
 
-Read [HOST.md](../../HOST.md) for execution, state and authorization rules.
+Load [HOST.md](../../HOST.md) for execution, state and authorization rules unless its full matching content is already loaded in this chat. Follow its hash-based read protocol.
 Modes: `consult`, `variants`, `images`, `refine`. Choose the mode from the actual request.
 
 1. Read the product brief, target audience, content, existing UI and design decisions. Identify the intended impression and constraints.

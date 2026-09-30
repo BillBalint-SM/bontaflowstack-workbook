@@ -5,7 +5,7 @@ description: "Create a manual local checkpoint of the goal, progress, decisions 
 
 # BFS Save Context
 
-Read [HOST.md](../../HOST.md) for execution, state and authorization rules.
+Load [HOST.md](../../HOST.md) for execution, state and authorization rules unless its full matching content is already loaded in this chat. Follow its hash-based read protocol.
 Modes: `save`, `list`. Choose the mode from the actual request.
 
 1. Identify the current goal and meaningful progress. Read relevant project files and Git state when Git is present.

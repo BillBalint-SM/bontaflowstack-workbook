@@ -1,11 +1,19 @@
 [CmdletBinding()]
-param([string]$OutputDirectory)
+param([string]$OutputDirectory, [switch]$Release)
 $ErrorActionPreference = 'Stop'
 $repoRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
+$status = @(& git -C $repoRoot status --porcelain --untracked-files=all)
+if ($LASTEXITCODE -ne 0) { throw 'Build from the source Git checkout.' }
+$dirty = $status.Count -gt 0
+if ($Release -and $dirty) { throw 'Release requires a clean checkout, including untracked source files.' }
 if (-not $OutputDirectory) { $OutputDirectory = Join-Path $repoRoot 'artifacts' }
 $OutputDirectory = [IO.Path]::GetFullPath($OutputDirectory)
 & node (Join-Path $PSScriptRoot 'check.mjs')
 if ($LASTEXITCODE -ne 0) { throw 'Package checks failed.' }
+$status = @(& git -C $repoRoot status --porcelain --untracked-files=all)
+if ($LASTEXITCODE -ne 0) { throw 'Cannot inspect source status.' }
+$dirty = $status.Count -gt 0
+if ($Release -and $dirty) { throw 'Release source changed during package checks.' }
 $manifest = Get-Content -LiteralPath (Join-Path $repoRoot 'plugins/bontaflowstack/.codex-plugin/plugin.json') -Raw | ConvertFrom-Json
 $version = $manifest.version
 if ($version -notmatch '^\d+\.\d+\.\d+$') { throw 'Use a release version without a development suffix.' }
@@ -14,7 +22,6 @@ $files = @(& git -C $repoRoot ls-files --cached --others --exclude-standard) | W
 } | Sort-Object -Unique
 if ($LASTEXITCODE -ne 0 -or $files.Count -lt 50) { throw 'Build from the source Git checkout.' }
 $head = & git -C $repoRoot rev-parse HEAD
-$dirty = [bool](& git -C $repoRoot status --porcelain)
 [IO.Directory]::CreateDirectory($OutputDirectory) | Out-Null
 $zipPath = Join-Path $OutputDirectory "BontaFlowStack-$version-source.zip"
 if (Test-Path -LiteralPath $zipPath) { throw "Output exists; choose a new output directory: $zipPath" }

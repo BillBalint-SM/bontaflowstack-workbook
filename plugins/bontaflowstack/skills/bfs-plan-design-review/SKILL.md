@@ -5,7 +5,7 @@ description: "Review planned screens and journeys for hierarchy, interaction sta
 
 # BFS Plan Design Review
 
-Read [HOST.md](../../HOST.md) for execution, state and authorization rules.
+Load [HOST.md](../../HOST.md) for execution, state and authorization rules unless its full matching content is already loaded in this chat. Follow its hash-based read protocol.
 Modes: `bfs-review`. Choose the mode from the actual request.
 
 1. Read the brief, proposed screens, content and existing design system. Identify the primary journey and audience.

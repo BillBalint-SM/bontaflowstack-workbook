@@ -319,20 +319,10 @@
         ],
         "fix": [
           "browser"
-        ],
-        "quick": [
-          "browser"
-        ],
-        "full": [
-          "browser"
-        ],
-        "regression": [
-          "browser"
-        ],
-        "diff": [
-          "browser"
         ]
       },
+      "defaultCoverage": "quick",
+      "coverages": ["quick", "full", "regression", "diff"],
       "handoffs": [
         "bfs-bug-issue-investigate"
       ]

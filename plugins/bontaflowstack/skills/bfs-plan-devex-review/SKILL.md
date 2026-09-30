@@ -5,7 +5,7 @@ description: "Review planned API, CLI, SDK, onboarding and error-recovery experi
 
 # BFS Plan DevEx Review
 
-Read [HOST.md](../../HOST.md) for execution, state and authorization rules.
+Load [HOST.md](../../HOST.md) for execution, state and authorization rules unless its full matching content is already loaded in this chat. Follow its hash-based read protocol.
 Modes: `bfs-review`. Choose the mode from the actual request.
 
 1. Identify the intended developer, first successful task, supported environments and exposed interfaces.

@@ -5,7 +5,7 @@ description: "Load a manual or automatic checkpoint, identify changed inputs and
 
 # BFS Load Context
 
-Read [HOST.md](../../HOST.md) for execution, state and authorization rules.
+Load [HOST.md](../../HOST.md) for execution, state and authorization rules unless its full matching content is already loaded in this chat. Follow its hash-based read protocol.
 Modes: `load`, `resume`. Choose the mode from the actual request.
 
 1. List workflow list and workflow checkpoints for the current project. Use the requested ID, or prefer the current workspace's relevant recent record; ask only when the choice is ambiguous.

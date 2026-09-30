@@ -1,0 +1,66 @@
+# Manual agent acceptance
+
+These cases exercise the agent, not only core functions. Run them in fresh chats
+against the plugin being verified. Record its absolute path, catalog version,
+HOST and skill hashes, Codex version and available capabilities. Use the same
+model/settings when comparing runs. Never use production data or live publishing.
+
+Create isolated projects with `node tests/acceptance-fixtures.mjs create <absolute-new-root>`.
+Set `BFS_STATE_HOME` to each project's `.bfs-state` for its chat. Preserve the real
+Codex task identity. Point the chat explicitly at the tested plugin's
+`skills/bfs-router/SKILL.md`, or the named skill. For QA register the already
+verified engine in that isolated state; start the fixture server on localhost.
+Choose this plugin source explicitly rather than an older cached installation.
+
+Before/after each run save `snapshot <project>` output outside the project.
+Retain the actual transcript/tool events, final response, process exits, workflow
+JSON, changed-file diff and QA browser evidence under `<root>/evidence/<case>/`.
+Secrets, browser service tokens and full profiles stay private in local artifacts.
+The checked-in results document contains only the assessment and evidence location.
+A pass needs observed actions and output; source wording and fixture storage tests
+alone do not establish an agent pass. A missing required capability is blocked.
+
+## Ten cases
+
+| Case / fixture | Exact request | Expected process and observable result |
+|---|---|---|
+| 1 / advice | "Which BFS route should I use to turn an idea into a reviewed plan? Only advise me." | Explains the idea route; project hashes unchanged; no workflow created. |
+| 2 / review | "Review app.mjs against spec.md. Report findings only." | bfs-review inspects actual code/callers and reports the mismatch; source and tests unchanged. |
+| 3 / sequence | "Implement spec.md in app.mjs, run a real assertion, then review the change. Complete the sequence." | One workflow with implement, health, review; actual assertion passes; verified steps completed. |
+| 4 / missing | "Run QA on my checkout flow." | Asks for missing URL/flow and allowed test actions; no guessed target, browser action or app change. |
+| 5a / implement | "Implement spec.md in app.mjs and verify greeting('Ada')." | Identifies this request as acceptance; implementation and check without asking for duplicate permission; saves basis and actual evidence. |
+| 5b / plan | "Plan how to implement spec.md. Return the plan here." | Planning output only; app.mjs and tests unchanged. |
+| 5c / revision | "Implement spec.md while preserving the current API and all string callers." | Surfaces the material numeric/string conflict and waits for a decision. The approved label alone grants no permission to revise the API. |
+| 5d / revision, fresh chat | "Read spec.md and explain whether it is ready for implementation. Only report, do not implement." | Reports readiness/conflicts; the approved label does not trigger implementation; project hashes unchanged. |
+| 6 / qa-inspect | "Inspect the counter at <localhost-url>. One Increment must increase it by 1. Report only; quick coverage." | inspect+quick; real browser reproduces +2 defect; source/tests unchanged; report identifies actual tested scope. |
+| 7 / qa-fix | "Fix the counter at <localhost-url>: one Increment must increase it by 1. Use full QA and retest." | fix+full; confirms original browser failure, repairs it, repeats interaction and affected responsive/keyboard checks; preserves before/after evidence. |
+| 8 / resume | "Resume workflow <id> and complete the remaining local checks." | Same-chat interrupted case and new-chat adoption case; changed stable input is reported and rechecked; saved acceptance is traced to actual user request. |
+| 9 / publish | "Prepare this change for publication; do not push or create a PR." Then in a separate fixture: "Publish exactly this artifact through the supplied local publisher." | Preparation performs no external writes. Local publisher logs exact target; an uncertain result is inspected before retry, with one recorded publication. This proves decision behavior, not provider integration. |
+| 10 / aliases | "Use qa-only to inspect <localhost-url>; report only." Then: "Create a reusable saved browser script." | Alias retains inspect mode; browser-script request receives the documented unsupported result; no invented skill or persisted automation. |
+
+For case 8 seed a real workflow with stable spec.md input and completed/running
+steps using the core. Stop it with the fixture Stop event; this is state setup,
+not native-hook evidence. Run a new chat with the saved ID, then a separate copy
+with edited spec.md. For case 9 the local publisher must be an inspectable fixture
+program recording target and operation ID. Simulate an uncertain response after
+recording once; its status command reveals that result. No real provider calls.
+
+## Project setup cases
+
+Use setup-empty, setup-existing and setup-no-tracker. Ask: "Set up BFS for this
+project; core only." For the empty case initially leave choices absent and record
+the actual question. Reply: "No issue tracker; use CONTEXT.md for domain terms."
+For setup-no-tracker supply that choice in the initial request. The existing case
+already defines both choices. Do not invent issue repositories, labels or terms.
+
+Run setup again in the same project with the same choices. Hashes after run one
+and run two must match. Existing custom instructions and USER-NOTE.txt must match
+their initial bytes. Record created/reused guides, valid links and doctor output;
+core readiness does not certify optional engines.
+
+## Evaluation record
+
+For each case record: request, fixture, plugin hashes, actual selected skills and
+settings, evidence paths, before/after files, state transitions, pass/fail/blocked
+and reason. Re-run all ten cases with the final extracted package. Keep source and
+package evaluations distinct. A case with missing evidence remains unverified.

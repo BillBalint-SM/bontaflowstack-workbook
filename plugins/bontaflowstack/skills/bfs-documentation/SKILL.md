@@ -5,7 +5,7 @@ description: "Create missing project documentation or update existing guides, re
 
 # BFS Documentation
 
-Read [HOST.md](../../HOST.md) for execution, state and authorization rules.
+Load [HOST.md](../../HOST.md) for execution, state and authorization rules unless its full matching content is already loaded in this chat. Follow its hash-based read protocol.
 Modes: `create`, `update`, `coverage`. Choose the mode from the actual request.
 
 1. Identify the audience, requested documentation and the source change or module it must explain.

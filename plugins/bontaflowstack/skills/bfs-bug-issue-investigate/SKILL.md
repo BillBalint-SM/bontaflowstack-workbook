@@ -5,7 +5,7 @@ description: "Reproduce a bug or issue, trace the actual cause, and perform a re
 
 # BFS Bug Issue Investigate
 
-Read [HOST.md](../../HOST.md) for execution, state and authorization rules.
+Load [HOST.md](../../HOST.md) for execution, state and authorization rules unless its full matching content is already loaded in this chat. Follow its hash-based read protocol.
 Modes: `diagnose`, `fix`. Choose the mode from the actual request.
 
 1. Capture expected and actual behavior, failing input, environment and original error. Read relevant source, recent changes and callers.

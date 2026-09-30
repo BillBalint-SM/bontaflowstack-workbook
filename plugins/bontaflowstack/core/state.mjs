@@ -87,6 +87,7 @@ export function atomicWrite(file, value) {
   noLinks(file);
   const serialized = JSON.stringify(value, null, 2) + '\n';
   const previous = fs.existsSync(file) ? fs.readFileSync(file) : null;
+  if (previous?.equals(Buffer.from(serialized))) return value;
   const temporary = `${file}.${randomUUID()}.tmp`;
   try {
     const fd = fs.openSync(temporary, 'wx', 0o600);

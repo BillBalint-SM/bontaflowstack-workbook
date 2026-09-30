@@ -5,7 +5,7 @@ description: "Merge or deploy an explicitly selected change using existing envir
 
 # BFS Prod Deploy
 
-Read [HOST.md](../../HOST.md) for execution, state and authorization rules.
+Load [HOST.md](../../HOST.md) for execution, state and authorization rules unless its full matching content is already loaded in this chat. Follow its hash-based read protocol.
 Modes: `inspect`, `integrate`, `deploy`, `verify`. Choose the mode from the actual request.
 
 For a requested integration and deployment sequence, use separate workflow steps

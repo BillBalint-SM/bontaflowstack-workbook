@@ -2,27 +2,41 @@ import path from 'node:path';
 import fs from 'node:fs';
 import { randomUUID } from 'node:crypto';
 import { atomicWrite, changeJson, readJson, requireValue, text, identifier, now, fingerprints, drift, filesIn, noLinks, safeData, git, digest } from './state.mjs';
+import { selection as selectSettings, resolveSkill } from './catalog.mjs';
 
 const states = ['completed', 'failed', 'blocked', 'waiting'];
 const location = (ctx, id) => path.join(ctx.workspaceDir, 'workflows', `${identifier(id)}.json`);
 const environment = ctx => ({ nodeMajor: Number(process.versions.node.split('.')[0]), workspace: ctx.workspace,
   head: ctx.git ? git(ctx.workspace,['rev-parse','HEAD']).stdout?.trim() || null : null,
   branch: ctx.git ? git(ctx.workspace,['rev-parse','--abbrev-ref','HEAD']).stdout?.trim() || null : null });
-function valid(ctx, record) {
+function valid(ctx, record, catalog) {
   requireValue(record?.schema === 1 && record.projectId === ctx.projectId && Array.isArray(record.steps), 'Invalid or foreign workflow');
+  if (catalog) for (const step of record.steps) {
+    const skill = resolveSkill(step.skill,catalog);
+    Object.assign(step,{skill:skill.id},selectSettings(skill,{...step,mode:step.mode ?? skill.mode}));
+  }
   return record;
 }
-function owned(ctx, record) {
-  valid(ctx, record);
+function owned(ctx, record, catalog) {
+  valid(ctx, record, catalog);
   requireValue(record.workspaceId === ctx.workspaceId && record.taskId === ctx.taskId, 'Resume and explicitly adopt this workflow before changing it');
   return record;
 }
-function records(ctx) {
+function records(ctx, catalog) {
   const root = path.join(ctx.projectDir, 'workspaces');
   noLinks(root);
   if (!fs.existsSync(root)) return [];
   return fs.readdirSync(root, { withFileTypes: true }).filter(e => e.isDirectory() && /^[a-f0-9]{64}$/.test(e.name))
-    .flatMap(e => filesIn(path.join(root, e.name, 'workflows'))).map(file => ({ file, record: valid(ctx, readJson(file)) }));
+    .flatMap(e => filesIn(path.join(root, e.name, 'workflows'))).map(file => ({ file, record: valid(ctx, readJson(file), catalog) }));
+}
+// Later verified outputs supersede historical hashes of the same path.
+function currentEvidence(steps) {
+  const files = new Map();
+  for (const step of steps) {
+    for (const input of step.inputs) if (!files.has(input.path)) files.set(input.path,input);
+    if (step.status === 'completed') for (const output of step.outputs) files.set(output.path,output);
+  }
+  return [...files.values()];
 }
 export function workflow(ctx, action, input, catalog) {
   if (action === 'start') {
@@ -34,16 +48,15 @@ export function workflow(ctx, action, input, catalog) {
       const name = typeof selection === 'string' ? selection : selection?.skill;
       const skill = catalog.skills.find(s => s.id === name);
       requireValue(skill, `Unknown skill: ${name}`);
-      const mode = selection?.mode || skill.defaultMode;
-      requireValue(Object.hasOwn(skill.modes,mode), `Unknown mode for ${name}: ${mode}`);
-      return { id: String(i + 1), skill: name, mode, status: 'pending', inputs: [], outputs: [], evidence: [] };
+      const settings = typeof selection === 'string' ? {} : selection;
+      return { id: String(i + 1), skill: name, ...selectSettings(skill,settings,true), status: 'pending', inputs: [], outputs: [], evidence: [] };
     });
     const record = { schema: 1, id: randomUUID(), projectId: ctx.projectId, workspaceId: ctx.workspaceId, workspace: ctx.workspace, taskId: ctx.taskId,
       goal: text(input.goal, 'goal'), environment: environment(ctx), route: input.route ?? null, status: 'running', createdAt: now(), updatedAt: now(), steps, next: input.next || steps[0].skill };
     atomicWrite(location(ctx, record.id), record);
     return record;
   }
-  if (action === 'list') return records(ctx).map(({ record }) => ({ id: record.id, goal: record.goal, status: record.status, next: record.next, workspace: record.workspace, updatedAt: record.updatedAt })).sort((a,b) => b.updatedAt.localeCompare(a.updatedAt));
+  if (action === 'list') return records(ctx,catalog).map(({ record }) => ({ id: record.id, goal: record.goal, status: record.status, next: record.next, workspace: record.workspace, updatedAt: record.updatedAt })).sort((a,b) => b.updatedAt.localeCompare(a.updatedAt));
   if (action === 'save') {
     const snapshot = { schema: 1, id: randomUUID(), kind: 'checkpoint', projectId: ctx.projectId, workspaceId: ctx.workspaceId, workspace: ctx.workspace, taskId: ctx.taskId,
       createdAt: now(), environment: environment(ctx), goal: text(input.goal, 'goal'), summary: text(input.summary, 'summary'), decisions: input.decisions || [], remaining: input.remaining || [], files: fingerprints(ctx, input.files || []) };
@@ -60,9 +73,9 @@ export function workflow(ctx, action, input, catalog) {
   }
   if (action === 'resume') {
     const id = identifier(input.id);
-    const record = records(ctx).find(x => x.record.id === id)?.record || workflow(ctx, 'checkpoints', {}, catalog).find(x => x.id === id);
+    const record = records(ctx,catalog).find(x => x.record.id === id)?.record || workflow(ctx, 'checkpoints', {}, catalog).find(x => x.id === id);
     requireValue(record && record.projectId === ctx.projectId, 'Saved context not found in this project');
-    const evidence = record.steps ? record.steps.flatMap(s => [...s.inputs, ...s.outputs]) : record.files;
+    const evidence = record.steps ? currentEvidence(record.steps) : record.files;
     const currentEnvironment = environment(ctx);
     const environmentChanges = Object.entries(record.environment || {}).filter(([key,value]) => currentEnvironment[key] !== value).map(([key,value]) => ({key,previous:value,current:currentEnvironment[key]}));
     return { ...record, drift: drift(ctx, evidence), environmentChanges, requiresAdoption: record.taskId !== ctx.taskId || record.workspaceId !== ctx.workspaceId,
@@ -82,11 +95,11 @@ export function workflow(ctx, action, input, catalog) {
     return snapshot;
   }
   if (action === 'adopt') {
-    const source = records(ctx).find(x => x.record.id === identifier(input.id));
+    const source = records(ctx,catalog).find(x => x.record.id === identifier(input.id));
     requireValue(source, 'Workflow not found');
     requireValue(source.record.workspaceId === ctx.workspaceId, 'Start a new workflow in this worktree using the restored summary');
     return changeJson(source.file, null, record => {
-      valid(ctx, record);
+      valid(ctx, record, catalog);
       requireValue(input.confirm === 'resume', 'Explicit resume choice required');
       record.taskId = ctx.taskId;
       for (const step of record.steps) if (step.status === 'running') step.status = 'interrupted';
@@ -96,14 +109,14 @@ export function workflow(ctx, action, input, catalog) {
   }
   if (action === 'begin' || action === 'step') {
     return changeJson(location(ctx, input.id), null, record => {
-      owned(ctx, record);
+      owned(ctx, record, catalog);
       const step = record.steps.find(s => s.id === String(input.step));
       requireValue(step, 'Unknown step');
       if (action === 'begin') {
         requireValue(!record.steps.some(s => s.status === 'running' && s.id !== step.id), 'Another step is still running');
         const previous = record.steps.slice(0, record.steps.indexOf(step));
         requireValue(previous.every(s => s.status === 'completed'), 'A preceding step is unresolved');
-        requireValue(previous.every(s => drift(ctx, [...s.inputs, ...s.outputs]).length === 0), 'Prior evidence is stale; recheck the affected step');
+        requireValue(drift(ctx,currentEvidence(previous)).length === 0, 'Prior evidence is stale; recheck the affected step');
         for (const affected of record.steps.slice(record.steps.indexOf(step))) {
           if (affected.status !== 'pending') {
             const { history, ...prior } = affected;

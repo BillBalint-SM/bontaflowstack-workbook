@@ -5,7 +5,7 @@ description: "Check a plan's architecture, correctness, data handling, tests, pe
 
 # BFS Plan Eng Review
 
-Read [HOST.md](../../HOST.md) for execution, state and authorization rules.
+Load [HOST.md](../../HOST.md) for execution, state and authorization rules unless its full matching content is already loaded in this chat. Follow its hash-based read protocol.
 Modes: `bfs-review`. Choose the mode from the actual request.
 
 1. Read the plan and trace the affected interfaces, data structures and real callers.

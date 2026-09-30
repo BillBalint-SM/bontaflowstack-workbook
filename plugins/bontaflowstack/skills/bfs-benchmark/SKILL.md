@@ -5,7 +5,7 @@ description: "Measure page performance, capture comparable baselines, and report
 
 # BFS Benchmark
 
-Read [HOST.md](../../HOST.md) for execution, state and authorization rules.
+Load [HOST.md](../../HOST.md) for execution, state and authorization rules unless its full matching content is already loaded in this chat. Follow its hash-based read protocol.
 Modes: `quick`, `baseline`, `compare`, `trend`. Choose the mode from the actual request.
 
 1. Select the pages and measurement mode. Quick uses one labelled sample; a baseline or comparison uses three samples under equivalent conditions.

@@ -5,7 +5,7 @@ description: "Review a diff, patch or pull request for correctness, regressions 
 
 # BFS Review
 
-Read [HOST.md](../../HOST.md) for execution, state and authorization rules.
+Load [HOST.md](../../HOST.md) for execution, state and authorization rules unless its full matching content is already loaded in this chat. Follow its hash-based read protocol.
 Modes: `inspect`, `fix`. Choose the mode from the actual request.
 
 1. Resolve the actual diff or file pair and its verified base. Read local changes before review so unrelated work remains identifiable.

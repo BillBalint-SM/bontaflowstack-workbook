@@ -50,6 +50,9 @@ export function guard(ctx, action, input = {}) {
 }
 export function classify(command, cwd, root, shell = '') {
   cwd = canonical(cwd); root = canonical(root);
+  // ponytail: only exact read-only status commands skip the measured parser startup;
+  // keep all other syntax in the native parser, extend only for measured frequent reads.
+  if (/^git status(?: --short| --porcelain)?\s*$/i.test(command)) return null;
   const result = spawnSync(process.platform === 'win32' ? 'powershell.exe' : 'pwsh', ['-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass','-File',parser],
     { input: command, encoding: 'utf8', windowsHide: true, timeout: 8000, maxBuffer: 1024 * 1024 });
   if (result.error || result.status !== 0) return { decision: 'ask', reason: 'Command could not be inspected while guard warnings are enabled' };
@@ -95,7 +98,9 @@ export function preTool(ctx, event) {
   const args = event.tool_input;
   requireValue(args && typeof args === 'object' && !Array.isArray(args), 'Malformed native tool input');
   const observed = readJson(`${file}.observed.json`);
-  if (!observed || Date.now() - Date.parse(observed.at) > 30000) changeJson(`${file}.observed.json`, null, () => ({ taskId: ctx.taskId, workspaceId: ctx.workspaceId, at: now(), package: '0.3.0' }));
+  if (!observed || Date.now() - Date.parse(observed.at) > 30000) changeJson(`${file}.observed.json`, null, current =>
+    current?.taskId === ctx.taskId && current.workspaceId === ctx.workspaceId && Date.now() - Date.parse(current.at) <= 30000
+      ? current : { taskId: ctx.taskId, workspaceId: ctx.workspaceId, at: now(), package: '0.3.0' });
   const hook = { hookEventName: 'PreToolUse', additionalContext: marker(ctx) };
   const response = (decision, reason) => ({ hookSpecificOutput: { ...hook, permissionDecision: decision, permissionDecisionReason: reason } });
   const tool = event.tool_name;

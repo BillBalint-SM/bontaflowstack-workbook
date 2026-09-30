@@ -1,6 +1,6 @@
 # BontaFlowStack execution contract
 
-BontaFlowStack has 29 skills. The catalog is the authority for names, aliases,
+The catalog is the authority for skill names, aliases,
 modes, capabilities and handoffs. Answer in the user's language. Use the current
 project and this installed plugin; do not borrow source or tools from another
 plugin installation.
@@ -21,6 +21,11 @@ The equivalent direct interface is:
 Use `--input -` for UTF-8 JSON on stdin. Do not interpolate user/page data into
 shell code. Inspect JSON, stderr and exit status. `read` returns instructions;
 the agent executes them in this same task.
+
+Load HOST once per chat and plugin content hash. `read` returns `hostSha256`;
+subsequent requests may send `knownHostSha256` only after this chat has received
+the full matching HOST. An unchanged response omits `host`; a mismatch returns it.
+A new chat loads HOST again. Saved workflow metadata is not loaded instructions.
 
 Read [commands](references/commands.md) when preparing a concrete core request.
 For browser-dependent work also read [browser](references/browser.md).
@@ -60,6 +65,13 @@ For a requested sequence, use one workflow record across the selected steps:
    actual output file paths, decisions and next action. This saves automatically.
 5. Only a verified completed step permits its dependent step to begin. Failed,
    blocked and waiting states retain the work and its next action.
+
+QA selections retain independent `mode` and `coverage` values. The default is
+inspect/quick. Regression needs a named `baseline`; diff needs `diffBase`.
+Legacy coverage modes read as inspect plus that coverage without rewriting reads.
+For current file validity, a later completed output supersedes earlier hashes of
+the same path; historical evidence is retained. Unverified outputs do not replace
+verified evidence. Stable inputs must remain unchanged during their step.
 
 Evidence descriptions cite the actual test output, observed page, artifact or
 reasoning used to verify the result. Do not manufacture them to satisfy a schema.

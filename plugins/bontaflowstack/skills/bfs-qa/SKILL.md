@@ -5,10 +5,11 @@ description: "Test actual web interactions and responsive behavior, report repro
 
 # BFS QA
 
-Read [HOST.md](../../HOST.md) for execution, state and authorization rules.
-Modes: `inspect`, `fix`, `quick`, `full`, `regression`, `diff`. Choose the mode from the actual request.
+Load [HOST.md](../../HOST.md) for execution, state and authorization rules unless its full matching content is already loaded in this chat. Follow its hash-based read protocol.
+Modes: `inspect`, `fix`. Coverage: `quick`, `full`, `regression`, `diff`.
+Default: `inspect` with `quick` coverage. Save both choices in workflow selections.
 
-1. Select inspect or fix according to the request; inspect is the default. Choose quick, full, diff-aware or named-baseline regression coverage within that mode.
+1. Select inspect or fix and the independent coverage from the request. Quick covers the named main journey and its immediate failures; full covers relevant normal, empty, error and success states, responsive layout and keyboard use within the named area. Regression requires the actual named baseline; diff requires the actual comparison base. Ask for a missing base before that comparison. Legacy coverage-as-mode requests mean inspect with that coverage.
 2. Establish the URL, user journey, test data and allowed interactions. Use the shared browser reference for login and fresh element snapshots.
 3. Execute the scoped flow and relevant normal, empty, error and success states. Inspect page content, console, links, responsive layout, keyboard operation and screenshots.
 4. Record actual failures using the shared findings reference: reproduction, expected/observed behavior, URL, viewport, evidence and consequence. Separate environment failures from product defects.

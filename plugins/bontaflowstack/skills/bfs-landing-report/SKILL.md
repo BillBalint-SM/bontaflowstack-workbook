@@ -5,7 +5,7 @@ description: "Read a repository's integration queue, version claims and check fr
 
 # BFS Landing Report
 
-Read [HOST.md](../../HOST.md) for execution, state and authorization rules.
+Load [HOST.md](../../HOST.md) for execution, state and authorization rules unless its full matching content is already loaded in this chat. Follow its hash-based read protocol.
 Modes: `report`. Choose the mode from the actual request.
 
 1. Select the repository, base, version source and live remote or supplied snapshot. Read local status through delivery status when relevant.

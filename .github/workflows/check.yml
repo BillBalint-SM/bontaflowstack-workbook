@@ -12,4 +12,5 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - run: node scripts/check.mjs
+      - run: ./scripts/build-package.ps1 -Release
+      - run: ./scripts/test-package.ps1 -Archive (Get-ChildItem artifacts/*-source.zip).FullName

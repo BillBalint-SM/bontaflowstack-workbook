@@ -8,21 +8,9 @@ import { memory, preferences } from './memory.mjs';
 import { guard, preTool } from './guard.mjs';
 import { engines } from './engines.mjs';
 import { delivery } from './delivery.mjs';
+import { pluginRoot, loadCatalog, resolveSkill, selection } from './catalog.mjs';
 
-export const pluginRoot = fileURLToPath(new URL('../',import.meta.url));
-export function loadCatalog() {
-  const catalog = readJson(path.join(pluginRoot,'catalog.json'));
-  requireValue(catalog?.schema === 1 && Array.isArray(catalog.skills), 'Invalid skill catalog');
-  return catalog;
-}
-export function resolveSkill(name, catalog = loadCatalog()) {
-  name = String(name || '').replace(/^[$/]/,'').replace(/^bontaflowstack:/,'');
-  const alias = catalog.aliases[name];
-  const id = alias?.skill || name;
-  const skill = catalog.skills.find(row => row.id === id);
-  if (!skill) throw new Error(catalog.removed[name] ? `${name} was removed: ${catalog.removed[name]}` : `Unknown skill: ${name}`);
-  return { ...skill, mode:alias?.mode || skill.defaultMode, ...(alias ? { previousName:name } : {}) };
-}
+export { pluginRoot, loadCatalog, resolveSkill } from './catalog.mjs';
 function inputArgs(argv) {
   const args = [...argv];
   let input = {};
@@ -58,13 +46,17 @@ export function run(argv) {
   if (command === 'read') {
     const skill = resolveSkill(action || input.skill,catalog);
     const source = fs.readFileSync(path.join(pluginRoot,'skills',skill.id,'SKILL.md'),'utf8');
-    return { skill:skill.id, mode:skill.mode, host:fs.readFileSync(path.join(pluginRoot,'HOST.md'),'utf8'), instructions:source, contentSha256:digest(source) };
+    const host = fs.readFileSync(path.join(pluginRoot,'HOST.md'),'utf8'), hostSha256 = digest(host);
+    requireValue(input.knownHostSha256 === undefined || /^[a-f0-9]{64}$/.test(input.knownHostSha256), 'Invalid known HOST SHA-256');
+    return { skill:skill.id, ...selection(skill,{mode:skill.mode,coverage:input.mode === undefined ? skill.coverage : undefined,...input}), hostSha256,
+      ...(input.knownHostSha256 === hostSha256 ? {} : {host}), instructions:source, contentSha256:digest(source) };
   }
   const ctx = context();
   if (command === 'doctor' || command === 'check') {
     const engine = engines(ctx,'status');
     const skill = action ? resolveSkill(action,catalog) : null;
-    if (skill && input.mode) { requireValue(Object.hasOwn(skill.modes,input.mode), 'Unknown skill mode'); skill.mode = input.mode; }
+    if (skill) Object.assign(skill,selection(skill,{mode:skill.mode,coverage:input.mode === undefined ? skill.coverage : undefined,...input}));
+    else requireValue(input.coverage === undefined && input.mode === undefined, 'Select a skill for mode or coverage');
     const requirements = skill?.modes[skill.mode] || [];
     const missing = requirements.filter(name => !engine.capabilities[name]?.ready);
     let hooks = { observed: false, reason: 'Review and trust the plugin hooks with /hooks, then use a new Codex chat.' };
@@ -74,6 +66,7 @@ export function run(argv) {
     if (skill?.id === 'bfs-guard' && !hooks.observed) missing.push('native-guard-hook');
     const version = Number(process.versions.node.split('.')[0]);
     return { core:{ ready:version >= 24, node:process.version }, skill:skill?.id || null, mode:skill?.mode || null,
+      ...(skill?.coverage ? {coverage:skill.coverage, ...(skill.baseline ? {baseline:skill.baseline} : {}), ...(skill.diffBase ? {diffBase:skill.diffBase} : {})} : {}),
       ready:version >= 24 && !missing.length, missing, hooks, engines:engine, projectId:ctx.projectId, workspaceId:ctx.workspaceId, git:ctx.git, skillCount:catalog.skills.length };
   }
   if (command === 'workflow') return workflow(ctx,action,input,catalog);

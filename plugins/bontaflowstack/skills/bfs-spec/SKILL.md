@@ -5,7 +5,7 @@ description: "Turn an agreed request into a specification with behavior, scope, 
 
 # BFS Spec
 
-Read [HOST.md](../../HOST.md) for execution, state and authorization rules.
+Load [HOST.md](../../HOST.md) for execution, state and authorization rules unless its full matching content is already loaded in this chat. Follow its hash-based read protocol.
 Modes: `draft`, `revise`. Choose the mode from the actual request.
 
 1. Read the request, brief, relevant source and existing interfaces. Identify the intended user outcome and the concrete output being specified.

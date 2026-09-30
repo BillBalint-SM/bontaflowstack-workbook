@@ -5,7 +5,7 @@ description: "Audit a codebase or change for demonstrated security risks, trust-
 
 # BFS CSO Audit
 
-Read [HOST.md](../../HOST.md) for execution, state and authorization rules.
+Load [HOST.md](../../HOST.md) for execution, state and authorization rules unless its full matching content is already loaded in this chat. Follow its hash-based read protocol.
 Modes: `audit`. Choose the mode from the actual request.
 
 1. Establish the authorized codebase, change and audit depth. Identify assets, external inputs, privileges, data stores and sensitive operations.

@@ -5,8 +5,9 @@ design, implementation, testing, documentation and delivery.
 
 ## Terms
 
-- **Skill:** one of 29 public task entry points, defined by the catalog and its SKILL.md.
+- **Skill:** a public task entry point, defined by the catalog and its SKILL.md.
 - **Mode:** an explicitly selected behavior within one skill, such as QA inspection or repair.
+- **QA coverage:** the independent quick, full, regression or diff extent of a QA operation.
 - **Workflow:** an ordered sequence of skills performed in the current chat.
 - **Step:** one skill operation with input fingerprints, evidence, outputs and next action.
 - **Checkpoint:** automatically saved step state or an additional manual context snapshot.
@@ -19,7 +20,7 @@ design, implementation, testing, documentation and delivery.
 ## Decisions
 
 The main package contains a Node.js standard-library core, a PowerShell launcher,
-29 independently usable skills and two native hooks: PreToolUse and Stop.
+independently usable skills and two native hooks: PreToolUse and Stop.
 Shared references and catalog entries define handoffs without dependencies on
 another skill's internal directory. Optional engines are installed separately
 from a checksum-pinned release. Legacy user data remains untouched; import is explicit.

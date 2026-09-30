@@ -1,6 +1,6 @@
 # BontaFlowStack
 
-**29 connected skills for turning business ideas into designed, tested and delivered products.**
+**Connected skills for turning business ideas into designed, tested and delivered products.**
 
 BontaFlowStack works inside **Codex Desktop on Windows x64**. Describe your goal
 in your own language. The plugin helps choose the next step, performs the requested
@@ -148,9 +148,9 @@ continuing. Remembered decisions do not grant permission for new external action
 Click an image to enlarge it. [Interactive diagrams and editable sources](docs/diagrams/README.md)
 are included for local use.
 
-## The 29 skills
+## Skills
 
-All 29 installed skill names begin with `bfs-`. The Codex picker uses the
+All installed skill names begin with `bfs-`. The Codex picker uses the
 matching `BFS` title: `$bfs-router` is **BFS Router**, `$bfs-benchmark` is
 **BFS Benchmark**, and `$bfs-save-context` is **BFS Save Context**. Use these
 names for direct calls. Previous names remain catalog aliases through
@@ -180,11 +180,13 @@ names for direct calls. Previous names remain catalog aliases through
   Releasing the boundary keeps command warnings active.
 
 The full mode and handoff definitions live in the [catalog](plugins/bontaflowstack/catalog.json).
-Older names resolve through the driver; only the final 29 entries are installed.
+Older names resolve through the driver; only the catalog entries are installed.
 Saved reusable browser automation, standalone developer-experience audits,
 deployment provisioning and retrospective reports are outside this version.
 
 ## Local data and optional tools
+
+[Inspect, back up and remove local data](docs/bontaflowstack/LOCAL-DATA.md).
 
 Core data stays in `%LOCALAPPDATA%\BontaFlowStack\state\v2`. Project memory is
 shared across linked Git worktrees; workflow, task, browser and guard state are
@@ -218,12 +220,20 @@ Chromium also works with deeply nested Windows project paths.
 node scripts/check.mjs
 node tests/engine.integration.mjs C:\path\to\bontaflowstack-engines
 powershell -NoProfile -File scripts/build-package.ps1
+powershell -NoProfile -File scripts/build-package.ps1 -Release
+powershell -NoProfile -File scripts/test-package.ps1 -Archive C:\path\to\BontaFlowStack-version-source.zip
 ```
 
-The first command checks the 29-skill package and core behavior. The second uses
+The first command checks the catalog-defined package and core behavior. The second uses
 real Chromium for navigation, interactions, extraction, performance, screenshots,
 HTML rendering and design comparison. The package builder writes a ZIP, SHA-256
 and a per-file manifest; it records whether the source checkout was clean.
+Release mode requires a clean checkout. The archive check verifies the inventory,
+hashes and entrypoints from a fresh extraction with isolated state and no engines.
+The Windows CI runs both release construction and archive verification.
+
+[Manual agent and setup acceptance](docs/bontaflowstack/MANUAL-ACCEPTANCE.md) ·
+`node scripts/measure-runtime.mjs` measures local hook latency and HOST response reuse.
 
 [Core command reference](plugins/bontaflowstack/references/commands.md) ·
 [Execution contract](plugins/bontaflowstack/HOST.md)

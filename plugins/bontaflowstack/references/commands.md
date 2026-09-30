@@ -8,8 +8,8 @@ on `node <plugin>/core/cli.mjs`. The PowerShell launcher takes `-Command`,
 
 - `catalog list`: current skills, modes, required capabilities and handoffs.
 - `catalog resolve <name>`: canonical skill and alias mode.
-- `read <name>`: HOST plus that skill's instructions, without executing them.
-- `doctor [skill]`: core and selected default mode readiness; JSON `mode` selects another mode.
+- `read <name>`: instructions and `hostSha256`, with full HOST unless JSON `knownHostSha256` matches. Supply that hash only after loading full HOST in this chat. New chats omit it.
+- `doctor [skill]`: core and selected readiness; JSON `mode` and QA `coverage` select the behavior. QA defaults to inspect/quick; all current coverage choices require browser.
 - `engine status`: per-capability readiness without starting an engine.
 
 ## Workflow
@@ -20,8 +20,13 @@ on `node <plugin>/core/cli.mjs`. The PowerShell launcher takes `-Command`,
 
 Send this to `workflow start`. Alternatively provide `route`: `idea`, `website`,
 `implementation`, `repair` or `delivery`. Routes are ordered suggestions selected for the request.
-An explicit selection may also be `{"skill":"bfs-qa","mode":"inspect"}` instead
-of a string. Each saved step retains its selected mode.
+An explicit selection may also be `{"skill":"bfs-qa","mode":"fix","coverage":"full"}`
+instead of a string. QA retains both choices. Modes are inspect/fix; coverage is
+quick/full/regression/diff. Regression requires a named `baseline` string; diff
+requires a concrete `diffBase` string. Legacy quick/full/regression/diff modes
+normalize to inspect with that coverage. Conflicting values are rejected.
+Old records without coverage read with quick; reading does not rewrite them.
+Coverage and comparison bases are QA-only fields.
 
 The `implementation` route selects `bfs-implement`, `bfs-health`, then `bfs-review`.
 Its implementation skill requires a concrete user-accepted basis before editing.
@@ -48,6 +53,9 @@ takes `{"id":"..."}` and reports drift. `workflow adopt` additionally requires
 `"confirm":"resume"` to continue from a different task in the same workspace.
 Reopening a step preserves its prior result as history and resets dependent
 steps to pending. Resume also reports changes to Git HEAD/branch and Node version.
+Begin/resume check the current hash per path: a later completed output replaces
+earlier historical hashes, while failed/blocked/waiting/interrupted outputs do
+not certify a new version. Stable inputs still cannot change during completion.
 
 `workflow save` creates an immutable manual checkpoint:
 

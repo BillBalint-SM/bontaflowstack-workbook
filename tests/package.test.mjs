@@ -3,11 +3,18 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { loadCatalog } from '../plugins/bontaflowstack/core/cli.mjs';
-import { checkPublicSkills, skillPolicy } from '../scripts/check.mjs';
+import { checkPublicSkills, skillPolicy, checkCatalog } from '../scripts/check.mjs';
 
 const catalog=loadCatalog();
 const readme=fs.readFileSync(fileURLToPath(new URL('../README.md',import.meta.url)),'utf8');
 const policies=Object.fromEntries(catalog.skills.map(skill=>[skill.id,skill.id!=='bfs-guard']));
+
+test('catalog rejects duplicate names, broken references and invalid QA settings',()=>{
+  assert.doesNotThrow(()=>checkCatalog(catalog));
+  for(const mutate of [c=>c.skills.push(c.skills[0]),c=>c.aliases.bad={skill:'missing'},c=>c.aliases.bad={skill:'bfs-qa',mode:'invalid'},c=>c.workflows.bad=['missing'],c=>c.skills.find(s=>s.id==='bfs-qa').defaultCoverage='invalid']) {
+    const changed=structuredClone(catalog);mutate(changed);assert.throws(()=>checkCatalog(changed));
+  }
+});
 
 test('public skill list and invocation routes agree',()=>{
   assert.doesNotThrow(()=>checkPublicSkills(catalog,readme,policies));

@@ -5,7 +5,7 @@ description: "Inspect or change optional question preferences and declared profi
 
 # BFS Plan Tune
 
-Read [HOST.md](../../HOST.md) for execution, state and authorization rules.
+Load [HOST.md](../../HOST.md) for execution, state and authorization rules unless its full matching content is already loaded in this chat. Follow its hash-based read protocol.
 Modes: `inspect`, `configure`, `proposals`. Choose the mode from the actual request.
 
 1. Identify the requested operation and scope: user, project or current task. Use preferences inspect/effective for reads; report missing data as empty and malformed data as an error.

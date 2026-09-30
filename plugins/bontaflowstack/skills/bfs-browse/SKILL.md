@@ -5,7 +5,7 @@ description: "Read and interact with a scoped web page, open a visible browser f
 
 # BFS Browse
 
-Read [HOST.md](../../HOST.md) for execution, state and authorization rules.
+Load [HOST.md](../../HOST.md) for execution, state and authorization rules unless its full matching content is already loaded in this chat. Follow its hash-based read protocol.
 Modes: `bfs-browse`, `open`, `login`. Choose the mode from the actual request.
 
 1. Establish the URL or current session and the requested read, interaction or visible-open operation. Run doctor bfs-browse and inspect engine browser --help when command details are needed.

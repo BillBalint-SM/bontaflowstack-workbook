@@ -5,7 +5,7 @@ description: "Prepare a verified change for delivery, review and documentation, 
 
 # BFS Finisher
 
-Read [HOST.md](../../HOST.md) for execution, state and authorization rules.
+Load [HOST.md](../../HOST.md) for execution, state and authorization rules unless its full matching content is already loaded in this chat. Follow its hash-based read protocol.
 Modes: `prepare`, `publish`. Choose the mode from the actual request.
 
 1. Identify the repository, branch, actual base and intended delivery result. Inspect current edits and keep ownership of unrelated changes explicit.

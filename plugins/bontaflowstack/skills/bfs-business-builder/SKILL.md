@@ -5,7 +5,7 @@ description: "Clarify an idea, offer, customer problem or product direction and 
 
 # BFS Business Builder
 
-Read [HOST.md](../../HOST.md) for execution, state and authorization rules.
+Load [HOST.md](../../HOST.md) for execution, state and authorization rules unless its full matching content is already loaded in this chat. Follow its hash-based read protocol.
 Modes: `explore`, `diagnose`. Choose the mode from the actual request.
 
 1. Establish the customer, their problem, the proposed offer, available evidence and the decision the user needs to make. Read supplied material and relevant project context.

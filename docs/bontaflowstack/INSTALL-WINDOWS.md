@@ -87,7 +87,7 @@ Ask in a new chat:
 $bfs-router Check the installed catalog and capabilities, then guide me to the next step.
 ```
 
-There must be exactly 29 skill entries. Core readiness and engine readiness are
+The skill entries must match the catalog. Core readiness and engine readiness are
 reported separately. `doctor bfs-browse` must report the browser capability ready
 before a browser-dependent task starts. Images use the Codex image generation tool
 available in the chat; no separate API key is needed. Optional impeccable and
@@ -111,6 +111,9 @@ does not remove old data. Legacy notes can be previewed and imported with
 historical permissions are not imported.
 
 ## Troubleshooting
+
+For retained project state, backups, browser profiles and uninstall cleanup, see
+[Local data](LOCAL-DATA.md). Uninstalling the plugin retains that data.
 
 | Message or symptom | Action |
 |---|---|

@@ -5,7 +5,11 @@ description: "Route a business, product, design, development or delivery task to
 
 # BFS Router
 
-Read [HOST.md](../../HOST.md) for execution, state and authorization rules.
+At first use in this chat, run the local core's `read bfs-router` to load
+[HOST.md](../../HOST.md) and keep its returned `hostSha256`. If this chat already
+loaded the matching HOST through `read`, reuse that hash. Every later skill
+`read` request sends `knownHostSha256`; a response with full HOST replaces the
+loaded contract and hash. A new chat starts with a full read.
 Modes: `route`, `guide`, `setup`. Choose the mode from the actual request.
 
 For setup, run the installed plugin's `scripts/setup.ps1`. Core setup checks
@@ -41,12 +45,16 @@ also adapt the project instructions after the installation check:
 2. Read the current catalog with `catalog list`. Match the descriptions and modes to the request. Resolve an old name with `catalog resolve <name>`; preserve its returned mode.
 3. For advice, explain the relevant route and finish without creating a workflow. For a concrete one-step task, load `read <skill>` and perform it in this task.
 4. For several requested steps, choose an appropriate catalog route or an explicit ordered skill list. Remove irrelevant phases before starting. Start one workflow using the common protocol and give each step its actual input and output condition.
-5. Load each selected skill, carry forward the user's scope and settled decisions, and execute it. Check its result before recording the step. A blocked, failed or waiting step suspends its dependent steps.
+5. Load each selected skill with `read <skill>` and JSON `knownHostSha256` from this chat's full HOST read. Carry forward the user's scope and settled decisions, and execute it. Check its result before recording the step. A blocked, failed or waiting step suspends its dependent steps.
 6. Report the achieved result, saved workflow ID and next action. Continue the requested sequence while its prerequisites are satisfied.
 
 Use the narrowest matching skill: page data goes to bfs-scrape, interaction testing to bfs-qa, implementation of an accepted plan/spec/design to bfs-implement, inspection of existing code changes to bfs-review, and an unexplained defect to bfs-bug-issue-investigate. The browser is a shared capability, not the default destination for every web task.
 For implementation, load bfs-implement and apply its accepted-basis rules before editing. A successful plan review is not user acceptance. The idea route ends with a reviewed plan; continue into implementation only within the user's requested scope and after acceptance of the concrete basis.
-A reusable browser-script request is unsupported in this version; explain the available one-time bfs-browse/bfs-scrape path. Requests beyond the catalog may be answered directly without inventing a skill.
+A concrete direct implementation request accepts its identified basis; carry that
+request into bfs-implement and start without a duplicate permission question.
+For a planning request, return the requested plan. A material revision requires
+the actual user decision and leaves affected workflow work waiting.
+For a reusable browser-script request, apply the [shared browser removed-feature policy](../../references/browser.md) and report the unsupported result. Other requests beyond the catalog may be answered directly without inventing a skill.
 Selecting a skill or route does not authorize publication, deployment, spending
 or destructive changes; check the user's actual request before those actions.
 

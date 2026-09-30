@@ -3,7 +3,7 @@ import path from 'node:path';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { loadCatalog, pluginRoot } from '../plugins/bontaflowstack/core/cli.mjs';
+import { loadCatalog, pluginRoot, selection } from '../plugins/bontaflowstack/core/catalog.mjs';
 const root=fileURLToPath(new URL('../',import.meta.url));
 export function skillPolicy(id, yaml) {
   for(const field of ['interface:','  display_name:','  short_description:','  default_prompt:','policy:'])
@@ -16,8 +16,8 @@ export function skillPolicy(id, yaml) {
 
 export function checkPublicSkills(catalog, readme, policies) {
   const names=catalog.skills.map(skill=>skill.id);
-  const section=readme.replace(/\r\n/g,'\n').split('## The 29 skills\n')[1]?.split(/\n#{2,3} /)[0];
-  assert.ok(section,'README: missing 29 skills section');
+  const section=readme.replace(/\r\n/g,'\n').split('## Skills\n')[1]?.split(/\n#{2,3} /)[0];
+  assert.ok(section,'README: missing Skills section');
   const table=section.split('\n').filter(line=>line.startsWith('|'));
   const listed=table.slice(2).flatMap(line=>[...line.matchAll(/`([a-z][a-z0-9-]*)`/g)].map(match=>match[1]));
   assert.deepEqual(listed.sort(),[...names].sort(),'README skill table differs from catalog');
@@ -29,6 +29,27 @@ export function checkPublicSkills(catalog, readme, policies) {
     assert.equal(policies[name],true,`route to non-implicit ${name}`);
 }
 
+export function checkCatalog(catalog) {
+  const names=catalog.skills.map(s=>s.id);
+  assert.ok(names.length>0,'Catalog is empty');
+  assert.equal(new Set(names).size,names.length,'Duplicate skill ID');
+  for(const skill of catalog.skills) {
+    assert.ok(typeof skill.description==='string'&&skill.description.trim(),`${skill.id}: missing description`);
+    selection(skill);
+    for(const capabilities of Object.values(skill.modes)) assert.ok(Array.isArray(capabilities)&&capabilities.every(name=>typeof name==='string'&&name),`${skill.id}: invalid capabilities`);
+    for(const next of skill.handoffs) assert.ok(names.includes(next),`${skill.id}: unknown handoff ${next}`);
+    if(skill.id==='bfs-qa') {
+      assert.deepEqual(Object.keys(skill.modes).sort(),['fix','inspect']);
+      assert.deepEqual(skill.coverages,['quick','full','regression','diff']);
+      assert.ok(skill.coverages.includes(skill.defaultCoverage),'Invalid default QA coverage');
+    } else assert.equal(skill.coverages,undefined,`${skill.id}: QA coverage on another skill`);
+  }
+  for(const alias of Object.values(catalog.aliases)) {
+    const skill=catalog.skills.find(s=>s.id===alias.skill);assert.ok(skill,'Unknown alias target');selection(skill,alias);
+  }
+  for(const route of Object.values(catalog.workflows)) for(const name of route) assert.ok(names.includes(name),`Unknown route skill ${name}`);
+}
+
 function checkPackage() {
   const catalog=loadCatalog();
   const manifest=JSON.parse(fs.readFileSync(path.join(pluginRoot,'.codex-plugin/plugin.json'),'utf8'));
@@ -36,9 +57,8 @@ function checkPackage() {
   assert.equal(manifest.interface.displayName,'BontaFlowStack');
   const marketplace=JSON.parse(fs.readFileSync(path.join(root,'.agents/plugins/marketplace.json'),'utf8'));
   assert.equal(marketplace.interface.displayName,'BontaFlowStack');
-  assert.equal(catalog.skills.length,29);
+  checkCatalog(catalog);
   const names=catalog.skills.map(s=>s.id);
-  assert.equal(new Set(names).size,29);
   assert.deepEqual(fs.readdirSync(path.join(pluginRoot,'skills')).sort(),[...names].sort());
   const policies={};
   for(const skill of catalog.skills) {
@@ -51,6 +71,7 @@ function checkPackage() {
     const folder=path.join(pluginRoot,'skills',skill.id);
     const source=fs.readFileSync(path.join(folder,'SKILL.md'),'utf8');
     assert.ok(source.startsWith(`---\nname: ${skill.id}\n`));
+    assert.equal(JSON.parse(source.match(/^description: (.+)$/m)?.[1]||'null'),skill.description,`${skill.id}: description differs from catalog`);
     assert.ok(source.includes(`\n# ${skill.title}\n`),`${skill.id}: skill heading differs from picker title`);
     for(const match of source.matchAll(/\]\(([^)]+)\)/g)) {
       if(!/^https?:/.test(match[1]))assert.ok(fs.existsSync(path.resolve(folder,match[1])),`${skill.id}: broken ${match[1]}`);
@@ -66,10 +87,10 @@ function checkPackage() {
   const hooks=JSON.parse(fs.readFileSync(path.join(pluginRoot,'hooks/hooks.json'),'utf8'));
   assert.deepEqual(Object.keys(hooks.hooks).sort(),['PreToolUse','Stop']);
   assert.equal(fs.readFileSync(path.join(root,'LICENSE'),'utf8'),fs.readFileSync(path.join(pluginRoot,'LICENSE'),'utf8'));
-  const result=spawnSync(process.execPath,['--test',path.join(root,'tests/core.test.mjs'),path.join(root,'tests/package.test.mjs')],{stdio:'inherit',windowsHide:true});
+  const result=spawnSync(process.execPath,['--test',...['core','package','reliability'].map(name=>path.join(root,`tests/${name}.test.mjs`))],{stdio:'inherit',windowsHide:true});
   if(result.error)throw result.error;
   if(result.status!==0)process.exit(result.status||1);
-  console.log(`Checked BontaFlowStack ${manifest.version}: 29 skills, README, policies, handoffs, hooks, license and core tests.`);
+  console.log(`Checked BontaFlowStack ${manifest.version}: ${names.length} skills, README, policies, handoffs, hooks, license and core tests.`);
 }
 
 if(process.argv[1] && path.resolve(process.argv[1])===fileURLToPath(import.meta.url))checkPackage();

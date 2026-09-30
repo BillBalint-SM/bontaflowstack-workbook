@@ -5,7 +5,7 @@ description: "Review a concrete plan through the relevant business, design, deve
 
 # BFS Autoplan
 
-Read [HOST.md](../../HOST.md) for execution, state and authorization rules.
+Load [HOST.md](../../HOST.md) for execution, state and authorization rules unless its full matching content is already loaded in this chat. Follow its hash-based read protocol.
 Modes: `bfs-review`. Choose the mode from the actual request.
 
 1. Obtain a usable plan and the user's intended review scope. Reuse an existing brief or specification; develop missing inputs only within the requested task.

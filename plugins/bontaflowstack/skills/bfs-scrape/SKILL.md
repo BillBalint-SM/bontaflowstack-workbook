@@ -5,7 +5,7 @@ description: "Extract tables, products, listings or other specified fields from 
 
 # BFS Scrape
 
-Read [HOST.md](../../HOST.md) for execution, state and authorization rules.
+Load [HOST.md](../../HOST.md) for execution, state and authorization rules unless its full matching content is already loaded in this chat. Follow its hash-based read protocol.
 Modes: `extract`, `answer`. Choose the mode from the actual request.
 
 1. Establish the target page and required fields or question. This workflow covers one page per invocation; clarify broader crawling scope separately.

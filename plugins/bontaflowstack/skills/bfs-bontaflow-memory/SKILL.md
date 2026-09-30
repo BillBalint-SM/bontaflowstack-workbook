@@ -5,7 +5,7 @@ description: "Read and maintain project decisions and learnings, search or expor
 
 # BFS BontaFlow Memory
 
-Read [HOST.md](../../HOST.md) for execution, state and authorization rules.
+Load [HOST.md](../../HOST.md) for execution, state and authorization rules unless its full matching content is already loaded in this chat. Follow its hash-based read protocol.
 Modes: `read`, `write`, `prune`, `export`, `import`. Choose the mode from the actual request.
 
 1. Select the actual project and requested read, write, prune, export or import operation. The runtime identifies the project; a note cannot choose another project's store.
