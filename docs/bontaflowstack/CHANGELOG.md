@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.1 — 2026-09-30
+
+- Fixed the successful ZIP smoke check's process exit code. The expected missing-browser check no longer leaves exit code 1 for the Windows CI shell wrapper.
+- Supersedes 0.4.0 without changing its published tag or assets.
+
 ## 0.4.0 — 2026-09-30
 
 ### Added

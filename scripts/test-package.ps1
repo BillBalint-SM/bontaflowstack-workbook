@@ -54,3 +54,4 @@ try {
     } finally { Pop-Location }
 } finally { $env:BFS_STATE_HOME = $oldState; $env:CODEX_THREAD_ID = $oldTask }
 @{status='completed';archive=$Archive;version=$package.version;dirty=$package.dirty;files=$listed.Count;extracted=$source;scope='ZIP inventory, hashes, versions and extracted entrypoints; no native-hook trust or optional-engine claim'} | ConvertTo-Json -Compress
+exit 0
