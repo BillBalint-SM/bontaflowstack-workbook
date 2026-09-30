@@ -1,6 +1,6 @@
 {
   "name": "bontaflowstack",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Business, product, design and development workflows for Codex on Windows.",
   "author": {
     "name": "Bálint Bilisics (BontaFlow)"
@@ -9,7 +9,7 @@
   "interface": {
     "displayName": "BontaFlowStack",
     "shortDescription": "From business ideas to tested product delivery.",
-    "longDescription": "29 connected skills for business briefs, product planning, brand and UI design, development, testing, documentation and delivery. Local workflow checkpoints support continuation across chats.",
+    "longDescription": "Connected skills for business briefs, product planning, brand and UI design, development, testing, documentation and delivery. Local workflow checkpoints support continuation across chats.",
     "developerName": "Bálint Bilisics (BontaFlow)",
     "category": "Productivity",
     "capabilities": [],

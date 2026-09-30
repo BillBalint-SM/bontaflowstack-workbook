@@ -235,6 +235,7 @@ The Windows CI runs both release construction and archive verification.
 [Manual agent and setup acceptance](docs/bontaflowstack/MANUAL-ACCEPTANCE.md) ·
 `node scripts/measure-runtime.mjs` measures local hook latency and HOST response reuse.
 
+[Changelog](docs/bontaflowstack/CHANGELOG.md) ·
 [Core command reference](plugins/bontaflowstack/references/commands.md) ·
 [Execution contract](plugins/bontaflowstack/HOST.md)
 
