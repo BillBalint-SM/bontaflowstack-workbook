@@ -1,28 +1,21 @@
 ---
 name: bfs-guard
-description: "Inspect or explicitly change destructive-command warnings and a project edit boundary for the current Codex task."
+description: "Inspect or explicitly change current-task command warnings and the project edit boundary."
 ---
 
 # BFS Guard
 
-Load [HOST.md](../../HOST.md) for execution, state and authorization rules unless its full matching content is already loaded in this chat. Follow its hash-based read protocol.
-Modes: `status`, `warnings`, `boundary`, `combined`, `release`, `off`. Choose the mode from the actual request.
+Load [HOST.md](../../HOST.md) via `read bfs-guard`; follow its hash-based read protocol.
+Modes: `status`, `warnings`, `boundary`, `combined`, `release`, `off`. Use status to inspect, warnings/boundary/combined to change the named protection, release to clear the boundary, and off to disable both. Default: `status`.
 
-1. Read guard status for the current task and explain the requested change to warnings, edit boundary or both. Reuse the supplied directory and decisions.
-2. Before a change, find the matching BFS_GUARD_OBSERVED marker in the actual native hook context. A manual hook invocation or test fixture is not proof of active native enforcement.
-3. Use guard set with that observation and only the fields the user wants changed: warnings true/false and/or boundary. Resolve an existing directory inside the project.
-4. Use guard release to clear only the boundary, or guard off for an explicitly requested removal of both protections.
-5. Read status again and verify the actual state. If native enforcement is unavailable, report that limitation without claiming an active boundary.
-6. If a native hook requests a decision for a risky command, present that exact command and target through the host's actual approval path. A hard boundary denial requires correcting the target or an explicit boundary change.
+1. Read current-task status and the [guard rules](../../references/guard.md) before changes or stopped-command handling.
+2. Change only requested warnings/boundary fields using native observation; resolve the boundary to an existing project directory.
+3. Release only the boundary, or disable both protections only when requested.
+4. Read status back; report missing native enforcement rather than claiming an active boundary.
 
-Coverage includes supported edit/patch paths and recognized destructive shell commands. This is not a sandbox for arbitrary shell filesystem writes. The protections are optional, task-specific and apply across all skills while active.
+Output: Verified guard status, changed protections and native-enforcement limitations.
 
 ## References
 
-When a command is stopped, use its exact pending ID only after the user has
-authorized that specific operation. Call guard approve with the current native
-observation and a quotation of the applicable authorization, then retry the
-unchanged tool call once. This never overrides host permissions. New or changed
-plugin hooks require user trust through Codex's `/hooks` review interface.
-
-- [commands](../../references/commands.md)
+- [guard](../../references/guard.md): before guard changes, hook checks or stopped-command handling.
+- [commands](../../references/commands.md#guard): before constructing guard requests.

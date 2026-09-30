@@ -100,7 +100,7 @@ export function preTool(ctx, event) {
   const observed = readJson(`${file}.observed.json`);
   if (!observed || Date.now() - Date.parse(observed.at) > 30000) changeJson(`${file}.observed.json`, null, current =>
     current?.taskId === ctx.taskId && current.workspaceId === ctx.workspaceId && Date.now() - Date.parse(current.at) <= 30000
-      ? current : { taskId: ctx.taskId, workspaceId: ctx.workspaceId, at: now(), package: '0.4.1' });
+      ? current : { taskId: ctx.taskId, workspaceId: ctx.workspaceId, at: now(), package: '0.5.0' });
   const hook = { hookEventName: 'PreToolUse', additionalContext: marker(ctx) };
   const response = (decision, reason) => ({ hookSpecificOutput: { ...hook, permissionDecision: decision, permissionDecisionReason: reason } });
   const tool = event.tool_name;

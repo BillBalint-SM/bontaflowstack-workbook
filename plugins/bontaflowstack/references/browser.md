@@ -23,12 +23,16 @@ Visible sign-in uses the engine's documented connect/handoff/resume path. The
 user enters credentials in the browser; the agent verifies access afterwards.
 The core supplies project/task-specific state and profile locations.
 
+## Removed browser scripts
+
 One-time page expressions and extraction files are supported. Stored reusable
 browser-script discovery, generation and execution are removed.
 For a request for that removed BFS feature, report it as unsupported. Do not
 substitute a saved console script, test program or invented skill. Offer a
 separate coding approach only as an option; create it when the user explicitly
 requests that alternative outside the removed BFS workflow.
+
+## Rendering and cleanup
 
 Use `engine render` for local HTML: pass the file followed by `--screenshot`
 and `--width`/`--height` options as shown by its `--help`. Inspect the resulting

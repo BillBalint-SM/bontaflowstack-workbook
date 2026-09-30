@@ -11,6 +11,7 @@ import { memory, preferences } from '../plugins/bontaflowstack/core/memory.mjs';
 import { guard, preTool, classify } from '../plugins/bontaflowstack/core/guard.mjs';
 import { delivery, versionNext } from '../plugins/bontaflowstack/core/delivery.mjs';
 import { engines } from '../plugins/bontaflowstack/core/engines.mjs';
+import { checkLocalLinks } from '../scripts/check.mjs';
 import { loadCatalog, resolveSkill, pluginRoot } from '../plugins/bontaflowstack/core/cli.mjs';
 
 const catalog = loadCatalog();
@@ -40,7 +41,7 @@ test('catalog exposes exactly the selected skills and preserves alias modes', ()
     const file = path.join(pluginRoot,'skills',skill.id,'SKILL.md');
     const body = fs.readFileSync(file,'utf8');
     assert.ok(body.startsWith(`---\nname: ${skill.id}\n`));
-    for (const match of body.matchAll(/\]\(([^)]+)\)/g)) assert.ok(fs.existsSync(path.resolve(path.dirname(file),match[1])),match[1]);
+    checkLocalLinks(file);
   }
   for (const name of Object.keys(catalog.aliases)) assert.ok(expected.includes(resolveSkill(name).id));
   assert.equal(resolveSkill('qa-only').mode,'inspect');
@@ -222,6 +223,39 @@ test('preferences are scoped, advisory, validated and require a selected proposa
   assert.throws(()=>preferences(ctx,'apply',{id:result.proposals[0].id}),/confirm/);
   preferences(ctx,'apply',{id:result.proposals[0].id,confirm:'apply'});
   assert.equal(preferences(ctx,'inspect').profile.detail_preference,0.5);
+});
+
+test('question presentation preserves old stores, validates choices and inherits scoped overrides', t => {
+  const {ctx}=fixture(t);
+  const request={id:'question-presentation',question:'Panel or chat?',options:['prefer-panel','chat']};
+  assert.equal(preferences(ctx,'effective').values[request.id],undefined);
+  assert.equal(fs.existsSync(ctx.home),false);
+  preferences(ctx,'set',{id:'detail-preference',question:'Depth?',options:['brief','full'],choice:'brief',scope:'user'});
+  const file=path.join(ctx.home,'preferences.json'), old=fs.readFileSync(file,'utf8');
+  assert.equal(preferences(ctx,'effective').values[request.id],undefined);
+  assert.equal(fs.readFileSync(file,'utf8'),old);
+  preferences(ctx,'set',{...request,choice:'prefer-panel'});
+  assert.equal(preferences(ctx,'inspect',{scope:'user'}).values[request.id].choice,'prefer-panel');
+  assert.equal(preferences(ctx,'inspect').values[request.id],undefined);
+  const saved=fs.readFileSync(file,'utf8');
+  assert.throws(()=>preferences(ctx,'set',{...request,options:['prefer-panel','other'],choice:'other'}),/question presentation/);
+  assert.throws(()=>preferences(ctx,'set',{...request,options:['prefer-panel','chat','other'],choice:'chat'}),/question presentation/);
+  assert.equal(fs.readFileSync(file,'utf8'),saved);
+  preferences(ctx,'set',{...request,choice:'chat',scope:'project'});
+  assert.equal(preferences(ctx,'effective').values[request.id].choice,'chat');
+  preferences(ctx,'set',{...request,choice:'prefer-panel',scope:'task'});
+  assert.equal(preferences(ctx,'effective').values[request.id].choice,'prefer-panel');
+  preferences(ctx,'reset',{id:request.id,scope:'task'});
+  assert.equal(preferences(ctx,'effective').values[request.id].choice,'chat');
+  preferences(ctx,'reset',{id:request.id,scope:'project'});
+  assert.equal(preferences(ctx,'effective').values[request.id].choice,'prefer-panel');
+  preferences(ctx,'reset',{id:request.id});
+  assert.equal(preferences(ctx,'effective').values[request.id],undefined);
+  assert.equal(preferences(ctx,'inspect',{scope:'user'}).values['detail-preference'].choice,'brief');
+  assert.equal(readJson(file).schema,1);
+  const malformed=readJson(file);malformed.values[request.id]={choice:'other'};
+  atomicWrite(file,malformed);
+  assert.throws(()=>preferences(ctx,'effective'),/question presentation/);
 });
 
 test('retrying a memory operation after an uncertain result does not duplicate it', t => {

@@ -14,10 +14,10 @@ on its own when you already have its input.
 
 You need Codex Desktop, Git and **Node.js 24 or newer**. The core uses no npm packages.
 
-Install the tested `0.4.1` release with the Codex CLI in PowerShell:
+Install the tested `0.5.0` release with the Codex CLI in PowerShell:
 
 ```powershell
-codex plugin marketplace add BillBalint-SM/bontaflowstack-workbook --ref v0.4.1
+codex plugin marketplace add BillBalint-SM/bontaflowstack-workbook --ref v0.5.0
 codex plugin add bontaflowstack@bontaflowstack
 ```
 
@@ -48,14 +48,14 @@ Git Bash and jq are not required by the core.
 ### Optional: source ZIP or local clone
 
 For manual setup, download the source ZIP and SHA-256 file from
-[GitHub Releases](https://github.com/BillBalint-SM/bontaflowstack-workbook/releases/tag/v0.4.1),
+[GitHub Releases](https://github.com/BillBalint-SM/bontaflowstack-workbook/releases/tag/v0.5.0),
 or use a local clone. Follow the
 [source ZIP setup](docs/bontaflowstack/INSTALL-WINDOWS.md#optional-install-a-source-zip-or-local-clone).
 
 ### Set up a project
 
 Open a new chat in the target project and ask `$bfs-router Set up BontaFlowStack
-for this project.` The driver checks the installed core and any requested optional
+for this project.` The router checks the installed core and any requested optional
 capabilities, then reads existing `AGENTS.md` and project guides. It creates only
 missing `docs/agents/issue-tracker.md` and `docs/agents/domain.md` guides and
 adds their missing `AGENTS.md` links. Existing instructions are preserved; a
@@ -63,12 +63,18 @@ second setup should make no file changes. The issue guide records where and how
 to read, publish and update work. The domain guide points to the project's real
 source of terms and decisions. Setup does not invent a glossary or ADR.
 
-If the project does not identify its issue tracker or domain source, the driver
+If the project does not identify its issue tracker or domain source, the router
 asks for that choice before writing the dependent guide. For example: "Should
 specifications go to GitHub Issues, local files, or no tracker? Where are the
-project's domain terms and decisions kept?" After setup, check the driver's
+project's domain terms and decisions kept?" After setup, check the router's
 reported created/reused files, open their `AGENTS.md` links, and check `doctor`
 for the capabilities you requested. [Detailed steps](docs/bontaflowstack/INSTALL-WINDOWS.md)
+
+On first conversational setup, choose selection panels when available or chat
+for BFS decision questions. Change or reset the saved choice with
+`bfs-plan-tune`; explicit project and current-chat overrides are supported.
+Without a saved choice, BFS prefers available panels and falls back to chat.
+This preference does not control Codex's native approval dialogs.
 
 ## Start with a goal
 
@@ -88,13 +94,13 @@ Use `$bfs-router` when you want help choosing a route. Naming a skill goes direc
 to that skill. Ask explicitly for publication or deployment when you want those
 operations included. `bfs-guard` is user-invoked only: name `$bfs-guard` directly to
 inspect or change its task protections, for example `$bfs-guard Show the current
-protection status.` The driver does not start it implicitly. Selecting any skill
+protection status.` The router does not start it implicitly. Selecting any skill
 or workflow does not by itself authorize publication, deployment, spending or
 destructive changes.
 
 ## How workflows connect
 
-The driver loads and follows each relevant skill in the same chat. A completed
+The router loads and follows each relevant skill in the same chat. A completed
 step passes its checked artifacts and settled decisions to the next step.
 Missing information pauses only the dependent work. You can supply a document,
 existing file or your own description instead of running an earlier skill.
@@ -108,7 +114,7 @@ visual direction through implementation and the relevant interface checks.
 
 ### Implement an accepted plan
 
-Use **`$bfs-implement`** (BFS implement) to build functionality from a plan,
+Use **`$bfs-implement`** (BFS Implement) to build functionality from a plan,
 specification, selected design or scoped change you have explicitly accepted.
 It identifies the accepted version and your decision, implements checkable parts,
 saves their verified progress and checks the result against your acceptance criteria.
@@ -181,7 +187,7 @@ names for direct calls. Previous names remain catalog aliases through
   Releasing the boundary keeps command warnings active.
 
 The full mode and handoff definitions live in the [catalog](plugins/bontaflowstack/catalog.json).
-Older names resolve through the driver; only the catalog entries are installed.
+Older names resolve through the router; only the catalog entries are installed.
 Saved reusable browser automation, standalone developer-experience audits,
 deployment provisioning and retrospective reports are outside this version.
 
@@ -235,6 +241,9 @@ The Windows CI runs both release construction and archive verification.
 
 [Manual agent and setup acceptance](docs/bontaflowstack/MANUAL-ACCEPTANCE.md) ·
 `node scripts/measure-runtime.mjs` measures local hook latency and HOST response reuse.
+
+[Native validation results and limits](docs/bontaflowstack/NATIVE-ACCEPTANCE-REPORT.md) ·
+[Instruction size comparison](docs/bontaflowstack/SKILL-OPTIMIZATION-REPORT.md)
 
 [Changelog](docs/bontaflowstack/CHANGELOG.md) ·
 [Core command reference](plugins/bontaflowstack/references/commands.md) ·

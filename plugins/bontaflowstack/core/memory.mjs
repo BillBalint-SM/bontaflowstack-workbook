@@ -94,7 +94,8 @@ export function memory(ctx, action, input = {}) {
   throw new Error(`Unknown memory action: ${action}`);
 }
 
-const optionalQuestions = new Set(['plan-design-review-mode', 'plan-devex-review-mode', 'detail-preference']);
+const optionalQuestions = new Set(['plan-design-review-mode', 'plan-devex-review-mode', 'detail-preference', 'question-presentation']);
+const questionPresentations = new Set(['prefer-panel', 'chat']);
 const profileKeys = new Set(['scope_appetite', 'risk_tolerance', 'detail_preference', 'autonomy', 'architecture_care']);
 const defaultPreferences = () => ({ schema: 1, enabled: false, values: {}, profile: {}, questions: [], proposals: [] });
 function prefFile(ctx, scope) {
@@ -104,10 +105,11 @@ function prefFile(ctx, scope) {
 }
 function validPreferences(value) {
   requireValue(value?.schema === 1 && typeof value.enabled === 'boolean' && value.values && value.profile && Array.isArray(value.questions) && Array.isArray(value.proposals), 'Invalid preferences store');
+  if (Object.hasOwn(value.values, 'question-presentation')) requireValue(questionPresentations.has(value.values['question-presentation']?.choice), 'Invalid question presentation choice');
   return value;
 }
 export function preferences(ctx, action, input = {}) {
-  const scope = input.scope || 'project';
+  const scope = input.scope || (['set','reset'].includes(action) && input.id === 'question-presentation' ? 'user' : 'project');
   const file = prefFile(ctx, scope);
   const current = validPreferences(readJson(file, defaultPreferences()));
   if (action === 'inspect') return { scope, advisory: true, ...current };
@@ -133,6 +135,7 @@ export function preferences(ctx, action, input = {}) {
     if (action === 'set') {
       requireValue(optionalQuestions.has(input.id), 'Only optional presentation preferences can be stored here');
       requireValue(Array.isArray(input.options) && input.options.length >= 2 && new Set(input.options).size === input.options.length && input.options.includes(input.choice), 'Choice must match distinct supplied options');
+      if (input.id === 'question-presentation') requireValue(input.options.length === 2 && input.options.every(option => questionPresentations.has(option)), 'Invalid question presentation options');
       store.values[input.id] = { choice: input.choice, question: text(input.question, 'question'), options: input.options, source: 'user-stated', updatedAt: now() };
     } else if (action === 'reset') {
       requireValue(optionalQuestions.has(input.id), 'Unknown optional preference');

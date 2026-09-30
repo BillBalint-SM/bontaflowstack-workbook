@@ -1,26 +1,27 @@
 ---
 name: bfs-qa
-description: "Test actual web interactions and responsive behavior, report reproducible defects, and optionally fix requested issues and retest them."
+description: "Test real web journeys and responsive states, or fix and retest requested defects."
 ---
 
 # BFS QA
 
-Load [HOST.md](../../HOST.md) for execution, state and authorization rules unless its full matching content is already loaded in this chat. Follow its hash-based read protocol.
-Modes: `inspect`, `fix`. Coverage: `quick`, `full`, `regression`, `diff`.
-Default: `inspect` with `quick` coverage. Save both choices in workflow selections.
+Load [HOST.md](../../HOST.md) via `read bfs-qa`; follow its hash-based read protocol.
+Modes: `inspect` for testing, `fix` for requested repairs. Save mode and coverage independently; default inspect/quick.
 
-1. Select inspect or fix and the independent coverage from the request. Quick covers the named main journey and its immediate failures; full covers relevant normal, empty, error and success states, responsive layout and keyboard use within the named area. Regression requires the actual named baseline; diff requires the actual comparison base. Ask for a missing base before that comparison. Legacy coverage-as-mode requests mean inspect with that coverage.
-2. Establish the URL, user journey, test data and allowed interactions. Use the shared browser reference for login and fresh element snapshots.
-3. Execute the scoped flow and relevant normal, empty, error and success states. Inspect page content, console, links, responsive layout, keyboard operation and screenshots.
-4. Record actual failures using the shared findings reference: reproduction, expected/observed behavior, URL, viewport, evidence and consequence. Separate environment failures from product defects.
-5. In fix mode, trace confirmed findings through source and callers. Keep baseline evidence, make the authorized repair, and add a discriminating regression where useful.
-6. Re-run the failing interaction and affected checks. Preserve original failures and label deferred or unverified results.
-7. Check the report against actual evidence and return tested scope, findings and changes. Inspect mode leaves application source and tests unchanged.
+1. Select coverage: quick tests the named main journey/immediate failures; full adds relevant normal, empty, error, success, responsive and keyboard states within that area. Regression requires a named baseline; diff requires a comparison base. Ask for missing bases before comparing. Legacy coverage-as-mode requests mean inspect plus that coverage.
+2. Establish URL, journey, test data and allowed interactions; ask for missing inputs before browser readiness checks. Follow browser rules for login and fresh snapshots.
+3. Execute scoped states; inspect content, console, links, responsive layout, keyboard behavior and screenshots.
+4. Record actual failures using findings: reproduction, expected/observed behavior, URL, viewport, evidence and consequence. Separate environment failures from product defects.
+5. In fix mode, trace confirmed defects through source/callers, preserve baseline evidence and make authorized repairs with discriminating regressions where useful.
+6. Repeat failing interactions and affected checks. Preserve original failures; label deferred/unverified results and check the report against evidence. Inspect leaves application source/tests unchanged.
 
-Report files may be written to the agreed destination. Health scoring is optional: define the assessed categories and rubric, exclude untested categories, and compare only equivalent coverage.
+Write reports to the agreed destination. Optional health scoring follows findings' rubric/coverage rules, excluding untested categories and comparing equivalent coverage.
+
+Output: Tested scope, reproducible findings, requested repairs, retest evidence and unverified results.
 
 ## References
 
-- [commands](../../references/commands.md)
-- [findings](../../references/findings.md)
-- [browser](../../references/browser.md)
+- [capabilities](../../references/capabilities.md): before checking or using optional engines.
+- [commands](../../references/commands.md): when constructing a core request.
+- [findings](../../references/findings.md): before recording defects/retests or scoring health.
+- [browser](../../references/browser.md): before browser work.

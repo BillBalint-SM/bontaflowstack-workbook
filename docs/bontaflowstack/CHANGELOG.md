@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.5.0 — 2026-09-30
+
+- Added the `question-presentation` preference: `prefer-panel` (with chat fallback) or `chat`, using existing user/project/task preference storage.
+- Conversational setup offers the choice after technical checks when no effective choice exists; unanswered questions do not block setup or save a default.
+- All skills load effective preferences once per chat; `bfs-plan-tune` can change/reset the presentation and refresh it for subsequent questions.
+- Shortened all 29 skills and synchronized descriptions with the catalog. Shared instructions define accepted basis, checkpoint, evidence and waiting; optional capability, guard and delivery details load through conditional references.
+- Reduced combined instruction text from 11127 to 9921 words (10.8%), counting the relocated reference text. This measures text size, not runtime cost or latency.
+- Clarified mode-specific memory and deployment steps, removed duplicate output requirements, and checked local reference links and section anchors.
+- Fixed setup to read the guard reference before any technical checks, including core-only setup. Missing capabilities no longer suppress questions about required task inputs.
+- Validation: 35 automated checks, 19 matched native A/B cases, two desktop setup chats with human panel/chat answers, and five focused sessions for the follow-up fixes. See [native results and limits](NATIVE-ACCEPTANCE-REPORT.md).
+- Native guard enforcement, actual provider deployment and the remaining manual cases are not certified by those runs. After updating, start a new chat and review changed hook definitions through Codex's native trust interface when requested.
+
 ## 0.4.1 — 2026-09-30
 
 - Fixed the successful ZIP smoke check's process exit code. The expected missing-browser check no longer leaves exit code 1 for the Windows CI shell wrapper.

@@ -58,6 +58,45 @@ and run two must match. Existing custom instructions and USER-NOTE.txt must matc
 their initial bytes. Record created/reused guides, valid links and doctor output;
 core readiness does not certify optional engines.
 
+## Question presentation cases
+
+Use isolated `BFS_STATE_HOME` values, the updated source plugin and fresh Codex
+chats. Set up the preference through the real setup conversation; the independent
+PowerShell installer is not an agent question test. Record actual tool calls,
+user responses and stored choices. A missing permitted panel leaves panel-specific
+verification blocked; chat fallback may still be verified.
+
+| Case | Request and response | Observable result |
+|---|---|---|
+| Initial panel choice | Request project setup; choose selection panels. | Question follows technical checks, precedes tracker/domain questions, saves `prefer-panel` at user scope, reads back and refreshes effective preferences. Later needed questions use a permitted panel with free text. |
+| Repeated setup | Repeat setup with the saved choice. | No presentation question or preference rewrite; existing project instructions are preserved. |
+| Initial chat choice | In separate clean state, request setup; choose chat. | Saves `chat`; subsequent tracker/domain questions are asked in chat. |
+| Unanswered setup | Dismiss the presentation question without an answer, where the host supports dismissal. | No saved choice; setup continues where other inputs permit it; a later setup may offer the preference again. A preselected option is never saved as an answer. |
+| Free text | Answer with an unambiguous preference, then separately an ambiguous response. | Unambiguous text maps to one canonical choice; ambiguous text is clarified before saving. |
+| Direct skill | In a new chat with saved `chat`, invoke `bfs-business-builder` on an idea missing a material product choice. | Reads effective preferences without setup or router; needed question appears in chat. |
+| Same-chat change | Request `$bfs-plan-tune Prefer selection panels for BFS decision questions.`, then supply an idea needing a choice; repeat with chat. | Precise requests need no duplicate confirmation; user preference is saved and effective preferences refreshed; the next question follows the new mode. |
+| Resume | Seed the existing case 8 workflow with a needed unresolved user decision; resume in a new chat with saved `chat`. | Effective preference is loaded; the needed question appears in chat, and dependent work waits for the actual answer. |
+| Scope and reset | Set a user panel preference, explicit project chat override and current-task panel override; reset them in reverse order. | Effective choices follow task, project, user; after all overrides are removed, default is unsaved `prefer-panel`. |
+| Panel unavailable | Use `prefer-panel` in a host/mode without a permitted question panel. | Same decision is asked in chat; no invented panel, tool use outside its rules, or change to native approvals. |
+
+## Instruction editing cases
+
+Run these with the edited source plugin in fresh Codex chats. Record actual
+instruction reads and reference loads as well as results; valid Markdown links
+alone do not prove that an agent loads the right reference at the right time.
+
+| Case | Request | Observable result |
+|---|---|---|
+| Direct skill / HOST | Invoke `bfs-health` directly, then another BFS skill in the same chat. | First read receives full HOST and reads effective preferences; later reads reuse only the matching hash. A new chat loads HOST again. |
+| Router advice/setup | Run advice case 1, then project setup cases separately. | Advice creates no workflow. Setup loads the guard reference before any setup script or doctor check, including core-only setup, then follows technical checks, presentation preference, tracker/domain choices and preserved project guides; capabilities load before optional engine checks. |
+| Missing input and capability | With no registered browser engine, request QA without a URL or journey; repeat through direct `bfs-qa` invocation with saved chat preference. | Asks for the URL, journey, test data and allowed interactions; reports the capability gap; no guessed target or browser action. Dependent work waits for the actual answer and capability readiness. |
+| Accepted basis / waiting | Run cases 5a–5d and 8. | Actual user acceptance starts local implementation; a planning request or saved approved label does not. Material conflict records waiting and leaves dependent work pending. |
+| Presentation | Run the question presentation cases above. | Direct invocation and resume use the saved preference; changing it affects the next necessary question, with no preselected answer recorded. |
+| QA selections | Run cases 6–7, then request regression or diff coverage without a base. | Mode and coverage stay independent; missing baseline/diff base is requested before comparison. |
+| Guard reference | Inspect status, then explicitly request a boundary change in an isolated fixture. | Loads guard rules before changing state; uses actual native observation and verifies status. Fixture hook output alone cannot certify native enforcement. |
+| Delivery reference | Run preparation-only case 9. | Loads delivery rules before readiness checks; verifies content-bound evidence and leaves push/PR/deployment for an applicable user request. |
+| Removed scripts | Run the reusable-script request in case 10 through router, browse and scrape. | Loads the browser removed-feature section, reports unsupported automation and offers scoped one-time work without inventing an alias or stored script. |
+
 ## Evaluation record
 
 For each case record: request, fixture, plugin hashes, actual selected skills and

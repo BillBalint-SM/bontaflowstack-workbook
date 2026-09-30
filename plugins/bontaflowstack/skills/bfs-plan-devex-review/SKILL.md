@@ -1,20 +1,23 @@
 ---
 name: bfs-plan-devex-review
-description: "Review planned API, CLI, SDK, onboarding and error-recovery experiences. Use for developer-facing designs before implementation."
+description: "Review planned API, CLI, SDK and onboarding experiences for developer usability."
 ---
 
 # BFS Plan DevEx Review
 
-Load [HOST.md](../../HOST.md) for execution, state and authorization rules unless its full matching content is already loaded in this chat. Follow its hash-based read protocol.
-Modes: `bfs-review`. Choose the mode from the actual request.
+Load [HOST.md](../../HOST.md) via `read bfs-plan-devex-review`; follow its hash-based read protocol.
+Mode: `review`.
 
 1. Identify the intended developer, first successful task, supported environments and exposed interfaces.
 2. Walk installation, configuration, authentication, first use, ordinary errors and recovery from the proposed instructions.
 3. Check naming, defaults, output formats, actionable diagnostics, compatibility and the amount of knowledge required before first success.
 4. Examine examples, documentation discovery and whether credentials or platform prerequisites are explained at the point they are needed.
 5. Turn each problem into a concrete interface or documentation change and an acceptance scenario.
-6. Return findings with the distinction between planned targets and measured experience. This skill finishes at plan review; it does not route to a removed runtime audit.
+
+Plan review only; runtime developer-experience auditing remains unavailable.
+
+Output: Interface/documentation findings and acceptance scenarios, distinguished from measured experience.
 
 ## References
 
-- [commands](../../references/commands.md)
+- [commands](../../references/commands.md): when constructing a core request.

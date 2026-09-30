@@ -5,6 +5,27 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { loadCatalog, pluginRoot, selection } from '../plugins/bontaflowstack/core/catalog.mjs';
 const root=fileURLToPath(new URL('../',import.meta.url));
+export function checkLocalLinks(file) {
+  const source=fs.readFileSync(file,'utf8').replace(/^```[^\n]*\n[\s\S]*?^```[^\n]*$/gm,'');
+  for(const match of source.matchAll(/\]\(([^)]+)\)/g)) {
+    const link=match[1];
+    if(/^(?:[a-z][\w+.-]*:|\/\/)/i.test(link))continue;
+    const [relative,fragment]=link.split('#');
+    const target=relative ? path.resolve(path.dirname(file),decodeURIComponent(relative)) : file;
+    assert.ok(fs.existsSync(target),`${file}: broken link ${link}`);
+    if(fragment) {
+      const headings=fs.readFileSync(target,'utf8').replace(/^```[^\n]*\n[\s\S]*?^```[^\n]*$/gm,'');
+      const seen=new Map(),anchors=new Set();
+      for(const heading of headings.matchAll(/^#{1,6}\s+(.+?)\s*#*\s*$/gm)) {
+        const slug=heading[1].toLowerCase().replace(/[^\p{L}\p{N}_ -]/gu,'').replace(/ /g,'-');
+        const count=seen.get(slug)||0;seen.set(slug,count+1);
+        anchors.add(count ? `${slug}-${count}` : slug);
+      }
+      assert.ok(anchors.has(decodeURIComponent(fragment)),`${file}: broken anchor ${link}`);
+    }
+  }
+}
+
 export function skillPolicy(id, yaml) {
   for(const field of ['interface:','  display_name:','  short_description:','  default_prompt:','policy:'])
     assert.ok(yaml.split(/\r?\n/).some(line=>line.startsWith(field)),`${id}: missing ${field}`);
@@ -73,15 +94,16 @@ function checkPackage() {
     assert.ok(source.startsWith(`---\nname: ${skill.id}\n`));
     assert.equal(JSON.parse(source.match(/^description: (.+)$/m)?.[1]||'null'),skill.description,`${skill.id}: description differs from catalog`);
     assert.ok(source.includes(`\n# ${skill.title}\n`),`${skill.id}: skill heading differs from picker title`);
-    for(const match of source.matchAll(/\]\(([^)]+)\)/g)) {
-      if(!/^https?:/.test(match[1]))assert.ok(fs.existsSync(path.resolve(folder,match[1])),`${skill.id}: broken ${match[1]}`);
-    }
+    checkLocalLinks(path.join(folder,'SKILL.md'));
     const yaml=fs.readFileSync(path.join(folder,'agents/openai.yaml'),'utf8');
     assert.ok(yaml.includes(`  display_name: "${skill.title}"`),`${skill.id}: picker title differs from catalog`);
     assert.ok(skill.title.startsWith('BFS '),`${skill.id}: picker title needs BFS prefix`);
     policies[skill.id]=skillPolicy(skill.id,yaml);
   }
   checkPublicSkills(catalog,fs.readFileSync(path.join(root,'README.md'),'utf8'),policies);
+  checkLocalLinks(path.join(pluginRoot,'HOST.md'));
+  for(const file of fs.readdirSync(path.join(pluginRoot,'references')).filter(file=>file.endsWith('.md')))
+    checkLocalLinks(path.join(pluginRoot,'references',file));
   for(const alias of Object.values(catalog.aliases))assert.ok(names.includes(alias.skill));
   for(const route of Object.values(catalog.workflows))for(const name of route)assert.ok(names.includes(name));
   const hooks=JSON.parse(fs.readFileSync(path.join(pluginRoot,'hooks/hooks.json'),'utf8'));

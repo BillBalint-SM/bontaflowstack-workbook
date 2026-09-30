@@ -1,13 +1,28 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { loadCatalog } from '../plugins/bontaflowstack/core/cli.mjs';
-import { checkPublicSkills, skillPolicy, checkCatalog } from '../scripts/check.mjs';
+import { checkPublicSkills, skillPolicy, checkCatalog, checkLocalLinks } from '../scripts/check.mjs';
 
 const catalog=loadCatalog();
 const readme=fs.readFileSync(fileURLToPath(new URL('../README.md',import.meta.url)),'utf8');
 const policies=Object.fromEntries(catalog.skills.map(skill=>[skill.id,skill.id!=='bfs-guard']));
+
+test('local documentation links validate files and section anchors',t=>{
+  const directory=fs.mkdtempSync(path.join(os.tmpdir(),'bfs-links-'));
+  t.after(()=>fs.rmSync(directory,{recursive:true,force:true}));
+  const source=path.join(directory,'source.md');
+  fs.writeFileSync(path.join(directory,'target.md'),'# Guard\n\n## Guard\n');
+  fs.writeFileSync(source,'# Source\n[policy](target.md#guard-1)\n[self](#source)\n```md\n[example](absent.md)\n```\n');
+  assert.doesNotThrow(()=>checkLocalLinks(source));
+  fs.writeFileSync(source,'[policy](absent.md)');
+  assert.throws(()=>checkLocalLinks(source),/broken link/);
+  fs.writeFileSync(source,'[policy](target.md#missing)');
+  assert.throws(()=>checkLocalLinks(source),/broken anchor/);
+});
 
 test('catalog rejects duplicate names, broken references and invalid QA settings',()=>{
   assert.doesNotThrow(()=>checkCatalog(catalog));

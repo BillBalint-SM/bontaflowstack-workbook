@@ -1,11 +1,11 @@
 {
   "schema": 1,
-  "version": "0.4.1",
+  "version": "0.5.0",
   "skills": [
     {
       "id": "bfs-router",
       "title": "BFS Router",
-      "description": "Route a business, product, design, development or delivery task to a BontaFlowStack skill or resumable workflow. Use for project setup, choosing the next step or coordinating several requested steps.",
+      "description": "Set up BFS or route a requested task to the matching skill or workflow.",
       "defaultMode": "route",
       "modes": {
         "route": [],
@@ -41,7 +41,7 @@
     {
       "id": "bfs-implement",
       "title": "BFS Implement",
-      "description": "Implement a plan, specification, selected design or scoped change explicitly accepted by the user. Use for building approved functionality and verifying its acceptance criteria.",
+      "description": "Implement an accepted plan, spec, design or scoped change and verify its acceptance criteria.",
       "defaultMode": "implement",
       "modes": {
         "implement": []
@@ -57,7 +57,7 @@
     {
       "id": "bfs-business-builder",
       "title": "BFS Business Builder",
-      "description": "Clarify an idea, offer, customer problem or product direction and produce a testable business brief. Use for founder decisions and comparing practical approaches.",
+      "description": "Clarify a customer problem or product direction into a testable business brief.",
       "defaultMode": "explore",
       "modes": {
         "explore": [],
@@ -70,7 +70,7 @@
     {
       "id": "bfs-spec",
       "title": "BFS Spec",
-      "description": "Turn an agreed request into a specification with behavior, scope, acceptance cases and implementation steps grounded in the actual project.",
+      "description": "Draft or revise a project-grounded specification with observable acceptance scenarios.",
       "defaultMode": "draft",
       "modes": {
         "draft": [],
@@ -84,7 +84,7 @@
     {
       "id": "bfs-autoplan",
       "title": "BFS Autoplan",
-      "description": "Review a concrete plan through the relevant business, design, developer-experience and engineering perspectives, preserving decisions and unresolved findings.",
+      "description": "Coordinate relevant plan reviews and return a reconciled plan with open decisions.",
       "defaultMode": "review",
       "modes": {
         "review": []
@@ -102,7 +102,7 @@
     {
       "id": "bfs-plan-ceo-review",
       "title": "BFS Plan CEO Review",
-      "description": "Review a plan for customer value, business fit, scope and practical success criteria. Use before committing effort to a product direction.",
+      "description": "Review a plan for customer value, business fit and measurable success.",
       "defaultMode": "review",
       "modes": {
         "review": []
@@ -112,7 +112,7 @@
     {
       "id": "bfs-plan-eng-review",
       "title": "BFS Plan Eng Review",
-      "description": "Check a plan's architecture, correctness, data handling, tests, performance and implementation readiness against the actual codebase.",
+      "description": "Review a plan against the codebase for architecture, correctness and implementation readiness.",
       "defaultMode": "review",
       "modes": {
         "review": []
@@ -122,7 +122,7 @@
     {
       "id": "bfs-plan-design-review",
       "title": "BFS Plan Design Review",
-      "description": "Review planned screens and journeys for hierarchy, interaction states, consistency, responsiveness and accessibility before implementation.",
+      "description": "Review planned screens and journeys for usability, accessibility and coherent interaction states.",
       "defaultMode": "review",
       "modes": {
         "review": []
@@ -132,7 +132,7 @@
     {
       "id": "bfs-plan-devex-review",
       "title": "BFS Plan DevEx Review",
-      "description": "Review planned API, CLI, SDK, onboarding and error-recovery experiences. Use for developer-facing designs before implementation.",
+      "description": "Review planned API, CLI, SDK and onboarding experiences for developer usability.",
       "defaultMode": "review",
       "modes": {
         "review": []
@@ -142,7 +142,7 @@
     {
       "id": "bfs-plan-tune",
       "title": "BFS Plan Tune",
-      "description": "Inspect or change optional question preferences and declared profile values, review local question history, and propose or apply scoped adjustments.",
+      "description": "Inspect or configure optional BFS preferences, including panel/chat questions, and review adjustment proposals.",
       "defaultMode": "inspect",
       "modes": {
         "inspect": [],
@@ -156,7 +156,7 @@
     {
       "id": "bfs-design-consultation",
       "title": "BFS Design Consultation",
-      "description": "Define a visual identity or design system, compare distinct design alternatives, and refine the selected direction for a website or product interface.",
+      "description": "Define a visual identity, compare design directions or refine the selected design system.",
       "defaultMode": "consult",
       "modes": {
         "consult": [],
@@ -174,7 +174,7 @@
     {
       "id": "bfs-design-html",
       "title": "BFS Design HTML",
-      "description": "Build responsive HTML or a project-native component from a brief, selected design or image, then inspect the actual rendered result.",
+      "description": "Build or refine responsive HTML/components from an accepted design and verify rendered behavior.",
       "defaultMode": "implement",
       "modes": {
         "implement": [
@@ -191,7 +191,7 @@
     {
       "id": "bfs-design-review",
       "title": "BFS Design Review",
-      "description": "Inspect a real interface for visual and interaction problems, optionally repair requested issues, and verify the affected output.",
+      "description": "Inspect a rendered interface for usability and visual defects, or repair and retest requested findings.",
       "defaultMode": "inspect",
       "modes": {
         "inspect": [
@@ -209,7 +209,7 @@
     {
       "id": "bfs-browse",
       "title": "BFS Browse",
-      "description": "Read and interact with a scoped web page, open a visible browser for human sign-in, and resume the same browser session.",
+      "description": "Read or interact with a web page, open a visible session or resume human sign-in.",
       "defaultMode": "browse",
       "modes": {
         "browse": [
@@ -229,7 +229,7 @@
     {
       "id": "bfs-scrape",
       "title": "BFS Scrape",
-      "description": "Extract tables, products, listings or other specified fields from a real page into checked JSON, or answer from that page with sources.",
+      "description": "Extract checked page data as JSON or answer a page question with sources.",
       "defaultMode": "extract",
       "modes": {
         "extract": [
@@ -244,7 +244,7 @@
     {
       "id": "bfs-benchmark",
       "title": "BFS Benchmark",
-      "description": "Measure page performance, capture comparable baselines, and report regressions or trends from real browser samples.",
+      "description": "Measure browser performance and report comparable baselines, regressions or trends.",
       "defaultMode": "quick",
       "modes": {
         "quick": [
@@ -263,7 +263,7 @@
     {
       "id": "bfs-bug-issue-investigate",
       "title": "BFS Bug Issue Investigate",
-      "description": "Reproduce a bug or issue, trace the actual cause, and perform a requested focused repair with regression verification.",
+      "description": "Diagnose a reproducible bug, or fix its shared cause and verify the regression.",
       "defaultMode": "diagnose",
       "modes": {
         "diagnose": [],
@@ -278,7 +278,7 @@
     {
       "id": "bfs-review",
       "title": "BFS Review",
-      "description": "Review a diff, patch or pull request for correctness, regressions and requirement coverage by tracing changed code and its callers.",
+      "description": "Review a code diff against requirements and callers, or repair and recheck requested defects.",
       "defaultMode": "inspect",
       "modes": {
         "inspect": [],
@@ -289,7 +289,7 @@
     {
       "id": "bfs-cso-audit",
       "title": "BFS CSO Audit",
-      "description": "Audit a codebase or change for demonstrated security risks, trust-boundary failures and prioritized remediation.",
+      "description": "Audit code or a change for reachable security risks and prioritized remediation.",
       "defaultMode": "audit",
       "modes": {
         "audit": []
@@ -301,7 +301,7 @@
     {
       "id": "bfs-health",
       "title": "BFS Health",
-      "description": "Run the project's existing tests, lint, type checks or build checks and report their actual results and limits.",
+      "description": "Run existing project checks and report commands, results and verification limits.",
       "defaultMode": "check",
       "modes": {
         "check": []
@@ -311,7 +311,7 @@
     {
       "id": "bfs-qa",
       "title": "BFS QA",
-      "description": "Test actual web interactions and responsive behavior, report reproducible defects, and optionally fix requested issues and retest them.",
+      "description": "Test real web journeys and responsive states, or fix and retest requested defects.",
       "defaultMode": "inspect",
       "modes": {
         "inspect": [
@@ -322,7 +322,12 @@
         ]
       },
       "defaultCoverage": "quick",
-      "coverages": ["quick", "full", "regression", "diff"],
+      "coverages": [
+        "quick",
+        "full",
+        "regression",
+        "diff"
+      ],
       "handoffs": [
         "bfs-bug-issue-investigate"
       ]
@@ -330,7 +335,7 @@
     {
       "id": "bfs-documentation",
       "title": "BFS Documentation",
-      "description": "Create missing project documentation or update existing guides, references and release notes from verified source and actual behavior.",
+      "description": "Create or update source-verified project documentation, or report documentation gaps.",
       "defaultMode": "create",
       "modes": {
         "create": [],
@@ -342,7 +347,7 @@
     {
       "id": "bfs-finisher",
       "title": "BFS Finisher",
-      "description": "Prepare a verified change for delivery, review and documentation, then carry out the requested commit, push and pull-request operations.",
+      "description": "Prepare a verified change for delivery or perform requested commit, push and PR operations.",
       "defaultMode": "prepare",
       "modes": {
         "prepare": [],
@@ -359,7 +364,7 @@
     {
       "id": "bfs-prod-deploy",
       "title": "BFS Prod Deploy",
-      "description": "Merge or deploy an explicitly selected change using existing environment configuration, then verify the actual delivered revision and health.",
+      "description": "Inspect, integrate or deploy a selected change and verify delivered revision and health.",
       "defaultMode": "inspect",
       "modes": {
         "inspect": [],
@@ -377,7 +382,7 @@
     {
       "id": "bfs-landing-report",
       "title": "BFS Landing Report",
-      "description": "Read a repository's integration queue, version claims and check freshness without changing Git or remote state.",
+      "description": "Report integration queue, version conflicts and check freshness without changing repository state.",
       "defaultMode": "report",
       "modes": {
         "report": []
@@ -387,7 +392,7 @@
     {
       "id": "bfs-bontaflow-memory",
       "title": "BFS BontaFlow Memory",
-      "description": "Read and maintain project decisions and learnings, search or export them, prune selected records, or explicitly import legacy notes.",
+      "description": "Read, write, prune, export or explicitly import project decisions and learnings.",
       "defaultMode": "read",
       "modes": {
         "read": [],
@@ -404,7 +409,7 @@
     {
       "id": "bfs-save-context",
       "title": "BFS Save Context",
-      "description": "Create a manual local checkpoint of the goal, progress, decisions and remaining work, or list existing checkpoints.",
+      "description": "Save a verified progress checkpoint or list existing checkpoints.",
       "defaultMode": "save",
       "modes": {
         "save": [],
@@ -417,7 +422,7 @@
     {
       "id": "bfs-load-context",
       "title": "BFS Load Context",
-      "description": "Load a manual or automatic checkpoint, identify changed inputs and resume the requested work from a verified next step.",
+      "description": "Recover checkpoint state, detect drift and resume from a verified next step.",
       "defaultMode": "load",
       "modes": {
         "load": [],
@@ -430,7 +435,7 @@
     {
       "id": "bfs-guard",
       "title": "BFS Guard",
-      "description": "Inspect or explicitly change destructive-command warnings and a project edit boundary for the current Codex task.",
+      "description": "Inspect or explicitly change current-task command warnings and the project edit boundary.",
       "defaultMode": "status",
       "modes": {
         "status": [],

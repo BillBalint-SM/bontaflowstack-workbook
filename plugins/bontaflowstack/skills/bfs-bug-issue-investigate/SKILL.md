@@ -1,12 +1,12 @@
 ---
 name: bfs-bug-issue-investigate
-description: "Reproduce a bug or issue, trace the actual cause, and perform a requested focused repair with regression verification."
+description: "Diagnose a reproducible bug, or fix its shared cause and verify the regression."
 ---
 
 # BFS Bug Issue Investigate
 
-Load [HOST.md](../../HOST.md) for execution, state and authorization rules unless its full matching content is already loaded in this chat. Follow its hash-based read protocol.
-Modes: `diagnose`, `fix`. Choose the mode from the actual request.
+Load [HOST.md](../../HOST.md) via `read bfs-bug-issue-investigate`; follow its hash-based read protocol.
+Modes: `diagnose`, `fix`. Use diagnose for investigation and fix for a requested repair. Default: `diagnose`.
 
 1. Capture expected and actual behavior, failing input, environment and original error. Read relevant source, recent changes and callers.
 2. Reproduce the smallest failing path using existing checks or an isolated example. Preserve unrelated work and the original diagnostic.
@@ -14,10 +14,12 @@ Modes: `diagnose`, `fix`. Choose the mode from the actual request.
 4. Run the targeted check and revise the explanation when evidence contradicts it. Report missing services, credentials or inputs as blockers.
 5. In requested fix mode, repair the shared cause with a small change and a meaningful regression check when behavior changes. Respect active guard policy; enabling guard is optional.
 6. Re-run the original reproduction and affected checks. Use bfs-health or bfs-review when required by the selected task, without widening the work merely to collect green results.
-7. Return cause, evidence, changes and remaining uncertainty. Store reusable lessons through bfs-bontaflow-memory when requested.
+7. Store reusable lessons through bfs-bontaflow-memory when requested.
 
 Diagnosis mode produces findings without source changes. A hypothesis is not a verified cause.
 
+Output: Verified cause, reproduction evidence, changes and remaining uncertainty.
+
 ## References
 
-- [commands](../../references/commands.md)
+- [commands](../../references/commands.md): when constructing a core request.

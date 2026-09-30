@@ -1,19 +1,20 @@
 ---
 name: bfs-health
-description: "Run the project's existing tests, lint, type checks or build checks and report their actual results and limits."
+description: "Run existing project checks and report commands, results and verification limits."
 ---
 
 # BFS Health
 
-Load [HOST.md](../../HOST.md) for execution, state and authorization rules unless its full matching content is already loaded in this chat. Follow its hash-based read protocol.
-Modes: `check`. Choose the mode from the actual request.
+Load [HOST.md](../../HOST.md) via `read bfs-health`; follow its hash-based read protocol.
+Mode: `check`.
 
 1. Read the project's documented commands and relevant package or build configuration.
 2. Select checks covering the requested change or health question. Resolve actual prerequisites and the intended working directory.
 3. Run the selected existing commands, preserving exit codes and diagnostics. Use delivery evidence when a content-bound persistent record is needed.
 4. Distinguish product failures, pre-existing failures, missing tools and inaccessible services. A skipped check remains untested.
-5. Return the exact commands, results, affected scope and the next useful action. Test failure is not permission to modify source or weaken assertions.
+
+Output: Exact commands, exit/results, affected scope and next useful action.
 
 ## References
 
-- [commands](../../references/commands.md)
+- [commands](../../references/commands.md): when constructing a core request.

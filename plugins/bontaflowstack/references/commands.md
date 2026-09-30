@@ -88,10 +88,28 @@ ownership first. Repeated import of the same bytes is idempotent.
 ## Preferences
 
 All operations accept `scope`: `user`, `project` (default) or `task`.
+For `question-presentation` set/reset only, omitted scope defaults to `user`.
 `inspect` reads that scope; `effective` shows user → project → task precedence.
 `set` takes `id`, `question`, distinct `options` and a matching `choice`.
 Eligible IDs: `plan-design-review-mode`, `plan-devex-review-mode`,
-`detail-preference`. `reset` removes the exact ID at the selected scope.
+`detail-preference`, `question-presentation`. `reset` removes the exact ID at the selected scope.
+
+`question-presentation` uses exactly the canonical options `prefer-panel` and
+`chat`; both must be supplied to `set`. Labels shown to the user may be localized.
+`prefer-panel` uses an available, permitted host question panel with chat fallback;
+`chat` asks in chat. No saved choice means an unsaved `prefer-panel` default.
+The first conversational setup offers this preference only when no effective
+choice exists. Reads, direct skill invocation and resume do not offer setup.
+Refresh effective preferences after changes; reset restores lower-scope inheritance.
+
+```json
+{"scope":"user","id":"question-presentation","question":"How would you like to answer BFS decision questions?","options":["prefer-panel","chat"],"choice":"chat"}
+```
+
+Send to `preferences set` only after the actual user choice. Inspect with
+`preferences effective`; remove the user override with `preferences reset` and
+`{"scope":"user","id":"question-presentation"}`. This setting does not control
+native host approval dialogs or authorize actions.
 
 `profile` takes `values` with declared 0..1 values for `scope_appetite`,
 `risk_tolerance`, `detail_preference`, `autonomy`, `architecture_care`.

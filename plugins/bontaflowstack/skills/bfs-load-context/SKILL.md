@@ -1,12 +1,12 @@
 ---
 name: bfs-load-context
-description: "Load a manual or automatic checkpoint, identify changed inputs and resume the requested work from a verified next step."
+description: "Recover checkpoint state, detect drift and resume from a verified next step."
 ---
 
 # BFS Load Context
 
-Load [HOST.md](../../HOST.md) for execution, state and authorization rules unless its full matching content is already loaded in this chat. Follow its hash-based read protocol.
-Modes: `load`, `resume`. Choose the mode from the actual request.
+Load [HOST.md](../../HOST.md) via `read bfs-load-context`; follow its hash-based read protocol.
+Modes: `load`, `resume`. Use load for inspection and resume for requested continuation. Default: `load`.
 
 1. List workflow list and workflow checkpoints for the current project. Use the requested ID, or prefer the current workspace's relevant recent record; ask only when the choice is ambiguous.
 2. Call workflow resume with the chosen ID. Read the goal, steps, decisions, next action and content drift.
@@ -20,6 +20,8 @@ For a user-selected legacy text/Markdown snapshot, preview workflow import-legac
 and import it explicitly as historical context. Old permissions and check results
 remain unverified; the original file stays untouched.
 
+Output: Recovered goal, decisions, drift, stale checks, next action and adoption status when applicable.
+
 ## References
 
-- [commands](../../references/commands.md)
+- [commands](../../references/commands.md#workflow): before loading, importing or adopting workflow/checkpoint state.

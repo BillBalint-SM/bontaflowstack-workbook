@@ -1,12 +1,12 @@
 ---
 name: bfs-design-html
-description: "Build responsive HTML or a project-native component from a brief, selected design or image, then inspect the actual rendered result."
+description: "Build or refine responsive HTML/components from an accepted design and verify rendered behavior."
 ---
 
 # BFS Design HTML
 
-Load [HOST.md](../../HOST.md) for execution, state and authorization rules unless its full matching content is already loaded in this chat. Follow its hash-based read protocol.
-Modes: `implement`, `refine`. Choose the mode from the actual request.
+Load [HOST.md](../../HOST.md) via `read bfs-design-html`; follow its hash-based read protocol.
+Modes: `implement`, `refine`. Use implement for a new UI and refine for changes to an existing implementation. Default: `implement`.
 
 1. Identify the accepted input, target files, existing framework, content and reusable design tokens. Reuse the supplied direction and relevant project conventions.
 2. Plan the small implementation around information hierarchy, meaningful content, components, responsive states and interactions.
@@ -14,11 +14,15 @@ Modes: `implement`, `refine`. Choose the mode from the actual request.
 4. Use native CSS for ordinary layout. If measured text layout is specifically required, obtain the optional engine pretext resource and its license, or use an already installed project dependency.
 5. Render desktop and narrow layouts through engine render, or use engine browser for live interaction. Inspect screenshots and page errors; check overflow, text wrapping and the requested controls.
 6. Repair demonstrated in-scope defects and repeat the affected checks. Optional design-detect may provide additional findings when the user has installed that capability.
-7. Return actual output paths, source direction, implemented states and verification evidence. A request for bfs-design-review can consume those checked outputs.
+
+Pass checked outputs to bfs-design-review when that review is requested.
 
 For image-to-code work, inspect the supplied image with the host's image viewing capability and distinguish visible properties from inferred behavior. Requested image generation or editing uses Codex's image tool through bfs-design-consultation, without separate API credentials.
 
+Output: Output paths, source direction, implemented states and rendered/interaction evidence.
+
 ## References
 
-- [commands](../../references/commands.md)
-- [browser](../../references/browser.md)
+- [capabilities](../../references/capabilities.md): before checking or using optional engines/image/design tools.
+- [commands](../../references/commands.md): when constructing a core request.
+- [browser](../../references/browser.md): before browsing, login, rendering or web measurements.
