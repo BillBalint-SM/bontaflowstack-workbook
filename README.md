@@ -10,16 +10,19 @@ It supports business and product planning, brand and interface direction, websit
 development, debugging, testing, documentation and delivery. Each skill also works
 on its own when you already have its input.
 
-## Install
+## Install from GitHub (recommended)
 
-You need Codex Desktop and **Node.js 24 or newer**. The core uses no npm packages.
+You need Codex Desktop, Git and **Node.js 24 or newer**. The core uses no npm packages.
 
-With the Codex CLI available in PowerShell:
+Install the tested `0.4.1` release with the Codex CLI in PowerShell:
 
 ```powershell
-codex plugin marketplace add BillBalint-SM/bontaflowstack-workbook --ref main
+codex plugin marketplace add BillBalint-SM/bontaflowstack-workbook --ref v0.4.1
 codex plugin add bontaflowstack@bontaflowstack
 ```
+
+The marketplace tracks that release tag. To select a newer version, follow
+[Update](docs/bontaflowstack/INSTALL-WINDOWS.md#update).
 
 Start a new Codex chat in your project and ask:
 
@@ -38,18 +41,16 @@ the separately installed [BontaFlowStack engines](https://github.com/BillBalint-
 Their installer checks the pinned source archive, installs its locked dependencies
 and Chromium, then registers the checked Node.js tools. Bun is not required.
 
-For a downloaded source ZIP or a clone, run from the repository directory:
-
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\setup.ps1 -InstallPlugin -WithEngines
-```
-
-Add `-InstallPrerequisites` to install missing Node.js through Windows Package
-Manager. Omit `-WithEngines` for planning, source review, documentation and local
-memory only. Git is needed for Git workflows and installing a Git marketplace;
 Git Bash and jq are not required by the core.
 
 [Installation and troubleshooting](docs/bontaflowstack/INSTALL-WINDOWS.md)
+
+### Optional: source ZIP or local clone
+
+For manual setup, download the source ZIP and SHA-256 file from
+[GitHub Releases](https://github.com/BillBalint-SM/bontaflowstack-workbook/releases/tag/v0.4.1),
+or use a local clone. Follow the
+[source ZIP setup](docs/bontaflowstack/INSTALL-WINDOWS.md#optional-install-a-source-zip-or-local-clone).
 
 ### Set up a project
 

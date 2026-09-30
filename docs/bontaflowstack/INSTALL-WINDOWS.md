@@ -10,14 +10,19 @@
 The core has no npm dependency installation. Engine setup downloads locked npm
 dependencies and Chromium to its own directory. Git Bash and jq are unnecessary.
 
-## Install from GitHub
+## Install from GitHub (recommended)
 
-Run in PowerShell with the Codex CLI on PATH:
+Use the Git-backed marketplace for installation and updates. Run in PowerShell
+with the Codex CLI on PATH to install the tested `0.4.1` release:
 
 ```powershell
-codex plugin marketplace add BillBalint-SM/bontaflowstack-workbook --ref main
+codex plugin marketplace add BillBalint-SM/bontaflowstack-workbook --ref v0.4.1
 codex plugin add bontaflowstack@bontaflowstack
 ```
+
+This pins the marketplace to `v0.4.1`. Select a newer release explicitly using
+the [Update](#update) procedure. If `bontaflowstack` is already registered with a
+different source or tag, use that procedure to switch it.
 
 Start a new chat in your project. Ask `$bfs-router Set up BontaFlowStack`.
 Include "browser and design capabilities" to run the optional engine installer.
@@ -57,10 +62,14 @@ core or browser capabilities; a core-only check does not prove browser readiness
 status.` directly when you want task protection. Skill selection does not itself
 authorize publication, deployment, spending or destructive changes.
 
-## Install a source ZIP or clone
+## Optional: install a source ZIP or local clone
 
-Extract the complete repository ZIP to a stable directory, or clone it. From that
-directory:
+Use this alternative for manual setup from a release archive or local source
+checkout. Download the source ZIP and SHA-256 file from
+[GitHub Releases](https://github.com/BillBalint-SM/bontaflowstack-workbook/releases/tag/v0.4.1).
+Compare the archive's SHA-256 with the downloaded checksum before extraction.
+Extract the complete repository ZIP to a stable directory, or use a local clone.
+From that directory:
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\setup.ps1 -InstallPlugin -WithEngines
@@ -99,10 +108,30 @@ manual login and continuation. Close it with the bfs-browse skill when finished.
 
 ## Update
 
-For a Git marketplace, run `codex plugin marketplace upgrade bontaflowstack`, then
-`codex plugin add bontaflowstack@bontaflowstack`. For a local source installation,
-update its files first, then repeat the plugin-add command. Start a new chat.
-Run setup with `-WithEngines` when the pinned engine version changes.
+Choose a tested release from
+[GitHub Releases](https://github.com/BillBalint-SM/bontaflowstack-workbook/releases).
+Set `$releaseTag` to the tag you selected; `v0.4.1` is the current example. To change
+an existing marketplace's source or pinned tag, remove its registration first,
+then register the selected Git release and install it:
+
+```powershell
+$releaseTag = 'v0.4.1'
+codex plugin marketplace remove bontaflowstack
+codex plugin marketplace add BillBalint-SM/bontaflowstack-workbook --ref $releaseTag
+codex plugin add bontaflowstack@bontaflowstack
+```
+
+Use the same sequence to switch from a local source installation to Git. For a
+ZIP or local clone installation that should remain local, update its source
+files first, then repeat `codex plugin add bontaflowstack@bontaflowstack`.
+
+If you intentionally track a Git branch, refresh it with
+`codex plugin marketplace upgrade bontaflowstack`, then repeat the plugin-add
+command. Refreshing a pinned tag keeps that tag; it does not select a newer release.
+
+Start a new chat after updating. Review changed hook definitions through `/hooks`
+when Codex requests it. Run setup with `-WithEngines` when the pinned engine
+version changes.
 
 Engine releases install to distinct version/checksum directories. Local project
 memory and checkpoints remain separate from the plugin cache. Updating the plugin
