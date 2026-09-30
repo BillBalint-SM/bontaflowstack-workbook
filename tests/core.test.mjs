@@ -311,6 +311,24 @@ test('guard blocks a warning until the exact operation has a single-use confirma
   assert.equal(preTool(ctx,event).hookSpecificOutput.permissionDecision,'deny');
 });
 
+test('guard covers destructive Git aliases and default worktree restores', t => {
+  const {ctx,project}=fixture(t);
+  const event={hook_event_name:'PreToolUse',session_id:ctx.taskId,cwd:project,tool_name:'functions.exec_command',tool_input:{cmd:'git status --short'}};
+  const observation=preTool(ctx,event).hookSpecificOutput.additionalContext;
+  guard(ctx,'set',{observation,warnings:true});
+  for (const cmd of ['git clean --force','git -C . clean --force','git restore file.txt','git restore -W file.txt',
+    'git checkout -- file.txt','git checkout HEAD -- file.txt','git branch --delete --force fixture','git branch -df fixture']) {
+    const call={...event,tool_input:{cmd}};
+    assert.equal(classify(cmd,project,project)?.decision,'ask',cmd);
+    assert.equal(preTool(ctx,call).hookSpecificOutput.permissionDecision,'deny',cmd);
+    guard(ctx,'approve',{observation,id:guard(ctx,'status').pending.id,confirmation:'Fixture authorizes this exact simulated command; it is never executed'});
+    assert.equal(preTool(ctx,call).hookSpecificOutput.permissionDecision,undefined,cmd);
+    assert.equal(preTool(ctx,call).hookSpecificOutput.permissionDecision,'deny',cmd);
+  }
+  for (const cmd of ['git status --short','git clean --dry-run','git checkout fixture','git branch --list --force',
+    'git restore --help','git restore --staged file.txt']) assert.equal(classify(cmd,project,project),null,cmd);
+});
+
 test('delivery preserves command exit and rejects stale evidence', t => {
   const {ctx,project}=fixture(t);
   fs.writeFileSync(path.join(project,'input.txt'),'one');

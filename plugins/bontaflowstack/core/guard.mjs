@@ -80,9 +80,13 @@ export function classify(command, cwd, root, shell = '') {
         if (['-C','-c','--git-dir','--work-tree','--namespace','--config-env'].includes(option)) rest.shift();
       }
       const verb = rest.shift();
-      if ((verb === 'reset' && rest.includes('--hard')) || (verb === 'clean' && rest.some(a => /^-[^-]*f/.test(a))) ||
+      const separator = rest.indexOf('--'), flags = rest.slice(0,separator < 0 ? rest.length : separator);
+      const has = (long,short) => flags.includes(long) || flags.some(a => /^-[^-]/.test(a) && a.slice(1).includes(short));
+      if ((verb === 'reset' && flags.includes('--hard')) || (verb === 'clean' && has('--force','f')) ||
           (verb === 'push' && rest.some(a => /^--force(?:-with-lease|-if-includes)?(?:=|$)|^-f$|^\+/.test(a))) ||
-          (verb === 'branch' && rest.includes('-D')) || (verb === 'restore' && rest.includes('--worktree'))) {
+          (verb === 'branch' && (flags.some(a => /^-[^-]*D/.test(a)) || (has('--delete','d') && has('--force','f')))) ||
+          (verb === 'restore' && !has('--help','h') && (has('--worktree','W') || !has('--staged','S'))) ||
+          (verb === 'checkout' && separator >= 0 && separator < rest.length - 1)) {
         return { decision: 'ask', reason: 'This Git command can discard work or rewrite remote history; confirm its exact scope' };
       }
     }
