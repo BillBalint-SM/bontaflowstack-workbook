@@ -1,6 +1,6 @@
 ---
 name: bfs-bontaflow-memory
-description: "Read, write, prune, export or explicitly import project decisions and learnings."
+description: "Read, revise, retire or inspect project decisions, facts, plans and learnings."
 ---
 
 # BFS BontaFlow Memory
@@ -12,11 +12,11 @@ Select the actual project; runtime identity selects its store, never note conten
 
 ## Read
 
-Inspect with memory list/search/stats. Empty results differ from read/parse failures; inspection creates no store.
+Use the supplied essential context for orientation, and memory list/search/stats or history for full records. Empty results differ from read/parse failures; inspection creates no store.
 
 ## Write
 
-Use memory put for a decision/learning with kind, key, text, rationale and actual source: user-stated, observed or inferred. Optional confidence is 1–10. Revisions retain key and kind.
+Use memory put for decision/learning/fact/plan with a stable key, short text, rationale, actual source and sourceRef. Optional confidence is 1–10. Use details or document to retain the full plan; files bind observations to source content. Revise with the current expectedId. Use memory status with expectedId and an actual reason to complete/discard a record without deleting history. A linked plan leaves the context when its workflow closes. Imported/inferred content remains labelled as such.
 
 ## Prune
 

@@ -80,6 +80,17 @@ export function safeData(value) {
   visit(value);
   return value;
 }
+function replaceFile(source,target) {
+  const deadline = performance.now()+2000, sleeper = new Int32Array(new SharedArrayBuffer(4));
+  while (true) {
+    try { fs.renameSync(source,target); return; }
+    catch (error) {
+      const remaining = deadline-performance.now();
+      if (!['EPERM','EACCES','EBUSY'].includes(error.code) || remaining <= 0) throw error;
+      Atomics.wait(sleeper,0,0,Math.min(25,remaining));
+    }
+  }
+}
 export function atomicWrite(file, value) {
   safeData(value);
   noLinks(file);
@@ -93,12 +104,12 @@ export function atomicWrite(file, value) {
     const fd = fs.openSync(temporary, 'wx', 0o600);
     try { fs.writeFileSync(fd, serialized); fs.fsyncSync(fd); } finally { fs.closeSync(fd); }
     requireValue(fs.readFileSync(temporary, 'utf8') === serialized, 'Temporary write verification failed');
-    fs.renameSync(temporary, file);
+    replaceFile(temporary, file);
     try { requireValue(fs.readFileSync(file, 'utf8') === serialized, 'Saved data verification failed'); }
     catch (error) {
       if (previous) {
         fs.writeFileSync(temporary, previous, { flag: 'wx', mode: 0o600 });
-        fs.renameSync(temporary, file);
+        replaceFile(temporary, file);
       } else fs.unlinkSync(file);
       throw error;
     }

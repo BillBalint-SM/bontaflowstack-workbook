@@ -11,7 +11,8 @@ design, implementation, testing, documentation and delivery.
 - **Workflow:** an ordered sequence of skills performed in the current chat.
 - **Step:** one skill operation with input fingerprints, evidence, outputs and next action.
 - **Checkpoint:** automatically saved step state or an additional manual context snapshot.
-- **Project memory:** explicit typed decisions and learnings shared within a project.
+- **Project memory:** versioned decisions, facts, plans and learnings shared within a project, with source references and lifecycle status.
+- **Essential context:** a bounded current view of project memory and resumable work; full stored content and history remain available by record ID.
 - **Engine:** a separately installed browser, renderer or design capability invoked as a process.
 - **Guard:** optional per-task command warnings and supported edit-path constraints.
 - **Delivery evidence:** an observed result bound to the actual checked content.
@@ -38,3 +39,11 @@ General implementation uses the independent `bfs-implement` skill. It starts
 from an accepted basis within a requested implementation scope and checkpoints
 the actual decision and verified progress. Its skill instructions define when
 to wait or return for acceptance of a material revision.
+
+The accepted core-skill methodology keeps the existing BFS flow. Shared discovery
+and planning references guide material decisions, domain collisions and verifiable
+task dependencies. `bfs-implement` owns TDD; bug investigation supplies its verified
+reproduction. Code review reports Standards and Spec separately on a frozen scope.
+The methodology has native acceptance evidence in
+`docs/bontaflowstack/CORE-SKILL-METHODOLOGY-REPORT.md`. Installation and delivery
+status must be checked against the actual selected release and local plugin.

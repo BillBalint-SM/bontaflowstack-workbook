@@ -12,6 +12,16 @@ on `node <plugin>/core/cli.mjs`. The PowerShell launcher takes `-Command`,
 - `doctor [skill]`: core and selected readiness; JSON `mode` and QA `coverage` select the behavior. QA defaults to inspect/quick; all current coverage choices require browser.
 - `engine status`: per-capability readiness without starting an engine.
 
+## Essential context
+
+`context show` derives the short current view from memory, workflows and
+checkpoints. It includes current records, stale source notices, resumable work
+and detail pointers. `read <skill>` includes this view automatically; native
+PreToolUse injects it only when changed or first available. Reads create no stores.
+The view is limited to 10,000 characters with omitted counts. Full stored text
+and history remain accessible through `memory history` and `workflow resume`.
+Recorded data supplies context, not authorization for external actions.
+
 ## Workflow
 
 ```json
@@ -63,23 +73,53 @@ not certify a new version. Stable inputs still cannot change during completion.
 {"goal":"Launch the page","summary":"Design complete","decisions":[],"remaining":["Implement the selected design"],"files":["DESIGN.md"]}
 ```
 
+Add `workflowId` when the snapshot belongs to a workflow. For requested pause,
+`workflow pause` accepts `id` and optional `summary`, `decisions`, `remaining`
+and `files`; it creates an immutable snapshot containing the full saved workflow
+and marks that workflow paused. Its result includes `checkpointId`. Other work
+can proceed. Inspect `workflow resume`, then `workflow adopt` with
+`confirm: resume` before continuing paused work in the same workspace. Drift
+checks still apply. `workflow discard` accepts `id` and the actual cancellation
+summary; it retains a snapshot and removes the work from the active view.
+Discarded work cannot begin again; a new request starts a new workflow.
+
 `workflow import-legacy` previews a selected text/Markdown snapshot using `file`.
 Import with `goal` and `confirm: "import"`. It preserves the original bytes as
 context only; no old permissions, guard policy or successful checks are imported.
 
 ## Memory
 
-`memory list/search` accepts optional `query`, `kind`, `type` and `limit`.
+`memory list/search` accepts optional `query`, `kind`, `key`, `type` and `limit`.
+It returns current active revisions; `includeInactive: true` includes retired ones.
 `memory put` appends a revision of a key/kind pair:
 
 ```json
 {"kind":"learning","key":"checkout-retry","type":"pitfall","text":"The checkout request must carry its existing operation ID on retry.","source":"observed","confidence":8,"files":["checkout.js"]}
 ```
 
-Kinds are `decision` and `learning`. Sources are `user-stated`, `observed` and
+Kinds are `decision`, `learning`, `fact` and `plan`. Sources are `user-stated`, `observed` and
 `inferred`; imports use `imported`. `memory stats` reports revision/current
-counts. `memory export` returns Markdown. `memory prune` takes exact `ids` and
+counts. `memory export` returns selected current records as Markdown, including
+full details and provenance. `memory prune` takes exact `ids` and
 keeps a backup; earlier revisions can become current after removing the latest.
+
+Use `sourceRef` for the actual quotation or observation reference. `details`
+retains full text outside the condensed context (up to 128,000 characters).
+Alternatively, `document` reads and archives a selected UTF-8 workspace file and
+binds its content fingerprint. `files` bind other supporting source files.
+`expectedId` rejects an update based on an obsolete revision. Reuse an
+`operationId` to retry the same put/status request after an uncertain result;
+it returns the original saved revision. Different content with that ID fails.
+`workflowId` links
+a work-specific plan to its workflow; closed linked work leaves the context view.
+
+`memory status` appends a lifecycle revision with `kind`, `key`, `expectedId`,
+`status` (`active`, `completed` or `discarded`) and `reason`. It preserves the
+original source fingerprints; reactivation cannot certify a changed source.
+Retirement keeps all earlier content. `memory history` accepts `kind`/`key` and
+returns chronological revisions, including retired ones, up to the selected limit
+(default/max 10,000). Larger histories remain in the local store; no automatic
+pruning occurs. Legacy records without status remain active.
 
 `memory import-legacy` takes `file`, previews JSON/JSONL decision/learning
 records, then imports with `confirm: "import"`. Verify the original project's

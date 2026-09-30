@@ -1,6 +1,6 @@
 interface:
   display_name: "BFS BontaFlow Memory"
-  short_description: "Project memory with checked results"
+  short_description: "Project facts, decisions and plans"
   default_prompt: "Use $bfs-bontaflow-memory for the requested task and verify the result."
 policy:
   allow_implicit_invocation: true

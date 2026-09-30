@@ -1,6 +1,6 @@
 interface:
   display_name: "BFS Save Context"
-  short_description: "Save working context with checked results"
+  short_description: "Save or pause working context"
   default_prompt: "Use $bfs-save-context for the requested task and verify the result."
 policy:
   allow_implicit_invocation: true
