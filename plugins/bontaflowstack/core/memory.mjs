@@ -1,20 +1,34 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
-import { atomicWrite, changeJson, readJson, safeData, requireValue, text, identifier, now, digest, noLinks } from './state.mjs';
+import { atomicWrite, changeJson, readJson, safeData, requireValue, text, identifier, now, digest, noLinks, fingerprints } from './state.mjs';
 
 const empty = () => ({ schema: 1, records: [] });
 function valid(store) {
   requireValue(store?.schema === 1 && Array.isArray(store.records), 'Invalid memory store');
   return store;
 }
-function entry(input) {
-  requireValue(['decision', 'learning'].includes(input.kind), 'Memory kind must be decision or learning');
+function entry(input, ctx) {
+  requireValue(['decision', 'learning', 'fact', 'plan'].includes(input.kind), 'Memory kind must be decision, learning, fact or plan');
   requireValue(['user-stated', 'observed', 'inferred', 'imported'].includes(input.source), 'Specify the actual memory source');
+  requireValue(['active','completed','discarded'].includes(input.status ?? 'active'), 'Invalid memory status');
   if (input.confidence !== undefined) requireValue(Number.isFinite(input.confidence) && input.confidence >= 1 && input.confidence <= 10, 'Confidence must be 1..10');
+  requireValue(Array.isArray(input.files ?? []), 'Memory files must be an array');
+  const files = [...input.files || [], ...(input.document === undefined ? [] : [text(input.document,'document path',4096)])];
+  const fileFingerprints = fingerprints(ctx,files);
+  let details = input.details;
+  if (input.document !== undefined) {
+    requireValue(details === undefined, 'Use document or details, not both');
+    const source = fileFingerprints.at(-1), bytes = fs.readFileSync(path.join(ctx.workspace,source.path));
+    requireValue(digest(bytes) === source.sha256, 'Document changed while recording it');
+    details = new TextDecoder('utf-8',{fatal:true,ignoreBOM:true}).decode(bytes);
+  }
   return safeData({ id: randomUUID(), key: identifier(input.key), kind: input.kind, type: input.type || 'operational',
     text: text(input.text, 'memory text'), rationale: input.rationale || '', source: input.source,
-    confidence: input.confidence ?? null, files: input.files || [], createdAt: now() });
+    confidence: input.confidence ?? null, files, fileFingerprints,
+    status: input.status ?? 'active', sourceRef: input.sourceRef === undefined ? '' : text(input.sourceRef,'source reference',4096),
+    ...(details === undefined ? {} : {details:text(details,'memory details',128000)}),
+    ...(input.workflowId === undefined ? {} : {workflowId:identifier(input.workflowId)}), createdAt: now() });
 }
 function latest(store) {
   const byKey = new Map();
@@ -23,17 +37,33 @@ function latest(store) {
 }
 export function memory(ctx, action, input = {}) {
   const file = path.join(ctx.projectDir, 'memory.json');
-  if (action === 'put') {
-    const row = entry(input);
-    if (input.operationId) row.operationId = identifier(input.operationId);
-    let saved = row;
+  if (action === 'put' || action === 'status') {
+    let saved;
     changeJson(file, empty(), store => {
       valid(store);
-      const previous = row.operationId && store.records.find(r => r.operationId === row.operationId);
-      if (previous) {
-        requireValue(['key','kind','text','source','rationale'].every(key => previous[key] === row[key]), 'Operation ID already belongs to different memory content');
-        saved = previous;
-      } else store.records.push(row);
+      const previous = latest(store).find(row=>row.kind===input.kind && row.key===input.key);
+      const target = action === 'status' ? store.records.find(row=>row.id===input.expectedId && row.kind===input.kind && row.key===input.key) : previous;
+      if (action === 'status') {
+        requireValue(target, 'Read the current revision before changing its status');
+        requireValue(['active','completed','discarded'].includes(input.status), 'Invalid memory status');
+        text(input.reason,'status reason');
+      }
+      const row = entry(action === 'status' ? {...target,status:input.status,confidence:target.confidence ?? undefined,sourceRef:target.sourceRef || undefined,files:[]} : input,ctx);
+      if (action === 'status') { row.files=target.files || []; row.fileFingerprints=target.fileFingerprints || []; row.statusReason=input.reason; }
+      if (target) row.supersedes = target.id;
+      if (input.operationId) row.operationId = identifier(input.operationId);
+      const duplicate = row.operationId && store.records.find(r => r.operationId === row.operationId);
+      if (duplicate) {
+        requireValue(['key','kind','type','text','source','rationale','confidence','details','workflowId','statusReason'].every(key => JSON.stringify(duplicate[key]) === JSON.stringify(row[key])) &&
+          (duplicate.status ?? 'active') === row.status && (duplicate.sourceRef || '') === row.sourceRef &&
+          JSON.stringify(duplicate.fileFingerprints || []) === JSON.stringify(row.fileFingerprints) &&
+          (input.expectedId === undefined || duplicate.supersedes === input.expectedId),
+          'Operation ID already belongs to different memory content');
+        saved = duplicate;
+      } else {
+        if (input.expectedId !== undefined) requireValue(previous?.id === identifier(input.expectedId), 'Memory changed; read the current revision before updating');
+        store.records.push(row); saved = row;
+      }
       return store;
     });
     return { ...saved, file };
@@ -80,14 +110,14 @@ export function memory(ctx, action, input = {}) {
       const content = row.text || row.insight || row.decision;
       text(content, `legacy record ${index + 1}`);
       const result = entry({ key: `import-${sourceHash.slice(0,12)}-${index}`, kind: row.kind ?? (row.decision ? 'decision' : 'learning'),
-        text: content, rationale: row.rationale || '', source: 'imported', type: row.type || 'operational' });
+        text: content, rationale: row.rationale || '', source: 'imported', type: row.type || 'operational' },ctx);
       return { ...result, originalSource: sourceHash, originalDate: row.createdAt || row.timestamp || null };
     });
     const conflicts = store => rows.flatMap(row => store.records.filter(old => old.key === row.key &&
       !['kind','text','rationale','type','source','originalSource','originalDate'].every(field => JSON.stringify(old[field]) === JSON.stringify(row[field])))
       .map(old => ({ id: old.id, key: old.key })));
     if (input.confirm !== 'import') return { preview: true, source, sourceHash, count: rows.length,
-      counts: Object.fromEntries(['decision','learning'].map(kind => [kind,rows.filter(row => row.kind === kind).length])),
+      counts: Object.fromEntries([...new Set(['decision','learning',...rows.map(row=>row.kind)])].map(kind => [kind,rows.filter(row => row.kind === kind).length])),
       conflicts: conflicts(valid(readJson(file,empty()))) };
     const saved = changeJson(file, empty(), store => {
       valid(store);
@@ -100,11 +130,13 @@ export function memory(ctx, action, input = {}) {
     return { imported: saved.records.filter(row => row.originalSource === sourceHash).length, sourceHash, file };
   }
   const store = valid(readJson(file, empty()));
-  const rows = latest(store).filter(row => (!input.kind || row.kind === input.kind) && (!input.type || row.type === input.type)
+  const rows = (action === 'history' ? store.records : latest(store)).filter(row => (!input.kind || row.kind === input.kind) && (!input.key || row.key === input.key) && (!input.type || row.type === input.type)
+    && (action === 'history' || input.includeInactive || (row.status ?? 'active') === 'active')
     && (!input.query || `${row.text} ${row.key} ${row.rationale}`.toLowerCase().includes(String(input.query).toLowerCase())));
-  if (action === 'search' || action === 'list') {
+  if (action === 'search' || action === 'list' || action === 'history') {
     requireValue(input.limit === undefined || (Number.isInteger(input.limit) && input.limit > 0 && input.limit <= 10000), 'Limit must be 1..10000');
-    return rows.slice(-(input.limit ?? 50)).reverse();
+    const result = rows.slice(-(input.limit ?? (action === 'history' ? 10000 : 50)));
+    return action === 'history' ? result : result.reverse();
   }
   if (action === 'stats') {
     const counts = {};
@@ -112,7 +144,9 @@ export function memory(ctx, action, input = {}) {
     const confidence = rows.filter(row => Number.isFinite(row.confidence));
     return { records: store.records.length, current: rows.length, counts, averageConfidence: confidence.length ? confidence.reduce((sum,row) => sum + row.confidence, 0) / confidence.length : null };
   }
-  if (action === 'export') return { markdown: ['# Project memory', ...rows.map(row => `\n## ${row.key}\n\n${row.text}\n\nKind: ${row.kind}; source: ${row.source}; recorded: ${row.createdAt}`)].join('\n') };
+  if (action === 'export') return { markdown: ['# Project memory', ...rows.map(row => `\n## ${row.key}\n\n${row.text}\n\nKind: ${row.kind}; source: ${row.source}; status: ${row.status ?? 'active'}; recorded: ${row.createdAt}`+
+    (row.sourceRef ? `\n\nSource reference: ${row.sourceRef}` : '')+(row.rationale ? `\n\nRationale: ${typeof row.rationale === 'string' ? row.rationale : JSON.stringify(row.rationale)}` : '')+
+    (row.details ? `\n\n${row.details}` : ''))].join('\n') };
   throw new Error(`Unknown memory action: ${action}`);
 }
 

@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "version": "0.5.1",
+  "version": "0.6.0",
   "skills": [
     {
       "id": "bfs-router",
@@ -270,6 +270,7 @@
         "fix": []
       },
       "handoffs": [
+        "bfs-implement",
         "bfs-health",
         "bfs-review",
         "bfs-bontaflow-memory"
@@ -392,7 +393,7 @@
     {
       "id": "bfs-bontaflow-memory",
       "title": "BFS BontaFlow Memory",
-      "description": "Read, write, prune, export or explicitly import project decisions and learnings.",
+      "description": "Read, revise, retire or inspect project decisions, facts, plans and learnings.",
       "defaultMode": "read",
       "modes": {
         "read": [],
@@ -409,10 +410,11 @@
     {
       "id": "bfs-save-context",
       "title": "BFS Save Context",
-      "description": "Save a verified progress checkpoint or list existing checkpoints.",
+      "description": "Save or pause verified work, or list existing checkpoints.",
       "defaultMode": "save",
       "modes": {
         "save": [],
+        "pause": [],
         "list": []
       },
       "handoffs": [

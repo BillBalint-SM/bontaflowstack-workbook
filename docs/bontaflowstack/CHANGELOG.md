@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.6.0 — 2026-09-30
+
+- Added versioned facts and full plans alongside decisions and learnings, with
+  source fingerprints, lifecycle status, immutable history and checked updates.
+- Skill reads and native hooks expose bounded essential context; completed and
+  discarded work leaves the active view while full saved history remains available.
+- Workflows can pause or discard with complete snapshots, then resume paused work
+  after ownership and source-drift checks. Windows state writes retry transient locks.
+- Existing skills now use material decision trees, domain clarification, public
+  test boundaries and dependency-aware vertical tasks. TDD lives in bfs-implement;
+  bug repair uses that procedure within the investigation step.
+- Code review reports Standards and Spec separately against the same frozen scope.
+- Validation: 43 automated checks and 32 native methodology sessions, with findings
+  and limits in [the methodology report](CORE-SKILL-METHODOLOGY-REPORT.md).
+- The context/closure extension (portable handoff, unified delivery proof and retro)
+  remains a separate planned increment. Engine 0.3.1 is unchanged.
+
 ## 0.5.1 — 2026-09-30
 
 - Fixed guard detection for destructive Git flag aliases, default worktree restores

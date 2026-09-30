@@ -5,6 +5,24 @@ against the plugin being verified. Record its absolute path, catalog version,
 HOST and skill hashes, Codex version and available capabilities. Use the same
 model/settings when comparing runs. Never use production data or live publishing.
 
+## Core-skill methodology cases
+
+The [accepted methodology plan](CORE-SKILL-METHODOLOGY-PLAN.md) defines A01-A16.
+Use `node tests/methodology-acceptance.mjs create <new-absolute-root> plugins/bontaflowstack`
+to freeze the source and create 25 isolated runs: five repeated primary cases,
+a repeated conversation-only Spec variant, planning/diagnosis variants, and
+separate Standards/Spec reviewers on the same fixture base.
+Run `node tests/methodology-acceptance.mjs run <root> <verified-codex-js-entry>`;
+optional trailing case IDs select a subset. It uses the preceding native comparison's
+`gpt-6-sol`/medium settings. Inspect transcripts and before/after snapshots to assign
+each case PASS/FAIL/BLOCKED; CLI exit 0 alone is not semantic success. Preserve the
+manifest, real task identities, commands, stderr, final answers and isolated state.
+The runner skips finished runs on retry; a failed semantic case needs a new frozen
+evidence root after correction. Independent reviewers have distinct native threads;
+the final assessment must reconcile their actual findings and verify common inputs.
+
+## General fixtures
+
 Create isolated projects with `node tests/acceptance-fixtures.mjs create <absolute-new-root>`.
 Set `BFS_STATE_HOME` to each project's `.bfs-state` for its chat. Preserve the real
 Codex task identity. Point the chat explicitly at the tested plugin's

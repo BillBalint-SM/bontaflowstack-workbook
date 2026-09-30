@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 import { changeJson, readJson, requireValue, canonical, within, digest, now, identifier } from './state.mjs';
+import { contextHook } from './context.mjs';
 
 const parser = fileURLToPath(new URL('./parse-command.ps1', import.meta.url));
 const blank = () => ({ schema: 1, warnings: false, boundary: null });
@@ -104,8 +105,8 @@ export function preTool(ctx, event) {
   const observed = readJson(`${file}.observed.json`);
   if (!observed || Date.now() - Date.parse(observed.at) > 30000) changeJson(`${file}.observed.json`, null, current =>
     current?.taskId === ctx.taskId && current.workspaceId === ctx.workspaceId && Date.now() - Date.parse(current.at) <= 30000
-      ? current : { taskId: ctx.taskId, workspaceId: ctx.workspaceId, at: now(), package: '0.5.1' });
-  const hook = { hookEventName: 'PreToolUse', additionalContext: marker(ctx) };
+      ? current : { taskId: ctx.taskId, workspaceId: ctx.workspaceId, at: now(), package: '0.6.0' });
+  const hook = { hookEventName: 'PreToolUse', additionalContext: marker(ctx)+contextHook(ctx) };
   const response = (decision, reason) => ({ hookSpecificOutput: { ...hook, permissionDecision: decision, permissionDecisionReason: reason } });
   const tool = event.tool_name;
   if (state.boundary) {

@@ -22,7 +22,7 @@ Modes: `route` for execution, `guide` for advice, `setup` for installation/proje
 ## Routing
 
 1. Identify advice, one action or a sequence. A named skill takes precedence. Read `catalog list`; match task, description and mode. Resolve old names with `catalog resolve <name>` and preserve the returned mode.
-2. For advice, explain the route without creating a workflow. For one action, load `read <skill>` and execute in this task. For a sequence, remove irrelevant phases from a catalog route or ordered skill list and start one workflow with actual inputs and output conditions.
+2. Reuse verified context and accepted inputs to choose the next useful action. An accepted specification with usable acceptance cases routes directly to bfs-implement; a missing brief alone does not add discovery or repeat approval. For advice, explain the route without creating a workflow. For one action, load `read <skill>` and execute in this task. For a sequence, remove irrelevant phases from a catalog route or ordered skill list and start one workflow with actual inputs and output conditions.
 3. Read each selected skill under HOST's hash protocol. Carry forward scope and decisions; inspect its result before recording the step. Continue while prerequisites hold; blocked, failed or waiting steps suspend dependent work.
 
 Choose the narrowest match: page data → bfs-scrape; interaction tests → bfs-qa; accepted implementation → bfs-implement; changed-code inspection → bfs-review; unexplained defect → bfs-bug-issue-investigate. Browser is a shared capability.

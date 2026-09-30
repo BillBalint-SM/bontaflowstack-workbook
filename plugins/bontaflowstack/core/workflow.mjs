@@ -56,10 +56,15 @@ export function workflow(ctx, action, input, catalog) {
     atomicWrite(location(ctx, record.id), record);
     return record;
   }
-  if (action === 'list') return records(ctx,catalog).map(({ record }) => ({ id: record.id, goal: record.goal, status: record.status, next: record.next, workspace: record.workspace, updatedAt: record.updatedAt })).sort((a,b) => b.updatedAt.localeCompare(a.updatedAt));
+  if (action === 'list') return records(ctx,catalog).map(({ record }) => ({ id: record.id, goal: record.goal, status: record.status, next: record.next, workspace: record.workspace,
+    taskId:record.taskId, workspaceId:record.workspaceId, summary:record.steps.filter(step=>step.summary).at(-1)?.summary || '',
+    decisions:record.steps.flatMap(step=>step.decisions || []), remaining:record.steps.filter(step=>step.status !== 'completed').map(step=>step.skill),
+    checkpointId:record.checkpointId, updatedAt: record.updatedAt })).sort((a,b) => b.updatedAt.localeCompare(a.updatedAt));
   if (action === 'save') {
+    if (input.workflowId !== undefined) owned(ctx,readJson(location(ctx,input.workflowId)),catalog);
     const snapshot = { schema: 1, id: randomUUID(), kind: 'checkpoint', projectId: ctx.projectId, workspaceId: ctx.workspaceId, workspace: ctx.workspace, taskId: ctx.taskId,
-      createdAt: now(), environment: environment(ctx), goal: text(input.goal, 'goal'), summary: text(input.summary, 'summary'), decisions: input.decisions || [], remaining: input.remaining || [], files: fingerprints(ctx, input.files || []) };
+      createdAt: now(), environment: environment(ctx), goal: text(input.goal, 'goal'), summary: text(input.summary, 'summary'), decisions: input.decisions || [], remaining: input.remaining || [], files: fingerprints(ctx, input.files || []),
+      ...(input.workflowId === undefined ? {} : {workflowId:identifier(input.workflowId)}), ...(input.workflow === undefined ? {} : {workflow:input.workflow}) };
     const file = path.join(ctx.workspaceDir, 'checkpoints', `${snapshot.id}.json`);
     atomicWrite(file, snapshot);
     return { ...snapshot, file };
@@ -101,9 +106,28 @@ export function workflow(ctx, action, input, catalog) {
     return changeJson(source.file, null, record => {
       valid(ctx, record, catalog);
       requireValue(input.confirm === 'resume', 'Explicit resume choice required');
+      requireValue(record.status !== 'discarded', 'This workflow was discarded; start a new workflow for a new request');
       record.taskId = ctx.taskId;
       for (const step of record.steps) if (step.status === 'running') step.status = 'interrupted';
+      if (record.status === 'paused') record.status = record.resumeStatus || 'running';
       record.updatedAt = now();
+      return record;
+    });
+  }
+  if (action === 'pause' || action === 'discard') {
+    const file = location(ctx,input.id), prior = owned(ctx,readJson(file),catalog);
+    requireValue(!['completed','discarded'].includes(prior.status), 'This workflow is already closed');
+    const checkpoint = workflow(ctx,'save',{goal:prior.goal,summary:input.summary || prior.goal,
+      decisions:input.decisions || prior.steps.flatMap(step=>step.decisions || []),
+      remaining:input.remaining || prior.steps.filter(step=>step.status !== 'completed').map(step=>step.skill),
+      files:input.files || currentEvidence(prior.steps),workflowId:prior.id,workflow:prior},catalog);
+    return changeJson(file,null,record=>{
+      owned(ctx,record,catalog);
+      requireValue(record.updatedAt === prior.updatedAt, 'Workflow changed while saving; retry with the current state');
+      if (record.status !== 'paused') record.resumeStatus = record.status;
+      for (const step of record.steps) if (step.status === 'running') step.status = 'interrupted';
+      record.status = action === 'pause' ? 'paused' : 'discarded';
+      record.checkpointId = checkpoint.id; record.summary = checkpoint.summary; record.updatedAt = now();
       return record;
     });
   }
@@ -113,6 +137,8 @@ export function workflow(ctx, action, input, catalog) {
       const step = record.steps.find(s => s.id === String(input.step));
       requireValue(step, 'Unknown step');
       if (action === 'begin') {
+        requireValue(record.status !== 'discarded', 'This workflow was discarded; start a new workflow');
+        requireValue(record.status !== 'paused', 'Resume and adopt the paused workflow before beginning a step');
         requireValue(!record.steps.some(s => s.status === 'running' && s.id !== step.id), 'Another step is still running');
         const previous = record.steps.slice(0, record.steps.indexOf(step));
         requireValue(previous.every(s => s.status === 'completed'), 'A preceding step is unresolved');
@@ -123,7 +149,7 @@ export function workflow(ctx, action, input, catalog) {
             affected.history = [...history || [], prior];
           }
           affected.status = 'pending'; affected.inputs = []; affected.outputs = []; affected.evidence = [];
-          delete affected.summary; delete affected.finishedAt;
+          delete affected.summary; delete affected.finishedAt; delete affected.decisions;
         }
         step.status = 'running'; step.inputs = fingerprints(ctx, input.inputs || []); step.startedAt = now();
         record.status = 'running'; record.next = step.skill;

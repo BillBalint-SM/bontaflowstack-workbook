@@ -9,6 +9,7 @@ import { guard, preTool } from './guard.mjs';
 import { engines } from './engines.mjs';
 import { delivery } from './delivery.mjs';
 import { pluginRoot, loadCatalog, resolveSkill, selection } from './catalog.mjs';
+import { essentialContext, contextForRead } from './context.mjs';
 
 export { pluginRoot, loadCatalog, resolveSkill } from './catalog.mjs';
 function inputArgs(argv) {
@@ -37,8 +38,8 @@ export function run(argv) {
   }
   if (command === 'help' || command === '--help') return {
     usage:'node core/cli.mjs <command> <action> [--input file.json|-]',
-    commands:{ catalog:'list|resolve <skill>', read:'<skill>', doctor:'[skill]', workflow:'start|begin|step|list|resume|adopt|save|checkpoints|import-legacy',
-      memory:'list|search|put|prune|stats|export|import-legacy', preferences:'inspect|effective|set|reset|profile|enable|question|stats|propose|apply',
+    commands:{ catalog:'list|resolve <skill>', read:'<skill>', context:'show', doctor:'[skill]', workflow:'start|begin|step|list|resume|adopt|save|pause|discard|checkpoints|import-legacy',
+      memory:'list|search|put|status|history|prune|stats|export|import-legacy', preferences:'inspect|effective|set|reset|profile|enable|question|stats|propose|apply',
       guard:'status|set|release|off|approve', engine:'status|register|browser|render|design|design-md|design-detect|pretext', delivery:'status|queue|version|config|evidence|verify', hook:'pretool|stop' }
   };
   const catalog = loadCatalog();
@@ -49,9 +50,10 @@ export function run(argv) {
     const host = fs.readFileSync(path.join(pluginRoot,'HOST.md'),'utf8'), hostSha256 = digest(host);
     requireValue(input.knownHostSha256 === undefined || /^[a-f0-9]{64}$/.test(input.knownHostSha256), 'Invalid known HOST SHA-256');
     return { skill:skill.id, ...selection(skill,{mode:skill.mode,coverage:input.mode === undefined ? skill.coverage : undefined,...input}), hostSha256,
-      ...(input.knownHostSha256 === hostSha256 ? {} : {host}), instructions:source, contentSha256:digest(source) };
+      ...(input.knownHostSha256 === hostSha256 ? {} : {host}), instructions:source, contentSha256:digest(source), context:contextForRead(context(),catalog) };
   }
   const ctx = context();
+  if (command === 'context') { requireValue(action === 'show', 'Unknown context action'); return essentialContext(ctx,catalog); }
   if (command === 'doctor' || command === 'check') {
     const engine = engines(ctx,'status');
     const skill = action ? resolveSkill(action,catalog) : null;

@@ -34,6 +34,120 @@ function fixture(t) {
 }
 const expected = catalog.skills.map(s=>s.id);
 
+function contextCommand(fixture, command = ['context','show']) {
+  const result=spawnSync(process.execPath,[path.join(pluginRoot,'core/cli.mjs'),...command],{cwd:fixture.project,env:fixture.env,encoding:'utf8',windowsHide:true});
+  assert.equal(result.status,0,result.stderr);
+  return JSON.parse(result.stdout);
+}
+
+test('essential context retains fact and plan revisions while retiring completed or discarded records', t => {
+  const f=fixture(t),{ctx,project}=f;
+  fs.writeFileSync(path.join(project,'spec.md'),'First accepted plan');
+  const first=memory(ctx,'put',{kind:'fact',key:'handoff',text:'Preserve headers and storage.',details:'Full fixture rationale retained outside the short context.',source:'user-stated',sourceRef:'Fixture user message',files:['spec.md']});
+  const revision={kind:'fact',key:'handoff',text:'Preserve headers, storage and tabs.',source:'user-stated',sourceRef:'Later fixture user message',expectedId:first.id,files:['spec.md'],operationId:'update-handoff'};
+  const changed=memory(ctx,'put',revision);
+  assert.equal(memory(ctx,'put',revision).id,changed.id);
+  assert.throws(()=>memory(ctx,'put',{...revision,workflowId:'other-work'}),/different/);
+  assert.throws(()=>memory(ctx,'put',{...revision,operationId:'invalid-files',files:'spec.md'}),/array/);
+  assert.throws(()=>memory(ctx,'put',{kind:'fact',key:'handoff',text:'Stale overwrite',source:'user-stated',expectedId:first.id}),/changed/);
+  assert.deepEqual(memory(ctx,'history',{kind:'fact',key:'handoff'}).map(row=>row.text),[first.text,changed.text]);
+  const plan=memory(ctx,'put',{kind:'plan',key:'delivery',text:'Deliver the selected change.',source:'user-stated',document:'spec.md'});
+  fs.writeFileSync(path.join(project,'spec.md'),'A later changed plan');
+  assert.equal(memory(ctx,'history',{kind:'plan',key:'delivery'})[0].details,'First accepted plan');
+  assert.match(memory(ctx,'export').markdown,/First accepted plan/);
+  fs.writeFileSync(path.join(project,'spec.md'),'First accepted plan');
+  assert.ok(contextCommand(f).items.some(row=>row.id===changed.id));
+  const closure={kind:'plan',key:'delivery',status:'completed',expectedId:plan.id,reason:'Fixture verification completed.',operationId:'complete-delivery'};
+  const completed=memory(ctx,'status',closure);
+  assert.equal(memory(ctx,'status',closure).id,completed.id);
+  assert.throws(()=>memory(ctx,'status',{...closure,reason:'Different reason'}),/different/);
+  memory(ctx,'status',{kind:'fact',key:'handoff',status:'discarded',expectedId:changed.id,reason:'Fixture user discarded this direction.'});
+  assert.deepEqual(contextCommand(f).items,[]);
+  assert.equal(memory(ctx,'history',{kind:'fact',key:'handoff'})[0].details,first.details);
+  assert.equal(memory(ctx,'history',{kind:'plan',key:'delivery'}).at(-1).status,'completed');
+});
+
+test('skill reads include bounded essential context and identify changed source facts without erasing history', t => {
+  const f=fixture(t),{ctx,project}=f;
+  assert.equal(contextCommand(f).items.length,0);
+  assert.equal(fs.existsSync(ctx.home),false);
+  fs.writeFileSync(path.join(project,'spec.md'),'accepted version');
+  const fact=memory(ctx,'put',{kind:'fact',key:'source',text:'The accepted source uses version one.',source:'observed',sourceRef:'Read spec.md',files:['spec.md']});
+  for(let i=0;i<20;i++)memory(ctx,'put',{kind:'decision',key:'choice-'+i,text:'Essential choice '+i+' '+'.'.repeat(1000),source:'user-stated'});
+  const read=contextCommand(f,['read','bfs-spec']);
+  assert.equal(read.context.authorizesActions,false);
+  assert.ok(read.context.items.length<=12);
+  assert.ok(read.context.omitted.items>0);
+  assert.ok(JSON.stringify(read.context).length<12000);
+  for(let i=0;i<4;i++) {
+    const work=workflow(ctx,'start',{goal:'Long journey '+i+' '+'.'.repeat(2000),skills:['bfs-spec']},catalog);
+    workflow(ctx,'save',{goal:work.goal,workflowId:work.id,summary:'.'.repeat(5000),decisions:Array(10).fill('.'.repeat(2000)),remaining:Array(10).fill('.'.repeat(2000))},catalog);
+  }
+  assert.ok(JSON.stringify(contextCommand(f)).length<12000,'combined facts and journeys must remain bounded');
+  fs.writeFileSync(path.join(project,'spec.md'),'changed version');
+  const current=contextCommand(f);
+  assert.ok(!current.items.some(row=>row.id===fact.id));
+  assert.ok(current.stale.some(row=>row.id===fact.id));
+  assert.equal(memory(ctx,'history',{kind:'fact',key:'source'})[0].text,fact.text);
+});
+
+test('native context refreshes on changes, clears retired data and preserves guard behavior on corrupt memory', t => {
+  const {ctx,project}=fixture(t);
+  const item=memory(ctx,'put',{kind:'decision',key:'direction',text:'Fixture selected direction.',source:'user-stated'});
+  const event={hook_event_name:'PreToolUse',session_id:ctx.taskId,cwd:project,tool_name:'functions.exec_command',tool_input:{cmd:'git status'}};
+  assert.match(preTool(ctx,event).hookSpecificOutput.additionalContext,/BFS_CONTEXT_DATA/);
+  assert.doesNotMatch(preTool(ctx,event).hookSpecificOutput.additionalContext,/BFS_CONTEXT_DATA/);
+  memory(ctx,'status',{kind:'decision',key:'direction',status:'discarded',expectedId:item.id,reason:'Fixture cancellation.'});
+  const cleared=preTool(ctx,event).hookSpecificOutput.additionalContext;
+  assert.match(cleared,/BFS_CONTEXT_DATA/);
+  assert.doesNotMatch(cleared,/Fixture selected direction/);
+  fs.writeFileSync(path.join(ctx.projectDir,'memory.json'),'{invalid');
+  const failed=preTool(ctx,event).hookSpecificOutput;
+  assert.match(failed.additionalContext,/BFS_CONTEXT_UNAVAILABLE/);
+  assert.equal(failed.permissionDecision,undefined);
+});
+
+test('paused work survives another task and resumes with complete saved state and drift checks', t => {
+  const f=fixture(t),{ctx,project,env}=f;
+  fs.writeFileSync(path.join(project,'spec.md'),'accepted version');
+  const first=workflow(ctx,'start',{goal:'Original delivery',skills:['bfs-spec','bfs-implement','bfs-health']},catalog);
+  workflow(ctx,'begin',{id:first.id,step:'1'},catalog);
+  workflow(ctx,'step',{id:first.id,step:'1',status:'completed',summary:'Accepted fixture spec',evidence:['Read fixture spec'],outputs:['spec.md'],decisions:['Fixture accepted this exact specification']},catalog);
+  workflow(ctx,'begin',{id:first.id,step:'2',inputs:['spec.md']},catalog);
+  const paused=workflow(ctx,'pause',{id:first.id,summary:'Implementation paused with the agreed spec.',remaining:['Implement the agreed output'],files:['spec.md']},catalog);
+  assert.equal(paused.status,'paused');
+  const snapshot=workflow(ctx,'resume',{id:paused.checkpointId},catalog);
+  assert.equal(snapshot.workflowId,first.id);
+  assert.equal(snapshot.workflow.steps[0].decisions[0],'Fixture accepted this exact specification');
+  assert.deepEqual(snapshot.remaining,['Implement the agreed output']);
+  assert.equal(workflow(ctx,'pause',{id:first.id,summary:'Saved the same paused work again.'},catalog).status,'paused');
+  const other=context(project,{...env,CODEX_THREAD_ID:'another-task'});
+  const second=workflow(other,'start',{goal:'Other review',skills:['bfs-review']},catalog);
+  workflow(other,'begin',{id:second.id,step:'1'},catalog);
+  workflow(other,'step',{id:second.id,step:'1',status:'completed',summary:'Other work checked',evidence:['Fixture review result']},catalog);
+  assert.equal(workflow(other,'resume',{id:first.id},catalog).status,'paused');
+  assert.ok(contextCommand(f).work.some(row=>row.id===first.id && row.status==='paused'));
+  assert.ok(!contextCommand(f).work.some(row=>row.id===second.id));
+  fs.writeFileSync(path.join(project,'spec.md'),'changed version');
+  assert.equal(workflow(other,'resume',{id:first.id},catalog).drift.length,1);
+  assert.equal(workflow(other,'adopt',{id:first.id,confirm:'resume'},catalog).status,'running');
+  assert.throws(()=>workflow(other,'begin',{id:first.id,step:'2'},catalog),/stale/);
+  fs.writeFileSync(path.join(project,'spec.md'),'accepted version');
+  workflow(other,'begin',{id:first.id,step:'2',inputs:['spec.md']},catalog);
+  workflow(other,'step',{id:first.id,step:'2',status:'completed',summary:'Original work delivered',evidence:['Fixture acceptance checked']},catalog);
+  assert.equal(contextCommand(f).work.find(row=>row.id===first.id).summary,'Original work delivered');
+  assert.deepEqual(contextCommand(f).work.find(row=>row.id===first.id).remaining,['bfs-health']);
+  workflow(other,'begin',{id:first.id,step:'3'},catalog);
+  workflow(other,'step',{id:first.id,step:'3',status:'completed',summary:'Checks passed',evidence:['Fixture final check']},catalog);
+  assert.ok(!contextCommand(f).work.some(row=>row.id===first.id));
+  assert.ok(!contextCommand(f).checkpoints.some(row=>row.workflowId===first.id));
+  assert.equal(workflow(other,'resume',{id:paused.checkpointId},catalog).workflow.steps[0].decisions[0],'Fixture accepted this exact specification');
+  const abandoned=workflow(other,'start',{goal:'Discarded direction',skills:['bfs-spec']},catalog);
+  workflow(other,'discard',{id:abandoned.id,summary:'Fixture user discarded the direction.'},catalog);
+  assert.ok(!contextCommand(f).work.some(row=>row.id===abandoned.id));
+  assert.throws(()=>workflow(other,'begin',{id:abandoned.id,step:'1'},catalog),/discarded/i);
+});
+
 test('catalog exposes exactly the selected skills and preserves alias modes', () => {
   assert.deepEqual(fs.readdirSync(path.join(pluginRoot,'skills')).sort(),[...expected].sort());
   for (const skill of catalog.skills) {
@@ -115,16 +229,20 @@ test('a changed input cannot be certified as a completed step', t => {
 });
 
 test('reopening a step invalidates downstream results and preserves selected modes and history', t => {
-  const {ctx}=fixture(t);
+  const f=fixture(t),{ctx}=f;
   const started=workflow(ctx,'start',{goal:'Inspect then document',skills:[{skill:'bfs-qa',mode:'inspect'},'bfs-documentation']},catalog);
   for(const step of ['1','2']) {
     workflow(ctx,'begin',{id:started.id,step},catalog);
-    workflow(ctx,'step',{id:started.id,step,status:'completed',summary:'Verified fixture result',evidence:['Test fixture completion']},catalog);
+    workflow(ctx,'step',{id:started.id,step,status:'completed',summary:'Verified fixture result',evidence:['Test fixture completion'],decisions:['Prior fixture alternative '+step]},catalog);
   }
+  workflow(ctx,'save',{workflowId:started.id,goal:started.goal,summary:'Historical completed work',decisions:['Prior snapshot alternative']},catalog);
   const reopened=workflow(ctx,'begin',{id:started.id,step:'1'},catalog);
   assert.equal(reopened.steps[0].mode,'inspect');
   assert.equal(reopened.steps[1].status,'pending');
   assert.equal(reopened.steps[1].history[0].status,'completed');
+  assert.deepEqual(reopened.steps[1].history[0].decisions,['Prior fixture alternative 2']);
+  assert.deepEqual(contextCommand(f).work[0].decisions,[]);
+  assert.equal(contextCommand(f).work[0].summary,'');
   assert.equal(reopened.status,'running');
 });
 
@@ -181,7 +299,7 @@ test('atomic failure and write contention retain the previous bytes', t => {
   assert.equal(fs.readFileSync(file,'utf8'),old);
 });
 
-test('a transient Windows lock error is retried without losing the update', t => {
+test('transient Windows lock and replacement errors are retried without losing the update', t => {
   const {ctx}=fixture(t), file=path.join(ctx.home,'record.json');
   const mkdir=fs.mkdirSync;
   let failures=0;
@@ -193,6 +311,15 @@ test('a transient Windows lock error is retried without losing the update', t =>
   finally { fs.mkdirSync=mkdir; }
   assert.equal(failures,2);
   assert.deepEqual(readJson(file),{value:1});
+  const rename=fs.renameSync;
+  let replacements=0;
+  t.mock.method(fs,'renameSync',(source,target)=>{
+    if(target===file && replacements++===0)throw Object.assign(new Error('transient replacement error'),{code:'EPERM'});
+    return rename(source,target);
+  });
+  atomicWrite(file,{value:2});
+  assert.equal(replacements,2);
+  assert.deepEqual(readJson(file),{value:2});
 });
 
 test('memory keeps revisions, prunes exact IDs and imports legacy data without changing it', t => {
@@ -221,6 +348,7 @@ test('legacy memory import preserves typed collections and rejects partial input
     ['explicit.json',{decisions:[{text:'Explicit kind',kind:'learning'}]},['learning']],
     ['metadata.json',{learnings:[{text:'Structured legacy rationale',rationale:{reason:'Preserve imported metadata'},timestamp:{year:2020}}]},['learning']],
     ['records.json',{records:[{text:'Record',kind:'decision'}]},['decision']],
+    ['context-types.json',{records:[{text:'Fact',kind:'fact'},{text:'Plan',kind:'plan'}]},['fact','plan']],
     ['array.json',[{decision:'Array decision'},{insight:'Array lesson'}],['decision','learning']],
     ['rows.jsonl','{"decision":"Line decision"}\n{"insight":"Line lesson"}\n',['decision','learning']]
   ];
@@ -230,7 +358,7 @@ test('legacy memory import preserves typed collections and rejects partial input
     const before=fs.existsSync(storeFile) ? fs.readFileSync(storeFile,'utf8') : null;
     const preview=memory(ctx,'import-legacy',{file:legacy});
     assert.equal(preview.count,kinds.length,name);
-    assert.deepEqual(preview.counts,{decision:kinds.filter(k=>k==='decision').length,learning:kinds.filter(k=>k==='learning').length},name);
+    assert.deepEqual(preview.counts,Object.fromEntries([...new Set(['decision','learning',...kinds])].map(kind=>[kind,kinds.filter(k=>k===kind).length])),name);
     assert.deepEqual(preview.conflicts,[],name);
     assert.equal(fs.existsSync(storeFile) ? fs.readFileSync(storeFile,'utf8') : null,before,name);
     assert.equal(memory(ctx,'import-legacy',{file:legacy,confirm:'import'}).imported,kinds.length,name);

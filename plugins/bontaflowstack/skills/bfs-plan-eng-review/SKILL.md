@@ -12,7 +12,8 @@ Mode: `review`.
 2. Walk a normal operation and a failure through the proposed components. Check validation, ownership, concurrency, retries, compatibility and recovery.
 3. Prefer existing project facilities and native platform capabilities when they satisfy the specified behavior.
 4. Identify data-loss risks, ambiguous contracts, missing migrations, resource limits and changes that invalidate existing evidence.
-5. Map each significant risk to a concrete implementation adjustment and a discriminating test. Distinguish a necessary test from duplicated implementation checks.
+5. Map each significant risk to a concrete implementation adjustment and a discriminating test through the testing reference. Trace requirements to observable public test boundaries and affected failure/recovery cases.
+6. For multiple tasks or dependencies, read planning. Produce or validate vertical tasks with explicit blockers, acceptance cases and verification evidence; identify currently ready tasks. Report missing IDs and cycle paths before declaring the plan executable.
 
 Output: Ordered implementation tasks, technical decisions and acceptance scenarios with cited files or the proposed component location.
 
@@ -20,3 +21,5 @@ Output: Ordered implementation tasks, technical decisions and acceptance scenari
 
 - [commands](../../references/commands.md): when constructing a core request.
 - [review](../../references/review.md): when applying relevant review perspectives.
+- [testing](../../references/testing.md): before selecting acceptance test boundaries.
+- [planning](../../references/planning.md): for multiple tasks or dependency readiness.
