@@ -212,6 +212,77 @@ test('memory keeps revisions, prunes exact IDs and imports legacy data without c
   assert.equal(fs.readFileSync(legacy,'utf8'),raw);
 });
 
+test('legacy memory import preserves typed collections and rejects partial input', t => {
+  const {ctx,root}=fixture(t), storeFile=path.join(ctx.projectDir,'memory.json');
+  const formats=[
+    ['typed.json',{decisions:[{text:'Decision'}],learnings:[{text:'Lesson'}]},['decision','learning']],
+    ['decisions.json',{decisions:[{text:'Decision only'}]},['decision']],
+    ['learnings.json',{learnings:[{text:'Lesson only'}]},['learning']],
+    ['explicit.json',{decisions:[{text:'Explicit kind',kind:'learning'}]},['learning']],
+    ['metadata.json',{learnings:[{text:'Structured legacy rationale',rationale:{reason:'Preserve imported metadata'},timestamp:{year:2020}}]},['learning']],
+    ['records.json',{records:[{text:'Record',kind:'decision'}]},['decision']],
+    ['array.json',[{decision:'Array decision'},{insight:'Array lesson'}],['decision','learning']],
+    ['rows.jsonl','{"decision":"Line decision"}\n{"insight":"Line lesson"}\n',['decision','learning']]
+  ];
+  for (const [name,data,kinds] of formats) {
+    const legacy=path.join(root,name), raw=typeof data==='string' ? data : JSON.stringify(data);
+    fs.writeFileSync(legacy,raw);
+    const before=fs.existsSync(storeFile) ? fs.readFileSync(storeFile,'utf8') : null;
+    const preview=memory(ctx,'import-legacy',{file:legacy});
+    assert.equal(preview.count,kinds.length,name);
+    assert.deepEqual(preview.counts,{decision:kinds.filter(k=>k==='decision').length,learning:kinds.filter(k=>k==='learning').length},name);
+    assert.deepEqual(preview.conflicts,[],name);
+    assert.equal(fs.existsSync(storeFile) ? fs.readFileSync(storeFile,'utf8') : null,before,name);
+    assert.equal(memory(ctx,'import-legacy',{file:legacy,confirm:'import'}).imported,kinds.length,name);
+    const imported=fs.readFileSync(storeFile,'utf8');
+    memory(ctx,'import-legacy',{file:legacy,confirm:'import'});
+    assert.equal(fs.readFileSync(storeFile,'utf8'),imported,name);
+    assert.deepEqual(readJson(storeFile).records.filter(row=>row.originalSource===preview.sourceHash).map(row=>row.kind),kinds,name);
+    assert.equal(fs.readFileSync(legacy,'utf8'),raw,name);
+  }
+  const before=fs.readFileSync(storeFile,'utf8');
+  for (const data of [{decisions:[{text:'Valid'}],learnings:[{}]}, {decisions:[],learnings:'invalid'},
+    {records:[{text:'Record'}],decisions:[{text:'Decision'}]}, {decisions:[{text:'Invalid kind',kind:'other'}]}]) {
+    const legacy=path.join(root,'invalid.json'), raw=JSON.stringify(data);fs.writeFileSync(legacy,raw);
+    assert.throws(()=>memory(ctx,'import-legacy',{file:legacy,confirm:'import'}));
+    assert.equal(fs.readFileSync(storeFile,'utf8'),before);
+    assert.equal(fs.readFileSync(legacy,'utf8'),raw);
+  }
+});
+
+test('legacy memory import exposes incompatible prior records without rewriting them', t => {
+  const {ctx,root}=fixture(t), legacy=path.join(root,'legacy.json'), file=path.join(ctx.projectDir,'memory.json');
+  const raw=JSON.stringify({decisions:[{text:'Original decision'}],learnings:[{text:'Original lesson'}]});
+  fs.writeFileSync(legacy,raw);
+  const key=`import-${digest(raw).slice(0,12)}-0`;
+  const old=memory(ctx,'put',{key,kind:'learning',text:'Original decision',source:'imported'});
+  const store=readJson(file);Object.assign(store.records[0],{originalSource:digest(raw),originalDate:null});atomicWrite(file,store);
+  let before=fs.readFileSync(file,'utf8');
+  assert.deepEqual(memory(ctx,'import-legacy',{file:legacy}).conflicts,[{id:old.id,key}]);
+  assert.throws(()=>memory(ctx,'import-legacy',{file:legacy,confirm:'import'}),error=>error.message.includes(old.id));
+  assert.equal(fs.readFileSync(file,'utf8'),before);
+  memory(ctx,'prune',{ids:[old.id]});
+  assert.equal(memory(ctx,'import-legacy',{file:legacy,confirm:'import'}).imported,2);
+  const revision=memory(ctx,'put',{key,kind:'decision',text:'User edited this decision',source:'user-stated'});
+  before=fs.readFileSync(file,'utf8');
+  assert.deepEqual(memory(ctx,'import-legacy',{file:legacy}).conflicts,[{id:revision.id,key}]);
+  assert.throws(()=>memory(ctx,'import-legacy',{file:legacy,confirm:'import'}),error=>error.message.includes(revision.id));
+  assert.equal(fs.readFileSync(file,'utf8'),before);
+  assert.equal(fs.readFileSync(legacy,'utf8'),raw);
+});
+
+test('legacy memory import checks source drift before updating the store', t => {
+  const {ctx,root}=fixture(t), legacy=path.join(root,'legacy.json');
+  fs.writeFileSync(legacy,JSON.stringify([{insight:'Import candidate'}]));
+  memory(ctx,'put',{key:'existing',kind:'learning',text:'Keep this record',source:'user-stated'});
+  const file=path.join(ctx.projectDir,'memory.json'), before=fs.readFileSync(file,'utf8');
+  const read=fs.readFileSync;let reads=0;
+  const mock=t.mock.method(fs,'readFileSync',(target,...args)=>target===legacy && ++reads===2 ? 'changed source' : read(target,...args));
+  assert.throws(()=>memory(ctx,'import-legacy',{file:legacy,confirm:'import'}),/source changed/);
+  mock.mock.restore();
+  assert.equal(fs.readFileSync(file,'utf8'),before);
+});
+
 test('preferences are scoped, advisory, validated and require a selected proposal', t => {
   const {ctx}=fixture(t);
   assert.throws(()=>preferences(ctx,'set',{id:'publish-approval',question:'Publish?',options:['yes','no'],choice:'yes'}),/optional/);

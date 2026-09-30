@@ -84,6 +84,11 @@ keeps a backup; earlier revisions can become current after removing the latest.
 `memory import-legacy` takes `file`, previews JSON/JSONL decision/learning
 records, then imports with `confirm: "import"`. Verify the original project's
 ownership first. Repeated import of the same bytes is idempotent.
+Supported JSON shapes are an array, `records`, or `decisions` and/or `learnings`
+arrays. Typed collections supply the default kind; an explicit valid kind wins.
+Do not mix `records` with typed collections. Preview includes kind counts and
+conflicting record IDs. Conflicts, invalid input or detected source drift stop
+the import before changing memory; review existing records explicitly.
 
 ## Preferences
 

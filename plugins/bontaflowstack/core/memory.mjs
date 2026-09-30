@@ -57,24 +57,46 @@ export function memory(ctx, action, input = {}) {
     if (source.endsWith('.jsonl')) parsed = original.split(/\r?\n/).filter(x => x.trim()).map(line => JSON.parse(line));
     else {
       const data = JSON.parse(original.replace(/^\uFEFF/, ''));
-      parsed = Array.isArray(data) ? data : data.records || data.decisions || data.learnings;
+      if (Array.isArray(data)) parsed = data;
+      else if (data && Object.hasOwn(data,'records')) {
+        requireValue(!Object.hasOwn(data,'decisions') && !Object.hasOwn(data,'learnings'), 'Ambiguous legacy format; use records or typed collections');
+        parsed = data.records;
+      } else if (data && ['decisions','learnings'].some(name => Object.hasOwn(data,name))) {
+        parsed = [];
+        for (const [name,kind] of [['decisions','decision'],['learnings','learning']]) {
+          if (!Object.hasOwn(data,name)) continue;
+          requireValue(Array.isArray(data[name]), `Invalid legacy collection: ${name}`);
+          for (const row of data[name]) {
+            requireValue(row && typeof row === 'object' && !Array.isArray(row), 'Invalid legacy record');
+            parsed.push({ ...row, kind: row.kind ?? kind });
+          }
+        }
+      }
     }
     requireValue(Array.isArray(parsed), 'Unsupported legacy format; export decisions or learnings as JSON/JSONL first');
     const sourceHash = digest(original);
     const rows = parsed.map((row, index) => {
+      requireValue(row && typeof row === 'object' && !Array.isArray(row), `Invalid legacy record ${index + 1}`);
       const content = row.text || row.insight || row.decision;
       text(content, `legacy record ${index + 1}`);
-      const result = entry({ key: `import-${sourceHash.slice(0,12)}-${index}`, kind: row.kind || (row.decision ? 'decision' : 'learning'),
+      const result = entry({ key: `import-${sourceHash.slice(0,12)}-${index}`, kind: row.kind ?? (row.decision ? 'decision' : 'learning'),
         text: content, rationale: row.rationale || '', source: 'imported', type: row.type || 'operational' });
       return { ...result, originalSource: sourceHash, originalDate: row.createdAt || row.timestamp || null };
     });
-    if (input.confirm !== 'import') return { preview: true, source, sourceHash, count: rows.length };
+    const conflicts = store => rows.flatMap(row => store.records.filter(old => old.key === row.key &&
+      !['kind','text','rationale','type','source','originalSource','originalDate'].every(field => JSON.stringify(old[field]) === JSON.stringify(row[field])))
+      .map(old => ({ id: old.id, key: old.key })));
+    if (input.confirm !== 'import') return { preview: true, source, sourceHash, count: rows.length,
+      counts: Object.fromEntries(['decision','learning'].map(kind => [kind,rows.filter(row => row.kind === kind).length])),
+      conflicts: conflicts(valid(readJson(file,empty()))) };
     const saved = changeJson(file, empty(), store => {
       valid(store);
+      const mismatches = conflicts(store);
+      requireValue(!mismatches.length, `Legacy import conflicts with existing records: ${mismatches.map(row => row.id).join(', ')}; review them before importing`);
+      requireValue(fs.readFileSync(source, 'utf8') === original, 'Legacy source changed during import');
       for (const row of rows) if (!store.records.some(old => old.key === row.key)) store.records.push(row);
       return store;
     });
-    requireValue(fs.readFileSync(source, 'utf8') === original, 'Legacy source changed during import');
     return { imported: saved.records.filter(row => row.originalSource === sourceHash).length, sourceHash, file };
   }
   const store = valid(readJson(file, empty()));
