@@ -83,3 +83,7 @@ checks the registered installation before using it.
 The runnable lifecycle check in `tests/reliability.test.mjs` exercises removal of
 one isolated project's state/profile-shaped directories while preserving another
 project and shared engine data. It does not remove real user state or profiles.
+
+## Portable handoff
+
+Source development adds workflow export/import-handoff. A handoff includes the full selected memory histories, checkpoint/workflow and selected evidence, up to 8 MiB. Import stores one immutable historical checkpoint under the current identity without merging memory, guard settings or permissions. Code and other required artifacts travel separately. See [portable context](../../plugins/bontaflowstack/references/context.md).

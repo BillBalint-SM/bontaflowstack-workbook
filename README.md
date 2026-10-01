@@ -173,10 +173,14 @@ names for direct calls. Previous names remain catalog aliases through
 | Design | `bfs-design-consultation`, `bfs-design-html`, `bfs-design-review` | Compare directions, preserve your selection, implement and inspect the rendered result. |
 | Browser and data | `bfs-browse`, `bfs-scrape`, `bfs-benchmark` | Browse or sign in visibly, extract verified data, measure page performance. |
 | Quality | `bfs-bug-issue-investigate`, `bfs-review`, `bfs-cso-audit`, `bfs-health`, `bfs-qa` | Diagnose defects, inspect changes and security, run project checks and test web flows. |
-| Documentation and delivery | `bfs-documentation`, `bfs-finisher`, `bfs-prod-deploy`, `bfs-landing-report` | Maintain docs, prepare changes, use existing deployment configuration and report live delivery state. |
+| Documentation and delivery | `bfs-documentation`, `bfs-finisher`, `bfs-prod-deploy`, `bfs-landing-report`, `bfs-retro` | Maintain docs, prepare changes, use existing deployment configuration and report live delivery state. |
 | Continuation and control | `bfs-bontaflow-memory`, `bfs-save-context`, `bfs-load-context`, `bfs-guard` | Keep project decisions and learnings, save/restore progress and apply optional task protections. |
 
 ### Combined modes
+
+Source development adds portable handoff export/import and optional trace-based
+retro reporting. These additions require the next release; the installation
+commands above still select the tested 0.6.0 package.
 
 - **bfs-design-consultation:** consultation, variants, Codex image generation and refinement.
 - **bfs-browse:** page work, visible browser, manual login and continuation in the same session.
@@ -189,7 +193,7 @@ names for direct calls. Previous names remain catalog aliases through
 The full mode and handoff definitions live in the [catalog](plugins/bontaflowstack/catalog.json).
 Older names resolve through the router; only the catalog entries are installed.
 Saved reusable browser automation, standalone developer-experience audits,
-deployment provisioning and retrospective reports are outside this version.
+deployment provisioning are outside this version.
 
 ## Local data and optional tools
 

@@ -117,6 +117,28 @@ alone do not prove that an agent loads the right reference at the right time.
 
 ## Evaluation record
 
+Context/closure source cases use the existing native runner:
+
+```powershell
+node tests/context-closure-acceptance.mjs create C:\path\to\new-evidence-root plugins/bontaflowstack
+node tests/methodology-acceptance.mjs run C:\path\to\new-evidence-root C:\path\to\codex\bin\codex.js
+```
+
+N01 covers pause/other work/resume/export; N02 changed sources, missing artifact
+and query-before-retry; N03 local closure without a compulsory retro; N04 fresh
+read-only GitHub release observation; N05 actual failed/recovered trace and
+learning revisions; N06 judgment with missing evidence; N07 the integrated
+handoff/local-proof/provider-query/retro/closure journey. N08 isolates export and verifies that
+existing workflow, memory and checkpoints stay unchanged. N09 isolates pause
+and checks that it creates one snapshot as part of the pause. N02/N04/N07 require
+network access for the selected public read-only query; the native runner uses
+full access for those explicit cases. Their prompts prohibit publication,
+deployment, installs and unrelated project access. Other cases retain the
+workspace sandbox. A blocked query is a negative verification result, never a
+successful release claim. The existing release observation does not certify
+deployment of the fixture or the new source features. New source hook behavior
+and installed-package/native UI acceptance remain separate observations.
+
 For each case record: request, fixture, plugin hashes, actual selected skills and
 settings, evidence paths, before/after files, state transitions, pass/fail/blocked
 and reason. Re-run all ten cases with the final extracted package. Keep source and

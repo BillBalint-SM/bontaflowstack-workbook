@@ -1,0 +1,6 @@
+interface:
+  display_name: "BFS Retro"
+  short_description: "Find reusable lessons in actual work traces"
+  default_prompt: "Use $bfs-retro to review the requested work and report evidence-based lessons."
+policy:
+  allow_implicit_invocation: true

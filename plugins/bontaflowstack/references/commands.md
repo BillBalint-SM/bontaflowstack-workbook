@@ -219,3 +219,9 @@ as an ES module or the project's installed package, not as an inline browser bun
 
 Merge and deployment use the actual selected host/project commands after the
 skill checks scope and live state. Reading a configuration never executes it.
+
+## Portable handoff
+
+`workflow export` and `workflow import-handoff` use the [portable context contract](context.md).
+
+`delivery report` and fresh external `delivery verify` use the [delivery evidence contract](delivery.md#evidence-and-freshness).

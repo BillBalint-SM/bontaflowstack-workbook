@@ -35,6 +35,8 @@ export function essentialContext(ctx,catalog=loadCatalog()) {
   });
   const manual = new Map();
   for (const snapshot of snapshots) {
+    if (['completed','discarded'].includes(snapshot.sourceStatus)) continue;
+    if (allWork.some(row=>row.sourceCheckpointId===snapshot.id)) continue;
     if (snapshot.workflowId || allWork.some(row=>row.goal===snapshot.goal && row.workspaceId===snapshot.workspaceId)) continue;
     const key = snapshot.workspaceId+':'+snapshot.taskId;
     if (!manual.has(key)) manual.set(key,snapshot);
