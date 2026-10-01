@@ -14,10 +14,10 @@ on its own when you already have its input.
 
 You need Codex Desktop, Git and **Node.js 24 or newer**. The core uses no npm packages.
 
-Install the tested `0.6.0` release with the Codex CLI in PowerShell:
+Install the tested `0.6.1` release with the Codex CLI in PowerShell:
 
 ```powershell
-codex plugin marketplace add BillBalint-SM/bontaflowstack-workbook --ref v0.6.0
+codex plugin marketplace add BillBalint-SM/bontaflowstack-workbook --ref v0.6.1
 codex plugin add bontaflowstack@bontaflowstack
 ```
 
@@ -48,7 +48,7 @@ Git Bash and jq are not required by the core.
 ### Optional: source ZIP or local clone
 
 For manual setup, download the source ZIP and SHA-256 file from
-[GitHub Releases](https://github.com/BillBalint-SM/bontaflowstack-workbook/releases/tag/v0.6.0),
+[GitHub Releases](https://github.com/BillBalint-SM/bontaflowstack-workbook/releases/tag/v0.6.1),
 or use a local clone. Follow the
 [source ZIP setup](docs/bontaflowstack/INSTALL-WINDOWS.md#optional-install-a-source-zip-or-local-clone).
 
@@ -179,8 +179,7 @@ names for direct calls. Previous names remain catalog aliases through
 ### Combined modes
 
 Source development adds portable handoff export/import and optional trace-based
-retro reporting. These additions require the next release; the installation
-commands above still select the tested 0.6.0 package.
+retro reporting. These additions are included in 0.6.1.
 
 - **bfs-design-consultation:** consultation, variants, Codex image generation and refinement.
 - **bfs-browse:** page work, visible browser, manual login and continuation in the same session.
