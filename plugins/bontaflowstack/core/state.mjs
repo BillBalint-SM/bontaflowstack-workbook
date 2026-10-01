@@ -93,18 +93,30 @@ function replaceFile(source,target) {
 }
 export function atomicWrite(file, value) {
   safeData(value);
+  writeSerialized(file,JSON.stringify(value,null,2)+'\n');
+  return value;
+}
+export function atomicWriteText(file, value, {overwrite=false} = {}) {
+  safeData({text:value});
+  requireValue(typeof value === 'string', 'Expected UTF-8 text');
+  writeSerialized(file,value,!overwrite);
+  return value;
+}
+function writeSerialized(file, serialized, createOnly=false) {
   noLinks(file);
   fs.mkdirSync(path.dirname(file), { recursive: true });
   noLinks(file);
-  const serialized = JSON.stringify(value, null, 2) + '\n';
   const previous = fs.existsSync(file) ? fs.readFileSync(file) : null;
-  if (previous?.equals(Buffer.from(serialized))) return value;
+  if (previous?.equals(Buffer.from(serialized))) return;
+  requireValue(!createOnly || !previous, 'Output already exists; select a new file or explicit overwrite');
   const temporary = `${file}.${randomUUID()}.tmp`;
   try {
     const fd = fs.openSync(temporary, 'wx', 0o600);
     try { fs.writeFileSync(fd, serialized); fs.fsyncSync(fd); } finally { fs.closeSync(fd); }
     requireValue(fs.readFileSync(temporary, 'utf8') === serialized, 'Temporary write verification failed');
-    replaceFile(temporary, file);
+    // Create-only publication must reject a destination created by another writer.
+    // Same-directory hardlink publication is atomic; unsupported filesystems fail visibly.
+    if(createOnly)fs.linkSync(temporary,file);else replaceFile(temporary, file);
     try { requireValue(fs.readFileSync(file, 'utf8') === serialized, 'Saved data verification failed'); }
     catch (error) {
       if (previous) {
@@ -114,7 +126,6 @@ export function atomicWrite(file, value) {
       throw error;
     }
   } finally { if (fs.existsSync(temporary)) fs.unlinkSync(temporary); }
-  return value;
 }
 export function changeJson(file, fallback, update) {
   noLinks(file);

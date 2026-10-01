@@ -32,12 +32,12 @@ export const cases=[
 ];
 const repeated=new Set(['A01','A02','A06','A11','A13','A13-conversation']);
 function hashes(folder){return snapshot(folder);}
-export function createMethodologyFixtures(root,plugin){
+export function createMethodologyFixtures(root,plugin,selectedCases=cases){
   if(!path.isAbsolute(root)||fs.existsSync(root))throw Error('Choose a new absolute evidence root');
   fs.mkdirSync(root,{recursive:true});
   const frozen=path.join(root,'plugin');fs.cpSync(plugin,frozen,{recursive:true});
   const runs=[];
-  for(const c of cases)for(let repeat=1;repeat<=(repeated.has(c.id)?2:1);repeat++){
+  for(const c of selectedCases)for(let repeat=1;repeat<=(repeated.has(c.id)?2:1);repeat++){
     const id=`${c.id}-${repeat}`,project=path.join(root,'projects',id);
     fs.mkdirSync(project,{recursive:true});
     const files={'AGENTS.md':'Preserve unrelated user files and data. No external tracker. Use CONTEXT.md for domain terms when present.\n','USER-NOTE.txt':'Keep this user note unchanged.\n','app.mjs':greeting,'cli.mjs':cli,'test.mjs':check,'spec.md':spec,...c.files};
@@ -66,7 +66,7 @@ async function runOne(root,manifest,c,entry){
   const prompt=`Use only the frozen BFS plugin at ${manifest.plugin}. Load skills/${c.skill}/SKILL.md and this source's read/HOST protocol. Project: ${c.project}. Keep plugin and unrelated files unchanged. BFS_STATE_HOME is isolated in this project; preserve the real native task identity. No installs, external publication, deployment, hook trust changes or access to other projects. Answer in Hungarian. Fixture base: ${c.base}; initial hashes are in ${path.join(root,'manifest.json')}.\n\n${c.request}`;
   fs.writeFileSync(path.join(evidence,'prompt.txt'),prompt);
   const env={...process.env,BFS_STATE_HOME:path.join(c.project,'.bfs-state')};delete env.CODEX_THREAD_ID;
-  const args=[entry,'exec','--ignore-user-config','-c','windows.sandbox="elevated"','-c','model="gpt-6-sol"','-c','model_reasoning_effort="medium"','-c','approval_policy="never"','-s','workspace-write','--add-dir',root,'--skip-git-repo-check','-C',c.project,'--json','-o',path.join(evidence,'final.txt'),'-'];
+  const args=[entry,'exec','--ignore-user-config','-c','windows.sandbox="elevated"','-c','model="gpt-6-sol"','-c','model_reasoning_effort="medium"','-c','approval_policy="never"','-s',c.network?'danger-full-access':'workspace-write','--add-dir',root,'--skip-git-repo-check','-C',c.project,'--json','-o',path.join(evidence,'final.txt'),'-'];
   const started=Date.now();
   const exit=await new Promise((resolve,reject)=>{
     const child=spawn(process.execPath,args,{cwd:c.project,env,windowsHide:true});

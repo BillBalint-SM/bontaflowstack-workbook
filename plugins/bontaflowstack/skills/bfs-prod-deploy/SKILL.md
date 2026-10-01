@@ -13,6 +13,7 @@ Modes: `inspect` for readiness, `integrate` for merge, `deploy` for delivery, `v
 1. Resolve repository/change, exact head/base, environment and requested operation. Read existing deployment instructions/config; report missing targets, credentials or configuration.
 2. Inspect integration method, automatic/manual deployment trigger, status/health checks and recovery. Configuration supplies no permission. Check CI/review/test evidence against current content; distinguish pending, failed, stale and missing results.
 3. Execute only the requested mode. For an integration/deployment sequence, use separate integrate, deploy and verify workflow steps; save each observed stage immediately. Deploy-only starts at deployment.
+4. Bind each delivery evidence record to the owned workflow, stage and exact subject. Derive the report from those records. Use an explicitly selected current read-only provider query for delivery verify; distinguish its fresh observation from historical evidence and compare actual revision/version/artifact identity before claiming success.
 
 ## Inspect
 

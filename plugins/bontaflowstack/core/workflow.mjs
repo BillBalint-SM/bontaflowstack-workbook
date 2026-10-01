@@ -40,6 +40,10 @@ function currentEvidence(steps) {
 }
 export function workflow(ctx, action, input, catalog) {
   if (action === 'start') {
+    if(input.sourceCheckpointId!==undefined) {
+      identifier(input.sourceCheckpointId);
+      requireValue(workflow(ctx,'checkpoints',{},catalog).some(row=>row.id===input.sourceCheckpointId && row.projectId===ctx.projectId && row.workspaceId===ctx.workspaceId), 'Source checkpoint not found in this workspace');
+    }
     const route = input.route ? catalog.workflows[input.route] : undefined;
     requireValue(!input.route || route, 'Unknown workflow route');
     const selected = input.skills || route;
@@ -52,12 +56,13 @@ export function workflow(ctx, action, input, catalog) {
       return { id: String(i + 1), skill: name, ...selectSettings(skill,settings,true), status: 'pending', inputs: [], outputs: [], evidence: [] };
     });
     const record = { schema: 1, id: randomUUID(), projectId: ctx.projectId, workspaceId: ctx.workspaceId, workspace: ctx.workspace, taskId: ctx.taskId,
-      goal: text(input.goal, 'goal'), environment: environment(ctx), route: input.route ?? null, status: 'running', createdAt: now(), updatedAt: now(), steps, next: input.next || steps[0].skill };
+      goal: text(input.goal, 'goal'), environment: environment(ctx), route: input.route ?? null, status: 'running', createdAt: now(), updatedAt: now(), steps, next: input.next || steps[0].skill,
+      ...(input.sourceCheckpointId===undefined ? {} : {sourceCheckpointId:input.sourceCheckpointId}) };
     atomicWrite(location(ctx, record.id), record);
     return record;
   }
   if (action === 'list') return records(ctx,catalog).map(({ record }) => ({ id: record.id, goal: record.goal, status: record.status, next: record.next, workspace: record.workspace,
-    taskId:record.taskId, workspaceId:record.workspaceId, summary:record.steps.filter(step=>step.summary).at(-1)?.summary || '',
+    taskId:record.taskId, workspaceId:record.workspaceId, sourceCheckpointId:record.sourceCheckpointId, summary:record.steps.filter(step=>step.summary).at(-1)?.summary || '',
     decisions:record.steps.flatMap(step=>step.decisions || []), remaining:record.steps.filter(step=>step.status !== 'completed').map(step=>step.skill),
     checkpointId:record.checkpointId, updatedAt: record.updatedAt })).sort((a,b) => b.updatedAt.localeCompare(a.updatedAt));
   if (action === 'save') {

@@ -35,7 +35,8 @@
         "bfs-bontaflow-memory",
         "bfs-save-context",
         "bfs-load-context",
-        "bfs-plan-tune"
+        "bfs-plan-tune",
+        "bfs-retro"
       ]
     },
     {
@@ -359,7 +360,8 @@
         "bfs-health",
         "bfs-documentation",
         "bfs-landing-report",
-        "bfs-prod-deploy"
+        "bfs-prod-deploy",
+        "bfs-retro"
       ]
     },
     {
@@ -410,12 +412,13 @@
     {
       "id": "bfs-save-context",
       "title": "BFS Save Context",
-      "description": "Save or pause verified work, or list existing checkpoints.",
+      "description": "Save, pause or export verified work, or list existing checkpoints.",
       "defaultMode": "save",
       "modes": {
         "save": [],
         "pause": [],
-        "list": []
+        "list": [],
+        "export": []
       },
       "handoffs": [
         "bfs-load-context"
@@ -428,7 +431,8 @@
       "defaultMode": "load",
       "modes": {
         "load": [],
-        "resume": []
+        "resume": [],
+        "import": []
       },
       "handoffs": [
         "bfs-router"
@@ -448,6 +452,20 @@
         "off": []
       },
       "handoffs": []
+    },
+    {
+      "id": "bfs-retro",
+      "title": "BFS Retro",
+      "description": "Review actual work traces for reusable lessons, distinguishing mechanical checks from judgment.",
+      "defaultMode": "report",
+      "modes": {
+        "report": []
+      },
+      "handoffs": [
+        "bfs-bontaflow-memory",
+        "bfs-bug-issue-investigate",
+        "bfs-implement"
+      ]
     }
   ],
   "aliases": {
@@ -634,13 +652,16 @@
     "guard": {
       "skill": "bfs-guard",
       "mode": "status"
+    },
+    "retro": {
+      "skill": "bfs-retro",
+      "mode": "report"
     }
   },
   "removed": {
     "skillify": "Reusable browser automation generation and execution are unavailable; use one-time browse or scrape.",
     "devex-review": "Runtime developer-experience auditing is unavailable. Plan review remains a separate capability.",
-    "setup-deploy": "Deployment configuration generation is unavailable. Provide existing configuration to prod-deploy.",
-    "retro": "Retrospective reporting was removed. Workflow progress remains available."
+    "setup-deploy": "Deployment configuration generation is unavailable. Provide existing configuration to prod-deploy."
   },
   "workflows": {
     "implementation": [
