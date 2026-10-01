@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.6.1 — 2026-10-01
+
+- Added portable, integrity-checked context handoffs that preserve selected
+  histories and import as immutable checkpoints without replaying commands.
+- Added workflow-linked delivery evidence with explicit freshness, identity and
+  provider checks; stale or incomplete proof no longer certifies delivery.
+- Added optional, evidence-backed retro reporting with learning provenance.
+- Save/load skills now export, resume and branch checkpoints with reduced
+  unnecessary save and status steps.
+- Validation: 52 automated checks and the release ZIP smoke passed. Native
+  session timeouts and coverage boundaries are recorded in the
+  [context-closure report](CONTEXT-CLOSURE-REPORT.md). Engine 0.3.1 is unchanged.
+
 ## 0.6.0 — 2026-09-30
 
 - Added versioned facts and full plans alongside decisions and learnings, with
