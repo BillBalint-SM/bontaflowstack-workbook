@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "version": "0.6.1",
+  "version": "0.7.0",
   "skills": [
     {
       "id": "bfs-router",
@@ -36,7 +36,11 @@
         "bfs-save-context",
         "bfs-load-context",
         "bfs-plan-tune",
-        "bfs-retro"
+        "bfs-retro",
+        "bfs-prototype",
+        "bfs-triage",
+        "bfs-wayfinder",
+        "bfs-learn"
       ]
     },
     {
@@ -466,6 +470,60 @@
         "bfs-bug-issue-investigate",
         "bfs-implement"
       ]
+    },
+    {
+      "description": "Run a small, disposable experiment to settle a concrete product or technical question and preserve the decision evidence.",
+      "title": "BFS Prototype",
+      "id": "bfs-prototype",
+      "defaultMode": "explore",
+      "modes": {
+        "explore": []
+      },
+      "handoffs": [
+        "bfs-spec",
+        "bfs-design-consultation"
+      ]
+    },
+    {
+      "id": "bfs-triage",
+      "title": "BFS Triage",
+      "description": "Turn a reported problem into an evidence-based, prioritized triage report and next route.",
+      "defaultMode": "report",
+      "modes": {
+        "report": []
+      },
+      "handoffs": [
+        "bfs-bug-issue-investigate",
+        "bfs-spec",
+        "bfs-implement"
+      ]
+    },
+    {
+      "id": "bfs-wayfinder",
+      "title": "BFS Wayfinder",
+      "description": "Find the next useful project step from current context, workflow and task status.",
+      "defaultMode": "guide",
+      "modes": {
+        "guide": []
+      },
+      "handoffs": [
+        "bfs-load-context",
+        "bfs-router"
+      ]
+    },
+    {
+      "id": "bfs-learn",
+      "title": "BFS Learn",
+      "description": "Create an isolated runnable practice exercise or review its actual learning evidence.",
+      "defaultMode": "practice",
+      "modes": {
+        "practice": [],
+        "review": []
+      },
+      "handoffs": [
+        "bfs-bontaflow-memory",
+        "bfs-implement"
+      ]
     }
   ],
   "aliases": {
@@ -656,6 +714,22 @@
     "retro": {
       "skill": "bfs-retro",
       "mode": "report"
+    },
+    "triage": {
+      "skill": "bfs-triage",
+      "mode": "report"
+    },
+    "wayfinder": {
+      "skill": "bfs-wayfinder",
+      "mode": "guide"
+    },
+    "practice": {
+      "skill": "bfs-learn",
+      "mode": "practice"
+    },
+    "learning-review": {
+      "skill": "bfs-learn",
+      "mode": "review"
     }
   },
   "removed": {

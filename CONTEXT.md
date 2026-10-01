@@ -17,6 +17,9 @@ design, implementation, testing, documentation and delivery.
 - **Guard:** optional per-task command warnings and supported edit-path constraints.
 - **Delivery evidence:** an observed result bound to the actual checked content.
 - **Accepted basis:** the concrete plan, specification, selected design or scoped change explicitly accepted by the user, with identifiable content and acceptance criteria.
+- **Task graph:** an explicitly requested dependency plan whose worker tasks have separate worktrees, owned workflows and write scopes; fresh integrated evidence releases dependents.
+- **Prototype:** an isolated, disposable experiment answering a stated decision question; its result supplies evidence, not user acceptance or production completion.
+- **Learning workspace:** an isolated runnable exercise evaluated against its stated learning goal; it does not complete product work.
 
 ## Decisions
 
@@ -47,3 +50,9 @@ reproduction. Code review reports Standards and Spec separately on a frozen scop
 The methodology has native acceptance evidence in
 `docs/bontaflowstack/CORE-SKILL-METHODOLOGY-REPORT.md`. Installation and delivery
 status must be checked against the actual selected release and local plugin.
+
+Requested parallel implementation reuses the existing workflow and delivery
+evidence contracts. The task graph records ownership, dependencies and freshness;
+the host performs worker dispatch and Git integration. Overlapping write scopes
+run serially. Ordinary implementation has no mandatory orchestration phase.
+Triage and wayfinding are read-only; practice uses a separate workspace.

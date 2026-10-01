@@ -1,0 +1,6 @@
+interface:
+  display_name: "BFS Learn"
+  short_description: "Practice a skill or review evidence of learning"
+  default_prompt: "Use $bfs-learn to create a runnable practice exercise or review the supplied exercise evidence."
+policy:
+  allow_implicit_invocation: true

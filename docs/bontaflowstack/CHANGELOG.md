@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.7.0 — 2026-10-01
+
+- Added optional isolated prototypes with runnable decision questions and
+  preserved experimental evidence.
+- Added requested parallel task graphs, owned worktree/workflow bindings,
+  freshness checks and verified serial integration before dependent tasks.
+  Git object fingerprints avoid false staleness from Windows LF/CRLF conversion.
+- Added independent triage, read-only wayfinding and isolated learning practice
+  and review. Ordinary implementation retains its existing TDD flow.
+- Native outcomes and remaining proof limits are recorded in the prototype,
+  guard, remaining-acceptance and standalone-extension reports. Engine 0.3.1
+  is unchanged; release build and archive results accompany the release assets.
+
 ## 0.6.1 — 2026-10-01
 
 - Added portable, integrity-checked context handoffs that preserve selected

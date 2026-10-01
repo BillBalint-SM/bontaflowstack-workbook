@@ -26,6 +26,15 @@ Missing/ambiguous acceptance, incompatible requirements or material revisions re
 
 Output: Implemented acceptance criteria, verification evidence, changed paths and unresolved work.
 
+## Requested parallel implementation
+
+For an accepted task graph with requested parallel execution, read
+[parallel execution](../../references/parallel.md). Validate its graph and current
+readiness, give independent write scopes to separate workers/worktrees, and keep
+each worker's own workflow. Record actual committed results and integrate serially
+with fresh checks before releasing dependent tasks. One ready task follows the
+normal procedure above; parallelism does not add a mandatory phase.
+
 ## TDD
 
 This skill owns the red/green/refactor procedure, including repairs handed over by

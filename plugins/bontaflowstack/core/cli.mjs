@@ -11,6 +11,7 @@ import { delivery } from './delivery.mjs';
 import { pluginRoot, loadCatalog, resolveSkill, selection } from './catalog.mjs';
 import { essentialContext, contextForRead } from './context.mjs';
 import { handoff } from './handoff.mjs';
+import { tasks } from './tasks.mjs';
 
 export { pluginRoot, loadCatalog, resolveSkill } from './catalog.mjs';
 function inputArgs(argv) {
@@ -40,7 +41,7 @@ export function run(argv) {
   if (command === 'help' || command === '--help') return {
     usage:'node core/cli.mjs <command> <action> [--input file.json|-]',
     commands:{ catalog:'list|resolve <skill>', read:'<skill>', context:'show', doctor:'[skill]', workflow:'start|begin|step|list|resume|adopt|save|pause|discard|checkpoints|import-legacy|export|import-handoff',
-      memory:'list|search|put|status|history|prune|stats|export|import-legacy', preferences:'inspect|effective|set|reset|profile|enable|question|stats|propose|apply',
+      memory:'list|search|put|status|history|prune|stats|export|import-legacy', tasks:'list|validate|create|status|bind|record|integrate|adopt', preferences:'inspect|effective|set|reset|profile|enable|question|stats|propose|apply',
       guard:'status|set|release|off|approve', engine:'status|register|browser|render|design|design-md|design-detect|pretext', delivery:'status|queue|version|config|evidence|verify|report', hook:'pretool|stop' }
   };
   const catalog = loadCatalog();
@@ -74,6 +75,7 @@ export function run(argv) {
   }
   if (command === 'workflow') return ['export','import-handoff'].includes(action) ? handoff(ctx,action,input,catalog) : workflow(ctx,action,input,catalog);
   if (command === 'memory') return memory(ctx,action,input);
+  if (command === 'tasks') return tasks(ctx,action,input,catalog);
   if (command === 'preferences') return preferences(ctx,action,input);
   if (command === 'guard') return guard(ctx,action,input);
   if (command === 'engine') return engines(ctx,action,{ ...input, args:input.args || extra.filter((v,i) => !(i === 0 && v === '--')) });

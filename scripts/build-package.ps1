@@ -18,7 +18,7 @@ $manifest = Get-Content -LiteralPath (Join-Path $repoRoot 'plugins/bontaflowstac
 $version = $manifest.version
 if ($version -notmatch '^\d+\.\d+\.\d+$') { throw 'Use a release version without a development suffix.' }
 $files = @(& git -C $repoRoot ls-files --cached --others --exclude-standard) | Where-Object {
-    $_ -match '^(plugins/bontaflowstack/(\.codex-plugin/|core/|skills/|references/|scripts/|hooks/|catalog\.json$|engines\.lock\.json$|HOST\.md$|LICENSE$)|\.agents/plugins/|\.github/|docs/|scripts/|tests/|README\.md$|LICENSE$|CONTEXT\.md$|AGENTS\.md$|\.gitignore$|\.gitattributes$)' -and (Test-Path -LiteralPath (Join-Path $repoRoot $_) -PathType Leaf)
+    $_ -match '^(plugins/bontaflowstack/(\.codex-plugin/|core/|skills/|references/|scripts/|hooks/|catalog\.json$|engines\.lock\.json$|HOST\.md$|LICENSE$)|\.agents/plugins/|\.github/|docs/|tasks/|scripts/|tests/|README\.md$|LICENSE$|CONTEXT\.md$|AGENTS\.md$|\.gitignore$|\.gitattributes$)' -and (Test-Path -LiteralPath (Join-Path $repoRoot $_) -PathType Leaf)
 } | Sort-Object -Unique
 if ($LASTEXITCODE -ne 0 -or $files.Count -lt 50) { throw 'Build from the source Git checkout.' }
 $head = & git -C $repoRoot rev-parse HEAD

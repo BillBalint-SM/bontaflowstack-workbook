@@ -63,7 +63,7 @@ export function createMethodologyFixtures(root,plugin,selectedCases=cases){
 
 async function runOne(root,manifest,c,entry){
   const evidence=path.join(root,'evidence',c.id);fs.mkdirSync(evidence,{recursive:true});
-  const prompt=`Use only the frozen BFS plugin at ${manifest.plugin}. Load skills/${c.skill}/SKILL.md and this source's read/HOST protocol. Project: ${c.project}. Keep plugin and unrelated files unchanged. BFS_STATE_HOME is isolated in this project; preserve the real native task identity. No installs, external publication, deployment, hook trust changes or access to other projects. Answer in Hungarian. Fixture base: ${c.base}; initial hashes are in ${path.join(root,'manifest.json')}.\n\n${c.request}`;
+  const prompt=`Use only the frozen BFS plugin at ${manifest.plugin}. Verified direct CLI entry: ${path.join(manifest.plugin,'core/cli.mjs')}; invoke it with Node from the project directory. Load skills/${c.skill}/SKILL.md and this source's read/HOST protocol. Project: ${c.project}. Keep plugin and unrelated files unchanged. BFS_STATE_HOME is isolated in this project; preserve the real native task identity. No installs, external publication, deployment, hook trust changes or access to other projects. Answer in Hungarian. Fixture base: ${c.base}; initial hashes are in ${path.join(root,'manifest.json')}.\n\n${c.request}`;
   fs.writeFileSync(path.join(evidence,'prompt.txt'),prompt);
   const env={...process.env,BFS_STATE_HOME:path.join(c.project,'.bfs-state')};delete env.CODEX_THREAD_ID;
   const args=[entry,'exec','--ignore-user-config','-c','windows.sandbox="elevated"','-c','model="gpt-6-sol"','-c','model_reasoning_effort="medium"','-c','approval_policy="never"','-s',c.network?'danger-full-access':'workspace-write','--add-dir',root,'--skip-git-repo-check','-C',c.project,'--json','-o',path.join(evidence,'final.txt'),'-'];
@@ -72,7 +72,7 @@ async function runOne(root,manifest,c,entry){
     const child=spawn(process.execPath,args,{cwd:c.project,env,windowsHide:true});
     const out=fs.createWriteStream(path.join(evidence,'events.jsonl')),err=fs.createWriteStream(path.join(evidence,'stderr.txt'));
     child.stdout.pipe(out);child.stderr.pipe(err);child.stdin.end(prompt);
-    const timer=setTimeout(()=>child.kill(),600000);
+    const timer=setTimeout(()=>child.kill(),manifest.timeoutMs ?? 600000);
     child.once('error',error=>{clearTimeout(timer);out.end();err.end();reject(error);});
     child.once('close',code=>{clearTimeout(timer);Promise.all([new Promise(r=>out.end(r)),new Promise(r=>err.end(r))]).then(()=>resolve(code));});
   });

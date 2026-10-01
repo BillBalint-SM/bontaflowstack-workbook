@@ -141,5 +141,35 @@ and installed-package/native UI acceptance remain separate observations.
 
 For each case record: request, fixture, plugin hashes, actual selected skills and
 settings, evidence paths, before/after files, state transitions, pass/fail/blocked
-and reason. Re-run all ten cases with the final extracted package. Keep source and
+and reason. Run affected cases with the final extracted package when relevant
+source or packaging behavior changed. Keep source and
 package evaluations distinct. A case with missing evidence remains unverified.
+
+## Roadmap acceptance runners
+
+The accepted [test plan](../../tasks/test-plan.md) uses targeted new cases and
+reuses unchanged, source-bound evidence. A package version change alone does not
+require another complete campaign.
+
+```powershell
+node --test tests/task-graph.test.mjs
+node --test tests/parallel.integration.test.mjs
+node tests/prototype-acceptance.mjs create C:/path/to/new-prototype-evidence plugins/bontaflowstack
+node tests/remaining-native-acceptance.mjs create C:/path/to/new-remaining-evidence plugins/bontaflowstack
+node tests/standalone-native-acceptance.mjs create C:/path/to/new-extension-evidence plugins/bontaflowstack
+```
+
+Replace each evidence directory with a new owned absolute path. Each adapter
+uses the existing methodology runner and its captured native task/tool events;
+use its `run` command with the verified Codex JavaScript entry, not the Windows
+executable. Remaining C01 cases run sequentially. Native timeouts remain
+UNVERIFIED; retry only after investigating a concrete failure or changed input.
+The parallel native adapter records separate actual worker identities and
+worktrees, followed by coordinator integration evidence.
+
+Read the [prototype](PROTOTYPE-REPORT.md),
+[remaining cases](REMAINING-ACCEPTANCE-REPORT.md),
+[guard](GUARD-NATIVE-REPORT.md) and
+[extensions](STANDALONE-EXTENSIONS-REPORT.md) reports for observed results,
+source hashes, native identities and proof limits. Fixture checks and native
+enforcement are separate evidence; no simulated marker certifies a hook.

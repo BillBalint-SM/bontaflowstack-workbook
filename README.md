@@ -14,10 +14,10 @@ on its own when you already have its input.
 
 You need Codex Desktop, Git and **Node.js 24 or newer**. The core uses no npm packages.
 
-Install the tested `0.6.1` release with the Codex CLI in PowerShell:
+Install the tested `0.7.0` release with the Codex CLI in PowerShell:
 
 ```powershell
-codex plugin marketplace add BillBalint-SM/bontaflowstack-workbook --ref v0.6.1
+codex plugin marketplace add BillBalint-SM/bontaflowstack-workbook --ref v0.7.0
 codex plugin add bontaflowstack@bontaflowstack
 ```
 
@@ -48,7 +48,7 @@ Git Bash and jq are not required by the core.
 ### Optional: source ZIP or local clone
 
 For manual setup, download the source ZIP and SHA-256 file from
-[GitHub Releases](https://github.com/BillBalint-SM/bontaflowstack-workbook/releases/tag/v0.6.1),
+[GitHub Releases](https://github.com/BillBalint-SM/bontaflowstack-workbook/releases/tag/v0.7.0),
 or use a local clone. Follow the
 [source ZIP setup](docs/bontaflowstack/INSTALL-WINDOWS.md#optional-install-a-source-zip-or-local-clone).
 
@@ -169,6 +169,9 @@ names for direct calls. Previous names remain catalog aliases through
 | Business and specification | `bfs-business-builder`, `bfs-spec` | Clarify the customer problem, value and scope; write verifiable requirements. |
 | Plan coordination | `bfs-autoplan`, `bfs-plan-tune` | Select relevant reviews; manage explicit preferences and local proposals. |
 | Implementation | `bfs-implement` | Implement a user-accepted plan, spec or design; verify and checkpoint each part. |
+| Prototyping | `bfs-prototype` | Run an isolated experiment to answer one decision question and preserve its evidence. |
+| Triage and navigation | `bfs-triage`, `bfs-wayfinder` | Structure a reported problem; identify the next useful step from verified current work. |
+| Learning | `bfs-learn` | Create an isolated runnable exercise or review actual practice evidence. |
 | Plan reviews | `bfs-plan-ceo-review`, `bfs-plan-eng-review`, `bfs-plan-design-review`, `bfs-plan-devex-review` | Check business value, engineering, UI/UX and planned developer-facing interfaces. |
 | Design | `bfs-design-consultation`, `bfs-design-html`, `bfs-design-review` | Compare directions, preserve your selection, implement and inspect the rendered result. |
 | Browser and data | `bfs-browse`, `bfs-scrape`, `bfs-benchmark` | Browse or sign in visibly, extract verified data, measure page performance. |
@@ -179,7 +182,7 @@ names for direct calls. Previous names remain catalog aliases through
 ### Combined modes
 
 Source development adds portable handoff export/import and optional trace-based
-retro reporting. These additions are included in 0.6.1.
+retro reporting. These additions are included in 0.7.0.
 
 - **bfs-design-consultation:** consultation, variants, Codex image generation and refinement.
 - **bfs-browse:** page work, visible browser, manual login and continuation in the same session.

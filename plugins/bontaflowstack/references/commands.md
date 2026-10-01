@@ -6,6 +6,16 @@ on `node <plugin>/core/cli.mjs`. The PowerShell launcher takes `-Command`,
 
 ## Catalog and readiness
 
+For accepted parallel task graphs, `tasks list` discovers stored plan IDs without writes; `tasks validate/create` takes `plan`;
+`tasks status` takes `planId`. Worker `tasks bind` selects `taskId` and its own
+`workflowId`; `tasks record` supplies `summary` and actual `evidenceId`.
+Coordinator `tasks integrate` selects `taskId`, its verification `workflowId`
+and integration `evidenceId`. Read [parallel execution](parallel.md) for the
+graph schema, ownership and freshness rules. These operations never spawn or merge.
+New-chat continuation in the same workspace uses `tasks adopt` with `planId` and
+`confirm: "resume"`; optional `taskId` and `workflowId` adopt an active worker binding
+after its workflow adoption. Historical result owners and evidence remain unchanged.
+
 - `catalog list`: current skills, modes, required capabilities and handoffs.
 - `catalog resolve <name>`: canonical skill and alias mode.
 - `read <name>`: instructions and `hostSha256`, with full HOST unless JSON `knownHostSha256` matches. Supply that hash only after loading full HOST in this chat. New chats omit it.

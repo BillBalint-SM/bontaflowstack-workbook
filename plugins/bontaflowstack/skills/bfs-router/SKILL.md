@@ -27,6 +27,12 @@ Modes: `route` for execution, `guide` for advice, `setup` for installation/proje
 
 Choose the narrowest match: page data → bfs-scrape; interaction tests → bfs-qa; accepted implementation → bfs-implement; changed-code inspection → bfs-review; unexplained defect → bfs-bug-issue-investigate. Browser is a shared capability.
 
+Reported problem needing impact, reproduction and prioritization → bfs-triage;
+current project position and next useful step → bfs-wayfinder;
+a runnable decision experiment → bfs-prototype; an isolated practice exercise
+or its learning review → bfs-learn. Advice stays read-only; these are optional
+entry points, not prerequisites added to every implementation.
+
 Apply bfs-implement's accepted-basis rules before editing. Idea ends at plan review; implementation requires requested scope and acceptance. Planning requests return a plan; material revisions leave work `waiting`. HOST authorization applies to every route.
 
 For reusable browser scripts, read the [removed-feature policy](../../references/browser.md#removed-browser-scripts) and report unsupported automation. Answer other out-of-catalog requests without inventing skills.

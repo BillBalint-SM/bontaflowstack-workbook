@@ -14,6 +14,11 @@ Mode: `report`.
 4. Compare requested version candidates using delivery version. Keep proposed numbers separate from reservations; preserve three- or four-part semantics.
 5. Inspect sibling workspaces only when explicitly in scope. Derive the next action from observed state; this report reserves no version and changes no remote records.
 
+For a selected local task graph, use `tasks status` and report its ready, bound,
+recorded, integrated and stale tasks with blocker IDs. This read does not reserve
+work, launch workers or integrate commits. Read [parallel execution](../../references/parallel.md)
+when interpreting task evidence and ownership.
+
 Output: Observed activity, version collisions, evidence age, missing fields and next action.
 
 ## References

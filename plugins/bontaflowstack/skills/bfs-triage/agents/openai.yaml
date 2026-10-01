@@ -1,0 +1,6 @@
+interface:
+  display_name: "BFS Triage"
+  short_description: "Prioritize a reported problem from evidence"
+  default_prompt: "Use $bfs-triage to assess this report and identify its evidence-based next route."
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,6 @@
+interface:
+  display_name: "BFS Wayfinder"
+  short_description: "Find the next useful step in current project work"
+  default_prompt: "Use $bfs-wayfinder to identify my current position and the next useful step."
+policy:
+  allow_implicit_invocation: true
